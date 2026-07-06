@@ -22,7 +22,7 @@
  * calendar's ID (Calendar settings -> "Integrate calendar" -> Calendar ID).
  */
 
-var CALENDAR_ID = "";           // "" = your default calendar; or paste a calendar ID
+var CALENDAR_ID = "yourpartyporch@gmail.com";  // "" = default calendar; pinned to your Party Porch calendar
 var EVENT_HOURS = 3;            // block length: ~2h play + setup/teardown
 var INVITE_CUSTOMER = true;     // email the customer a calendar invite too
 var DAILY_CAPACITY = 2;         // how many parties you can run in one day (date is "full" at this many)
