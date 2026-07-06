@@ -5,6 +5,17 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-07-06
 
+### Changed — hosting / custom domain
+- **Restructured for the custom domain.** Moved the public booking site from `website/` to
+  the repo **root** so `yourpartyporch.com/` serves the site (its canonical/OG tags already
+  expected root). Moved the internal tracker to **`/tracker/`**.
+- Added **`CNAME`** (yourpartyporch.com), **`robots.txt`** (disallows `/tracker/`), and
+  **`sitemap.xml`** (home + 10 experience pages).
+- Moved site docs → `docs/website-setup.md`; legacy WP embed → `docs/index-wordpress.html`.
+- GitHub Pages now 301-redirects the `github.io` URL to the custom domain. **Remaining:** point
+  GoDaddy DNS (A records) at GitHub Pages, then enable HTTPS. (Decision: stay code-based on a
+  free static host; WordPress deemed unnecessary overhead.)
+
 ### Added
 - **Tracker: much more detailed Gantt.** Rebuilt the Gantt tab into 9 swimlanes
   (Key milestones, Setup & legal, Website & tech, Product launches, Marketing & content,
