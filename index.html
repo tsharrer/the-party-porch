@@ -633,6 +633,7 @@ function renderExpenses(){
   h+='<div class="foot">Keep this account separate for clean books. Saved on this device.</div>';
   return h;
 }
+let active='Tracker';
 function render(){
   const nav=document.getElementById('nav');
   nav.innerHTML=TABS.map(t=>`<button class="${t===active?'active':''}" onclick="go('${t}')">${t}</button>`).join('');
