@@ -58,7 +58,7 @@ function availability(dateStr) {
       var t = String(evs[i].getTitle() || "").toUpperCase();
       if (t.indexOf("BLOCKED") > -1 || t.indexOf("CLOSED") > -1 ||
           t.indexOf("UNAVAILABLE") > -1 || t.indexOf("VACATION") > -1) closed = true;
-      var m = String(evs[i].getDescription() || "").match(/Items?:\s*([a-z0-9_,\s]+)/i);
+      var m = String(evs[i].getDescription() || "").match(/Items?:[ \t]*([a-z0-9_,\t ]+)/i);
       if (m) {
         m[1].split(",").forEach(function (k) {
           k = k.trim().toLowerCase();
