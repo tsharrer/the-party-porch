@@ -20,13 +20,14 @@ within 15 miles.
 | Up to 12 | $180 | +$100 (1 ref) | **$280** |
 | Up to 18 | $250 | +$100 (1 ref) | **$350** |
 | Up to 24 | $320 | +$200 (2 refs) | **$520** |
-| Up to 30 | $390 | +$200 (2 refs) | **$590** |
-| Up to 36 | $460 | +$300 (3 refs) | **$760** |
+| **25+ players** | Custom quote | — | **Custom quote** |
 
-- **Rental** scales ~$12 per extra player (+$70 per 6): $180 → $250 → $320 → $390 → $460.
-  This beats the market rate of $15–16/extra player.
+- **Rental** scales ~$12 per extra player (+$70 per 6): $180 → $250 → $320. Beats the market
+  rate of $15–16/extra player.
 - **12 players included** in the base — most rivals include only ~8–10 at the same ~$180.
-- **Referee** is $100 each; 1 host runs up to ~18 kids, 2 for ~30, 3 for ~36.
+- **Referee** is $100 each; 1 host runs up to ~18 kids, 2 for ~24.
+- **Big parties (25+)** get a custom quote (headcount, refs, space, add-ons) so we stay flexible
+  and protect margin on the largest events.
 
 ## Houston competitor benchmark
 | Company | Base rental | Players incl. | Hosted |

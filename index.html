@@ -50,6 +50,9 @@
   .task input:checked::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#062b12;font-weight:900;font-size:12px}
   .task label{flex:1;cursor:pointer;font-size:15px}
   .task input:checked + label{text-decoration:line-through;color:var(--muted)}
+  .owner{flex:none;margin-left:8px;align-self:center;font-size:12px;font-weight:700;color:var(--muted);
+    background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:8px;padding:4px 6px;cursor:pointer;max-width:96px}
+  .owner.set{color:var(--accent);border-color:var(--accent);background:rgba(56,189,248,.08)}
   .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;margin-left:6px;vertical-align:middle}
   .p-spend{background:#7c2d12;color:#fed7aa}
   .p-content{background:#5b21b6;color:#ddd6fe}
@@ -314,10 +317,9 @@ CONTENT.Pricing = `
 <tr><td>Up to 12</td><td>$180</td><td>+$100 (1)</td><td><b>$280</b></td></tr>
 <tr><td>Up to 18</td><td>$250</td><td>+$100 (1)</td><td><b>$350</b></td></tr>
 <tr><td>Up to 24</td><td>$320</td><td>+$200 (2)</td><td><b>$520</b></td></tr>
-<tr><td>Up to 30</td><td>$390</td><td>+$200 (2)</td><td><b>$590</b></td></tr>
-<tr><td>Up to 36</td><td>$460</td><td>+$300 (3)</td><td><b>$760</b></td></tr>
+<tr><td><b>25+ players</b></td><td colspan="3"><b>Custom quote</b> — DM us headcount + location</td></tr>
 </table>
-<p class="muted" style="font-size:12px">Rental ~$12/extra player (+$70 per 6). Referee $100 each — 1 host runs up to ~18 kids, 2 for ~30, 3 for ~36.</p></div>
+<p class="muted" style="font-size:12px">Rental ~$12/extra player (+$70 per 6). Referee $100 each — 1 host runs up to ~18 kids, 2 for ~24. Big parties (25+) get a tailored quote.</p></div>
 <div class="card"><h3>🥊 vs. Houston competitors</h3>
 <table>
 <tr><th>Company</th><th>Base rental</th><th>Players incl.</th><th>Hosted</th></tr>
@@ -472,8 +474,20 @@ TRACKER.forEach(p=>p.items.forEach(i=>allIds.push(i.id)));
 function loadState(){try{return JSON.parse(localStorage.getItem('ppTracker')||'{}')}catch(e){return {}}}
 function saveState(s){localStorage.setItem('ppTracker',JSON.stringify(s))}
 let state=loadState();
+function loadOwners(){try{return JSON.parse(localStorage.getItem('ppOwners')||'{}')}catch(e){return {}}}
+function saveOwners(o){localStorage.setItem('ppOwners',JSON.stringify(o))}
+let owners=loadOwners();
+const OWNER_NAMES=['Ryan','Thilye'];
 // seed pre-done
 TRACKER.forEach(p=>p.items.forEach(i=>{if(i.done&&!(i.id in state))state[i.id]=true}));
+
+function ownerSelect(id){
+  const cur=owners[id]||'';
+  let opts=`<option value=""${cur===''?' selected':''}>— who?</option>`;
+  OWNER_NAMES.forEach(n=>{opts+=`<option value="${n}"${cur===n?' selected':''}>${n}</option>`});
+  return `<select class="owner${cur?' set':''}" onchange="setOwner('${id}',this.value)">${opts}</select>`;
+}
+function setOwner(id,val){if(val){owners[id]=val}else{delete owners[id]}saveOwners(owners);render();}
 
 function renderTracker(){
   let h='<h2 class="section">Master Tracker</h2>';
@@ -482,7 +496,7 @@ function renderTracker(){
     p.items.forEach(i=>{
       const checked=state[i.id]?'checked':'';
       let tags='';(i.tags||[]).forEach(t=>{const[e,c]=tagMap[t];tags+=`<span class="pill ${c}">${e}</span>`});
-      h+=`<div class="task"><input type="checkbox" id="${i.id}" ${checked} onchange="toggle('${i.id}')"><label for="${i.id}">${i.t}${tags}</label></div>`;
+      h+=`<div class="task"><input type="checkbox" id="${i.id}" ${checked} onchange="toggle('${i.id}')"><label for="${i.id}">${i.t}${tags}</label>${ownerSelect(i.id)}</div>`;
     });
     h+='</div>';
   });

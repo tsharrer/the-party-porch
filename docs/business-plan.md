@@ -48,11 +48,10 @@ row up ~$20–40 in 2027 as reviews build.
 | Up to 12 | $180 | +$100 (1) | $280 |
 | Up to 18 | $250 | +$100 (1) | $350 |
 | Up to 24 | $320 | +$200 (2) | $520 |
-| Up to 30 | $390 | +$200 (2) | $590 |
-| Up to 36 | $460 | +$300 (3) | $760 |
+| 25+ | Custom quote | — | Custom quote |
 
 Rental ~$12/extra player (+$70 per 6); 12 players included in base (rivals ~8–10 at $180).
-Referee $100 each (1 host up to ~18 kids, 2 for ~30, 3 for ~36).
+Referee $100 each (1 host up to ~18 kids, 2 for ~24). Parties of 25+ are quoted custom.
 
 | Add-on | Price |
 |--------|-------|

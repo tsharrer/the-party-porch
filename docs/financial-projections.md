@@ -4,7 +4,7 @@
 
 ## Per-party economics (rental + referee matrix)
 - Base (up to 12 players): **Rental $180** (you set up) · **+ Referee $100** (our host runs it)
-- Scales by player count: rental ~$12/extra player (+$70 per 6); referee $100 each (1 host up to ~18 kids)
+- Scales by player count: rental ~$12/extra player (+$70 per 6); referee $100 each (1 host up to ~18 kids); 25+ players quoted custom
 - 12 players included in base — beats rivals (~8–10 at ~$180) and cheaper per extra player ($12 vs $15–16)
 - Launch blended average ticket: **~$240–280** (most bookings attach a referee or add-ons)
 - Variable cost/party: **~$30** (rental only) to **~$110** (big party + 2 refs)
