@@ -1,0 +1,16 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Private / sensitive — never commit
+secrets/
+*.key
+*.env
+.env*
+customers.csv
+bookings-private.*
+finances-actuals.*
+
+# Working files
+*.tmp
+~$*

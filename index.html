@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6d28d9">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>The Party Porch — Launch Tracker</title>
+<style>
+  :root{
+    --bg:#0f0b1e; --card:#1b1533; --card2:#241b42; --accent:#a855f7; --accent2:#f59e0b;
+    --text:#f3effe; --muted:#a89ecb; --good:#22c55e; --line:#332a52; --pink:#ec4899;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:linear-gradient(180deg,#160f2e,#0f0b1e 40%);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding-bottom:90px;line-height:1.5;font-size:16px;
+  }
+  header{
+    position:sticky;top:0;z-index:50;padding:14px 16px calc(10px + env(safe-area-inset-top));
+    padding-top:calc(14px + env(safe-area-inset-top));
+    background:linear-gradient(135deg,#7c3aed,#db2777);box-shadow:0 4px 20px rgba(0,0,0,.4);
+  }
+  header h1{margin:0;font-size:20px;letter-spacing:.3px}
+  header .sub{font-size:12px;opacity:.9;margin-top:2px}
+  .progwrap{margin-top:10px;background:rgba(0,0,0,.25);border-radius:20px;height:22px;overflow:hidden;position:relative}
+  .progbar{height:100%;width:0;background:linear-gradient(90deg,#22c55e,#a3e635);transition:width .4s ease}
+  .progtxt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+  nav{display:flex;overflow-x:auto;gap:8px;padding:12px 16px;position:sticky;top:0;background:var(--bg);
+    scrollbar-width:none;border-bottom:1px solid var(--line)}
+  nav::-webkit-scrollbar{display:none}
+  nav button{white-space:nowrap;background:var(--card);color:var(--muted);border:1px solid var(--line);
+    padding:8px 14px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer}
+  nav button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  main{padding:16px}
+  .tab{display:none;animation:fade .25s ease}
+  .tab.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+  h2.section{font-size:15px;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin:22px 0 10px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:14px}
+  .card h3{margin:0 0 8px;font-size:16px}
+  .task{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .task:last-child{border-bottom:none}
+  .task input{appearance:none;min-width:24px;height:24px;margin-top:1px;border:2px solid var(--accent);
+    border-radius:7px;position:relative;cursor:pointer;background:transparent;transition:.15s}
+  .task input:checked{background:var(--good);border-color:var(--good)}
+  .task input:checked::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#062b12;font-weight:900;font-size:15px}
+  .task label{flex:1;cursor:pointer;font-size:15px}
+  .task input:checked + label{text-decoration:line-through;color:var(--muted)}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;margin-left:6px;vertical-align:middle}
+  .p-spend{background:#7c2d12;color:#fed7aa}
+  .p-content{background:#5b21b6;color:#ddd6fe}
+  .p-mkt{background:#155e75;color:#a5f3fc}
+  .p-goal{background:#065f46;color:#a7f3d0}
+  .phase{font-size:12px;color:var(--muted);margin:2px 0 12px}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:6px 0}
+  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--accent2);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+  .big{font-size:26px;font-weight:800;color:#fff}
+  .muted{color:var(--muted)}
+  .kpi{display:flex;gap:10px;flex-wrap:wrap}
+  .kpi .box{flex:1;min-width:90px;background:var(--card2);border-radius:12px;padding:12px;text-align:center}
+  .kpi .box .n{font-size:22px;font-weight:800}
+  .kpi .box .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  ul.clean{padding-left:18px;margin:6px 0}
+  ul.clean li{margin:5px 0}
+  .warn{background:#3b1d1d;border:1px solid #7f1d1d;border-radius:12px;padding:10px 12px;font-size:13px;color:#fecaca;margin:10px 0}
+  .tip{background:#12261b;border:1px solid #14532d;border-radius:12px;padding:10px 12px;font-size:13px;color:#bbf7d0;margin:10px 0}
+  .quote{background:var(--card2);border-left:3px solid var(--accent);padding:10px 12px;border-radius:8px;font-size:13px;margin:8px 0;white-space:pre-wrap}
+  .reset{display:block;width:100%;margin-top:20px;background:transparent;color:var(--muted);border:1px solid var(--line);padding:12px;border-radius:12px;font-size:13px}
+  a{color:var(--accent2)}
+  .foot{text-align:center;color:var(--muted);font-size:12px;margin:24px 0 8px}
+  details summary{cursor:pointer;font-weight:600;padding:6px 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎉 The Party Porch</h1>
+  <div class="sub">yourpartyporch.com · @yourpartyporch · Launch: Sept 2026 · Goal: +$10k/mo by Mar 2028</div>
+  <div class="progwrap"><div class="progbar" id="progbar"></div><div class="progtxt" id="progtxt">0%</div></div>
+</header>
+
+<nav id="nav"></nav>
+<main id="main"></main>
+
+<script>
+/* ---------------- DATA ---------------- */
+const TABS = ["Tracker","Timeline","Marketing","Clients","Shopping","Pricing","Money","Plan"];
+
+// TRACKER: phases -> tasks. id must be stable (used for localStorage).
+const TRACKER = [
+  {phase:"✅ Brand (DONE)", items:[
+    {id:"b1", t:"Secure name, domain (yourpartyporch.com) + all social handles", tags:[], done:true},
+  ]},
+  {phase:"July 2026 — Foundation", items:[
+    {id:"j1", t:"Create business Gmail + password manager"},
+    {id:"j2", t:"Set up free Google Business Profile (service-area)"},
+    {id:"j3", t:"Reserve business name w/ Secretary of State"},
+    {id:"j4", t:"Open separate checking account for clean books"},
+    {id:"j5", t:"Order the ~$600 starter kit (blasters + darts first)", tags:["spend"]},
+    {id:"j6", t:"Design logo + brand kit in Canva"},
+    {id:"j7", t:"Build 1-page site w/ booking form (Carrd/Google Site)"},
+    {id:"j8", t:"Set up booking intake: Google Form → Calendar"},
+    {id:"j9", t:"Assemble + test kit; count darts, label bins"},
+    {id:"j10", t:"Write safety rules + liability waiver"},
+    {id:"j11", t:"Film brand-launch content (kit reveal, explainer)", tags:["content"]},
+    {id:"j12", t:"Fully set up all social profiles (bio, link, highlights)"},
+    {id:"j13", t:"Run FREE pilot party w/ friends' kids — film everything", tags:["content"]},
+    {id:"j14", t:"Collect first testimonial + Google review", tags:["mkt"]},
+    {id:"j15", t:"🎯 Post first 3 Reels/TikToks — brand LIVE", tags:["goal"]},
+  ]},
+  {phase:"August 2026 — Build + Soft Launch", items:[
+    {id:"a1", t:'Announce "Now booking Fall parties!" everywhere', tags:["mkt"]},
+    {id:"a2", t:"Post in 10+ local Facebook parent/community groups", tags:["mkt"]},
+    {id:"a3", t:"List on Nextdoor + Facebook Marketplace"},
+    {id:"a4", t:"Launch Founding Family offer: first 5 parties $199", tags:["mkt"]},
+    {id:"a5", t:"Buy popcorn machine (~$200) → launch The Snack Bar", tags:["spend"]},
+    {id:"a6", t:"Create pricing one-pager + shareable booking link"},
+    {id:"a7", t:"DM 3 local micro-influencer moms (free party for a post)", tags:["mkt"]},
+    {id:"a8", t:"Run 2–3 soft-launch parties; film + collect reviews", tags:["content"]},
+    {id:"a9", t:"Refine run-of-show (setup→rules→games→cake→pickup)"},
+    {id:"a10", t:"Contact 5 local venues/parks re: recommended vendor", tags:["mkt"]},
+    {id:"a11", t:"Open September weekend slots on calendar"},
+    {id:"a12", t:"🎯 3+ parties done, 10+ content pieces, 5+ reviews", tags:["goal"]},
+  ]},
+  {phase:"September 2026 — 🚀 PUBLIC LAUNCH", items:[
+    {id:"s1", t:"Official launch post + Founding Family results reel", tags:["content"]},
+    {id:"s2", t:'Run launch giveaway ("tag 2 parents + follow to win")', tags:["mkt"]},
+    {id:"s3", t:"Turn on small boosted ad ($5–10/day) on best video", tags:["spend"]},
+    {id:"s4", t:"🎯 Land first FULL-PRICE booking", tags:["goal"]},
+    {id:"s5", t:"Hit 4–6 paid parties this month"},
+    {id:"s6", t:'Launch Halloween "Zombie Survival" battle theme', tags:["content"]},
+    {id:"s7", t:"Ask every customer for review + footage permission", tags:["mkt"]},
+    {id:"s8", t:"🎯 Phase 0 complete: repeatable system + reviews flowing", tags:["goal"]},
+  ]},
+  {phase:"Phase 1 — Validate (Oct–Dec 2026)", items:[
+    {id:"p1a", t:"Run 4–8 Nerf parties/month solo"},
+    {id:"p1b", t:"Post 4–5 videos/week consistently", tags:["content"]},
+    {id:"p1c", t:"Add Snack Bar (+$100) to every booking"},
+    {id:"p1d", t:"File LLC + get event liability insurance", tags:["spend"]},
+    {id:"p1e", t:"Set up Stripe/Square for deposits"},
+    {id:"p1f", t:"Holiday break camp + indoor-venue partnerships", tags:["mkt"]},
+    {id:"p1g", t:"🎯 6+ bookings/mo, $500+ saved for Kit #2", tags:["goal"]},
+  ]},
+  {phase:"Phase 2 — Add-ons + First Hire (Jan–May 2027)", items:[
+    {id:"p2a", t:"Buy Kit #2 (parallel parties)", tags:["spend"]},
+    {id:"p2b", t:"Launch The Booth (photo booth)", tags:["spend"]},
+    {id:"p2c", t:"Launch The Backdrop (flower/balloon walls)", tags:["spend"]},
+    {id:"p2d", t:"Add cotton candy to Snack Bar", tags:["spend"]},
+    {id:"p2e", t:"Hire first part-time helper"},
+    {id:"p2f", t:"Open weekday channels: schools, camps, churches", tags:["mkt"]},
+    {id:"p2g", t:"🎯 15+ parties/mo, avg ticket $380+, 1 helper", tags:["goal"]},
+  ]},
+  {phase:"Phase 3 — Multiply Crews (Jun–Oct 2027)", items:[
+    {id:"p3a", t:"Build Kit #3; train 2 crews", tags:["spend"]},
+    {id:"p3b", t:"Launch snow cone/slushie + Tiny Porch soft play", tags:["spend"]},
+    {id:"p3c", t:"Launch 360 booth (adult/wedding market)", tags:["spend"]},
+    {id:"p3d", t:"Launch Party Pack bundle"},
+    {id:"p3e", t:"Push corporate/community events ($600–1,200)", tags:["mkt"]},
+    {id:"p3f", t:"🎯 25+ parties/mo, 2 semi-independent crews", tags:["goal"]},
+  ]},
+  {phase:"Phase 4 — Hit +$10k/mo (Nov 2027–Mar 2028)", items:[
+    {id:"p4a", t:"Scale to 34+ parties/mo across 2–3 crews"},
+    {id:"p4b", t:"Launch Glow Zone + outdoor movie nights", tags:["spend"]},
+    {id:"p4c", t:"Promote best helper to crew chief"},
+    {id:"p4d", t:"Sell Ultimate bundles ($999+)"},
+    {id:"p4e", t:"Lock preferred-vendor deals (venues/camps/schools)", tags:["mkt"]},
+    {id:"p4f", t:"🏆 $10k+/mo NET — runs without you on-site", tags:["goal"]},
+  ]},
+];
+
+/* ---------- other tabs (static content HTML) ---------- */
+const CONTENT = {};
+
+CONTENT.Timeline = `
+<h2 class="section">Fall 2026 Launch Runway</h2>
+<div class="tip">Today: July 2026 · Public launch: <b>September 2026</b>. Fall = back-to-school birthday season + Halloween "zombie survival" battles.</div>
+<div class="card"><h3>📅 The 3-month runway</h3>
+<table>
+<tr><th>Month</th><th>Focus</th></tr>
+<tr><td><b>July</b></td><td>Foundation: accounts, buy kit, brand, booking system, first pilot party</td></tr>
+<tr><td><b>Aug</b></td><td>Build + soft launch: Founding Family offer, 3 discounted parties, content bank</td></tr>
+<tr><td><b>Sep</b></td><td>🚀 Public launch: giveaway, first full-price bookings, Halloween theme</td></tr>
+</table></div>
+<div class="card"><h3>🍂 Fall/Winter beats</h3>
+<ul class="clean">
+<li><b>Oct:</b> Halloween battles peak; popcorn on every booking</li>
+<li><b>Nov–Dec:</b> break camps + indoor venues (beat winter); gift certificates</li>
+<li><b>Jan–May '27:</b> Phase 2 — Kit #2, Booth+Backdrop, first hire, weekday schools</li>
+<li><b>Summer '27:</b> peak — 2 crews, corporate events, 360 booth</li>
+<li><b>Nov '27–Mar '28:</b> scale to 34+ parties/mo → <b>$10k/mo net</b></li>
+</ul></div>`;
+
+CONTENT.Marketing = `
+<h2 class="section">Marketing Engine</h2>
+<div class="card"><h3>📹 #1 channel: Content (free)</h3>
+<p class="muted">Film EVERY party. Post 4–5 short videos/week on TikTok + Reels + Shorts.</p>
+<ul class="clean">
+<li>Kid reactions seeing the battlefield</li>
+<li>Slow-mo dart hits + victory celebrations</li>
+<li>Setup timelapse: empty yard → arena in 60s</li>
+<li>"POV: The Party Porch just pulled up"</li>
+<li>Parent testimonials (10-sec clips)</li>
+<li>Themed teasers (Halloween/glow battles)</li>
+<li>Ride trending audio with party clips</li>
+</ul>
+<div class="tip">1 party = a Reel + TikTok + 3 Stories + a Short + a FB post. Hook in 1 second. Always end with "Booking Fall parties — link in bio."</div></div>
+<div class="card"><h3>📍 Local organic (high-intent, free)</h3>
+<ul class="clean">
+<li>15–20 local mom/parent/community FB groups</li>
+<li>Nextdoor + Facebook Marketplace (renew weekly)</li>
+<li><b>Google Business Profile</b> — aim 10 reviews in 60 days</li>
+<li>School/PTA + church bulletins; offer fundraiser nights</li>
+</ul></div>
+<div class="card"><h3>🔁 Referral & repeat</h3>
+<ul class="clean">
+<li>Refer-a-friend: <b>both get $30 off</b> (on every invoice)</li>
+<li>Returning families 10% off (birthdays repeat yearly!)</li>
+<li>Handle card in every goody bag</li>
+<li>Text review link day after every party</li>
+</ul></div>
+<div class="card"><h3>🤝 Partnerships</h3>
+<ul class="clean">
+<li>Venues/parks → be their recommended vendor</li>
+<li>Balloon artists, bakeries, bounce-house cos → cross-refer</li>
+<li>Micro-influencer moms → free party for posts</li>
+<li>Schools/camps/churches/corporate → weekday revenue</li>
+</ul></div>
+<div class="card"><h3>💸 Paid ads (start small, later)</h3>
+<p class="muted">Only after 3–4 videos perform organically. Boost the winners. $5–10/day, radius-targeted to parents of 5–14 yr olds. Keep cost-per-booking well under ~$300 net.</p></div>`;
+
+CONTENT.Clients = `
+<h2 class="section">First Clients Playbook</h2>
+<div class="card"><h3>🥇 First 3 (free/founding)</h3>
+<p class="muted">You need footage + reviews more than money. Trade parties for content.</p>
+<ul class="clean">
+<li>Family/friends w/ kids → FREE or $99 pilot, film it</li>
+<li>Personal network post: "Booking 3 founding families at 50% off for honest reviews"</li>
+<li>Each = 5+ clips, 3+ photos, 1 review, 1 testimonial</li>
+</ul></div>
+<div class="card"><h3>🔟 First 10 (paid, discounted)</h3>
+<p class="muted">First 5–10 paid parties at <b>$199</b> labeled "Founding Family — Fall 2026." Scarcity + deal + social proof.</p></div>
+<div class="card"><h3>⚡ Inquiry → booking flow</h3>
+<ul class="clean">
+<li>Respond in &lt; 1 hour (speed wins)</li>
+<li>Ask: date, child's age, # kids, location</li>
+<li>Recommend Standard + 1 add-on (anchor high)</li>
+<li>Send booking link + a photo/video</li>
+<li><b>Secure with $75 deposit</b> — no deposit = not booked</li>
+<li>Confirm details 3 days before</li>
+<li>Day-after: thank-you + review link + referral offer</li>
+</ul></div>
+<div class="card"><h3>💬 Scripts</h3>
+<div class="quote">🎉 The Party Porch launches this fall! We bring the ULTIMATE Nerf war birthday party to your backyard — blasters, obstacles, safety gear + a host who runs the show. Booking our first 5 FOUNDING FAMILIES at a special price. Comment "BATTLE" or DM to grab a fall date! @yourpartyporch</div>
+<div class="quote">Awesome, [date] is available! To lock it in I take a $75 deposit (goes toward your total). I'll send a secure link — once that's in, your date is reserved. 🎯</div>
+<div class="quote">Thank you for having us — [child] & the crew were awesome! 🙌 Mind leaving a quick Google review? [link]. Refer a friend who books & you BOTH get $30 off! 🎉</div></div>
+<div class="warn">⚠️ Get an attorney-reviewed waiver + event liability insurance before public/large events. Eye protection mandatory every battle.</div>`;
+
+CONTENT.Shopping = `
+<h2 class="section">$600 Starter Kit</h2>
+<div class="card"><h3>🛒 Phase 0 shopping list</h3>
+<table>
+<tr><th>Item</th><th>Qty</th><th>~Cost</th></tr>
+<tr><td>Budget blasters (bulk/used FB Marketplace)</td><td>14</td><td>$220</td></tr>
+<tr><td>Foam darts (bulk ~2,000)</td><td>—</td><td>$70</td></tr>
+<tr><td>Safety glasses</td><td>16</td><td>$45</td></tr>
+<tr><td>Pop-up bunkers/obstacles (or DIY)</td><td>6–8</td><td>$110</td></tr>
+<tr><td>Team vests/sashes (2 colors)</td><td>16</td><td>$35</td></tr>
+<tr><td>Storage bins + folding wagon</td><td>—</td><td>$55</td></tr>
+<tr><td>Flyers + Canva assets</td><td>—</td><td>$65</td></tr>
+<tr><td><b>TOTAL</b></td><td></td><td><b>~$600</b></td></tr>
+</table></div>
+<div class="tip">💡 First reinvestment (Phase 1): popcorn machine (~$200, ~90% margin) → +$100/party add-on. Best early ROI.</div>
+<div class="card"><h3>🧰 Sourcing tips</h3>
+<ul class="clean">
+<li>Buy used blasters in lots on FB Marketplace/OfferUp — half price</li>
+<li>Bulk darts online beat retail 3–4×</li>
+<li>DIY bunkers: foam board / inflatable pool tubes / cardboard first, upgrade later</li>
+<li>Label everything; count darts after each party</li>
+</ul></div>`;
+
+CONTENT.Pricing = `
+<h2 class="section">Packages & Pricing</h2>
+<div class="card"><h3>🎯 Nerf war packages</h3>
+<table>
+<tr><th>Package</th><th>Price</th></tr>
+<tr><td>Basic Battle (≤10 kids, 1.5 hr)</td><td>$249</td></tr>
+<tr><td><b>Standard (≤14, 2 hr, obstacles)</b> ⭐</td><td><b>$349</b></td></tr>
+<tr><td>Deluxe (≤20, 2 hr, host runs games)</td><td>$499</td></tr>
+</table></div>
+<div class="card"><h3>➕ Add-ons</h3>
+<table>
+<tr><td>Extra hour</td><td>+$75</td></tr>
+<tr><td>The Booth (photo booth)</td><td>+$150</td></tr>
+<tr><td>The Backdrop</td><td>+$125</td></tr>
+<tr><td>The Snack Bar (per machine)</td><td>+$100</td></tr>
+<tr><td>Extra 5 blasters</td><td>+$40</td></tr>
+</table></div>
+<div class="card"><h3>📦 Bundles (push every booking up a tier)</h3>
+<table>
+<tr><td>Battle</td><td>$349</td></tr>
+<tr><td>Battle + Snack Bar</td><td>$549</td></tr>
+<tr><td>Party Pack (Battle+Booth+Snack+Backdrop)</td><td>$699</td></tr>
+<tr><td>Ultimate (+360 booth, flower wall, uplighting)</td><td>$999–1,299</td></tr>
+</table></div>
+<div class="tip">Deposit: $75 non-refundable to reserve. Avg ticket target $400 → $600 with bundles.</div>`;
+
+CONTENT.Money = `
+<h2 class="section">The $10k/Month Math</h2>
+<div class="kpi">
+<div class="box"><div class="n">34</div><div class="l">parties/mo</div></div>
+<div class="box"><div class="n">$300</div><div class="l">net/party</div></div>
+<div class="box"><div class="n">$10.2k</div><div class="l">net/mo</div></div>
+</div>
+<div class="card"><h3>📈 Revenue ramp</h3>
+<table>
+<tr><th>Phase</th><th>When</th><th>Net/mo</th></tr>
+<tr><td>0 Launch</td><td>Sep '26</td><td>~$0–1k</td></tr>
+<tr><td>1 Validate</td><td>Oct–Dec '26</td><td>~$1–3k</td></tr>
+<tr><td>2 Add-ons+Hire</td><td>Jan–May '27</td><td>~$3–6k</td></tr>
+<tr><td>3 Crews</td><td>Jun–Oct '27</td><td>~$6–8k</td></tr>
+<tr><td>4 Scale</td><td>Nov '27–Mar '28</td><td><b>$10k+</b></td></tr>
+</table></div>
+<div class="card"><h3>🧮 Per-party economics</h3>
+<ul class="clean">
+<li>Avg ticket: ~$400 (→ $600 w/ bundles)</li>
+<li>Variable cost: ~$70–110 (darts, gas, ~2 hr helper)</li>
+<li>Net profit/party: ~$280–320</li>
+</ul>
+<div class="tip">Biggest lever: raising avg ticket $349→$600 via bundles nearly HALVES the parties needed. Sell bundles before chasing volume.</div></div>
+<div class="card"><h3>🪜 Reinvestment order</h3>
+<ol class="clean" style="padding-left:20px">
+<li>Popcorn machine</li><li>Kit #2</li><li>Booth + Backdrop</li>
+<li>First helper</li><li>Kit #3 + crews</li><li>Snow cone/soft play/360 booth</li>
+<li>Paid ads + software</li><li>Crew chief + premium bundles</li>
+</ol></div>`;
+
+CONTENT.Plan = `
+<h2 class="section">The Model</h2>
+<div class="card">
+<p>Nerf wars are the <b>hero product</b> that gets you booked and in the driveway. Every booking is a chance to add higher-margin lines — booths, snacks, backdrops — raising average order value. Same van, same route, same customer. Reinvest into more kits + hired crews until it runs weekends without you.</p></div>
+<div class="card"><h3>🏷️ Product lines under The Party Porch</h3>
+<table>
+<tr><th>Line</th><th>What</th></tr>
+<tr><td><b>Battle Zone</b></td><td>Nerf war party (core)</td></tr>
+<tr><td><b>The Booth</b></td><td>Photo booth → 360 booth</td></tr>
+<tr><td><b>The Snack Bar</b></td><td>Popcorn, cotton candy, snow cone</td></tr>
+<tr><td><b>The Backdrop</b></td><td>Balloon/flower walls, neon</td></tr>
+<tr><td><b>Tiny Porch</b></td><td>Toddler soft play</td></tr>
+<tr><td><b>Glow Zone</b></td><td>Glow/foam/bubble parties</td></tr>
+</table></div>
+<div class="warn">⚠️ Trademark: "Nerf" only in marketing/SEO copy ("Nerf war parties"), NEVER in the brand name/handles. You're safe as The Party Porch.</div>
+<div class="card"><h3>🧭 Principles</h3>
+<ul class="clean">
+<li>Content is the marketing engine — post 4–5×/week</li>
+<li>Raise the average ticket before chasing volume</li>
+<li>Let demand pull products in — don't stockpile</li>
+<li>Hire before burnout (Phase 2, not after)</li>
+<li>Safety + professionalism = referrals</li>
+</ul></div>`;
+
+/* ---------------- RENDER ---------------- */
+const tagMap={spend:['💰','p-spend'],content:['📹','p-content'],mkt:['📣','p-mkt'],goal:['🎯','p-goal']};
+let allIds=[];
+TRACKER.forEach(p=>p.items.forEach(i=>allIds.push(i.id)));
+
+function loadState(){try{return JSON.parse(localStorage.getItem('ppTracker')||'{}')}catch(e){return {}}}
+function saveState(s){localStorage.setItem('ppTracker',JSON.stringify(s))}
+let state=loadState();
+// seed pre-done
+TRACKER.forEach(p=>p.items.forEach(i=>{if(i.done&&!(i.id in state))state[i.id]=true}));
+
+function renderTracker(){
+  let h='<h2 class="section">Master Tracker</h2>';
+  TRACKER.forEach(p=>{
+    h+=`<div class="card"><div class="phase">${p.phase}</div>`;
+    p.items.forEach(i=>{
+      const checked=state[i.id]?'checked':'';
+      let tags='';(i.tags||[]).forEach(t=>{const[e,c]=tagMap[t];tags+=`<span class="pill ${c}">${e}</span>`});
+      h+=`<div class="task"><input type="checkbox" id="${i.id}" ${checked} onchange="toggle('${i.id}')"><label for="${i.id}">${i.t}${tags}</label></div>`;
+    });
+    h+='</div>';
+  });
+  h+='<button class="reset" onclick="resetAll()">↺ Reset all progress</button>';
+  h+='<div class="foot">The Party Porch · saved on this device</div>';
+  return h;
+}
+function toggle(id){state[id]=!state[id];saveState(state);updateProgress()}
+function resetAll(){if(confirm('Reset all checkboxes?')){state={};TRACKER.forEach(p=>p.items.forEach(i=>{if(i.done)state[i.id]=true}));saveState(state);render();}}
+function updateProgress(){
+  const done=allIds.filter(id=>state[id]).length;
+  const pct=Math.round(done/allIds.length*100);
+  document.getElementById('progbar').style.width=pct+'%';
+  document.getElementById('progtxt').textContent=`${done}/${allIds.length} done · ${pct}%`;
+}
+
+let active="Tracker";
+function render(){
+  const nav=document.getElementById('nav');
+  nav.innerHTML=TABS.map(t=>`<button class="${t===active?'active':''}" onclick="go('${t}')">${t}</button>`).join('');
+  const main=document.getElementById('main');
+  main.innerHTML=`<div class="tab active">${active==='Tracker'?renderTracker():CONTENT[active]}</div>`;
+  updateProgress();
+  window.scrollTo(0,0);
+}
+function go(t){active=t;render()}
+render();
+</script>
+</body>
+</html>
