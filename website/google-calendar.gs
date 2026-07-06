@@ -25,15 +25,17 @@
 var CALENDAR_ID = "yourpartyporch@gmail.com";  // "" = default calendar; pinned to your Party Porch calendar
 var EVENT_HOURS = 3;            // block length: ~2h play + setup/teardown
 var INVITE_CUSTOMER = true;     // email the customer a calendar invite too
-var DAILY_CAPACITY = 2;         // how many parties you can run in one day (date is "full" at this many)
 
 /**
  * Availability check (used by the website's date picker + cart).
  * The site calls this via JSONP:  GET ...?action=availability&date=YYYY-MM-DD&callback=fn
- * A date is UNAVAILABLE if:
- *   - it already has DAILY_CAPACITY or more "Party Porch" bookings, OR
- *   - you created an all-day event that day whose title contains
- *     BLOCKED / CLOSED / UNAVAILABLE / VACATION (your manual day-off).
+ *
+ * Inventory model: you own ONE of each item to start, so an item is UNAVAILABLE
+ * on a date once it's already booked that day. Each booking event stores its item
+ * keys in the description as "Items: nerf,movie,photobooth" — we read those back.
+ *
+ * A whole date is CLOSED (nothing available) if you add an all-day event that day
+ * whose title contains BLOCKED / CLOSED / UNAVAILABLE / VACATION (your manual day-off).
  */
 function doGet(e) {
   var p = (e && e.parameter) || {};
@@ -51,16 +53,20 @@ function availability(dateStr) {
     var cal = CALENDAR_ID ? CalendarApp.getCalendarById(CALENDAR_ID)
                           : CalendarApp.getDefaultCalendar();
     var evs = cal.getEvents(start, end);
-    var closed = false, count = 0;
+    var closed = false, booked = {};
     for (var i = 0; i < evs.length; i++) {
       var t = String(evs[i].getTitle() || "").toUpperCase();
       if (t.indexOf("BLOCKED") > -1 || t.indexOf("CLOSED") > -1 ||
           t.indexOf("UNAVAILABLE") > -1 || t.indexOf("VACATION") > -1) closed = true;
-      if (/PARTY PORCH/.test(t)) count++;
+      var m = String(evs[i].getDescription() || "").match(/Items?:\s*([a-z0-9_,\s]+)/i);
+      if (m) {
+        m[1].split(",").forEach(function (k) {
+          k = k.trim().toLowerCase();
+          if (k) booked[k] = true;
+        });
+      }
     }
-    var full = count >= DAILY_CAPACITY;
-    return { ok: true, date: dateStr, available: !(closed || full),
-             closed: closed, booked: count, capacity: DAILY_CAPACITY };
+    return { ok: true, date: dateStr, closed: closed, booked: Object.keys(booked) };
   } catch (err) {
     return { ok: false, error: String(err) };
   }
@@ -79,6 +85,8 @@ function doPost(e) {
                 " (" + (d.players || "") + ")";
 
     var desc = [
+      "Items: "    + (d.items    || ""),
+      "Cart: "     + (d.cart     || ""),
       "Service: "  + (d.service  || ""),
       "Players: "  + (d.players  || ""),
       "Add-ons: "  + (d.addons   || "None"),

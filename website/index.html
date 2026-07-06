@@ -747,10 +747,48 @@ var CATALOG = {
   "bounce":     {name:"White Bounce House",  price:255, emoji:"🏰", soon:true,  note:"Modern white bounce house"}
 };
 
+/* Maps rental-dropdown values + add-on checkbox labels to catalog keys, so a
+   booking made through the form also marks the right item as unavailable. */
+var ALIASES = {
+  "Nerf Battles":"nerf", "Movie Night":"movie", "Snack Bar":"popcorn",
+  "Cotton Candy":"cottoncandy", "Shaved Ice":"shavedice",
+  "Photo Booth":"photobooth", "Photo Booth (coming soon)":"photobooth",
+  "Flower Backdrop":"flower", "Flower Backdrop (coming soon)":"flower",
+  "Water Battles":"water", "Water Battles (coming soon)":"water",
+  "Yard Games":"yardgames", "Yard Games (coming soon)":"yardgames",
+  "Soft Play":"softplay", "Soft Play (coming soon)":"softplay",
+  "White Bounce Houses":"bounce", "White Bounce House":"bounce",
+  "White Bounce House (coming soon)":"bounce"
+};
+/* All catalog keys in this booking (cart + main rental + checked add-ons). */
+function orderItemKeys(){
+  var keys = {};
+  var cart = cartGet();
+  cart.forEach(function(k){ keys[k] = true; });
+  if(cart.length === 0){ var r = currentRental(); if(ALIASES[r]) keys[ALIASES[r]] = true; }
+  document.querySelectorAll('.addon-c:checked').forEach(function(c){
+    var a = ALIASES[c.value]; if(a) keys[a] = true;
+  });
+  return Object.keys(keys);
+}
+
+/* Availability state for the currently-checked date. */
+var AVAIL = { date:"", closed:false, booked:[] };
+function isBlocked(k){ return !!AVAIL.date && (AVAIL.closed || AVAIL.booked.indexOf(k) > -1); }
+
 function cartGet(){ try{ return JSON.parse(localStorage.getItem('pp_cart')||'[]'); }catch(e){ return []; } }
 function cartSet(a){ try{ localStorage.setItem('pp_cart', JSON.stringify(a)); }catch(e){} renderCart(); }
 function cartHas(k){ return cartGet().indexOf(k) > -1; }
-function cartToggle(k){ var a=cartGet(); var i=a.indexOf(k); if(i>-1){a.splice(i,1);}else{a.push(k);} cartSet(a); if(a.indexOf(k)>-1) openCart(); }
+function cartToggle(k){
+  var a = cartGet(), i = a.indexOf(k);
+  if(i > -1){ a.splice(i,1); cartSet(a); return; }
+  if(isBlocked(k)){
+    alert((CATALOG[k] ? CATALOG[k].name : k) + " is already booked on " + AVAIL.date +
+          " — we only have one of each. Pick another date to add it.");
+    return;
+  }
+  a.push(k); cartSet(a); openCart();
+}
 function cartRemove(k){ var a=cartGet(); var i=a.indexOf(k); if(i>-1){a.splice(i,1); cartSet(a);} }
 function cartTotal(){ return cartGet().reduce(function(s,k){ return s + ((CATALOG[k]&&CATALOG[k].price)||0); }, 0); }
 function cartNames(){ return cartGet().map(function(k){ return CATALOG[k] ? CATALOG[k].name + (CATALOG[k].soon?" (soon)":"") : k; }); }
@@ -760,13 +798,22 @@ function renderShop(){
   var html = "";
   Object.keys(CATALOG).forEach(function(k){
     var c = CATALOG[k];
+    var inCart = cartHas(k);
+    var blocked = isBlocked(k);
+    var btn;
+    if(inCart){
+      btn = '<button type="button" class="addcart in" data-k="'+k+'" onclick="cartToggle(\''+k+'\')">✓ In cart — remove</button>';
+    } else if(blocked){
+      btn = '<button type="button" class="addcart" disabled style="background:#3a3350;color:#9a93b5;cursor:not-allowed">Booked on '+AVAIL.date+'</button>';
+    } else {
+      btn = '<button type="button" class="addcart" data-k="'+k+'" onclick="cartToggle(\''+k+'\')">Add to cart</button>';
+    }
     html += '<div class="prod">' +
       (c.soon ? '<span class="soon-tag">Coming soon</span>' : '') +
       '<span class="pe">'+c.emoji+'</span>' +
       '<h3>'+c.name+'</h3>' +
       '<div class="pnote">'+(c.note||'')+'</div>' +
-      '<div class="pprice">$'+c.price+'</div>' +
-      '<button type="button" class="addcart" data-k="'+k+'" onclick="cartToggle(\''+k+'\')">Add to cart</button>' +
+      '<div class="pprice">$'+c.price+'</div>' + btn +
     '</div>';
   });
   g.innerHTML = html;
@@ -791,12 +838,8 @@ function renderCart(){
     }
   }
   var ct = document.getElementById('cartTotal'); if(ct) ct.textContent = "$"+tot;
-  // shop button states
-  document.querySelectorAll('.addcart').forEach(function(b){
-    var inCart = cartHas(b.getAttribute('data-k'));
-    b.textContent = inCart ? "✓ In cart — remove" : "Add to cart";
-    b.classList.toggle('in', inCart);
-  });
+  // shop grid reflects cart + availability states
+  renderShop();
   // order box in the form
   var ob = document.getElementById('orderBox');
   if(ob){
@@ -843,10 +886,30 @@ function runAvailability(){
   if(!d){ st.className = "avail-status bad"; st.textContent = "Please pick a date first."; return; }
   st.className = "avail-status wait"; st.textContent = "Checking " + d + "…";
   checkAvailability(d, function(res){
-    if(res && res.unknown){ st.className="avail-status wait"; st.textContent="✓ Date noted — we'll confirm availability within a few hours."; syncBookingDate(d); return; }
-    if(!res || !res.ok){ st.className="avail-status wait"; st.textContent="Couldn't check live right now — add to cart and we'll confirm your date."; syncBookingDate(d); return; }
-    if(res.available){ st.className="avail-status ok"; st.textContent="✓ "+d+" is available! Add your experiences below."; syncBookingDate(d); }
-    else { st.className="avail-status bad"; st.textContent = res.closed ? "Sorry — "+d+" is unavailable. Please choose another date." : "Sorry — "+d+" is fully booked. Please choose another date."; }
+    if(res && res.unknown){
+      AVAIL = {date:d, closed:false, booked:[]}; syncBookingDate(d); renderCart();
+      st.className="avail-status wait"; st.textContent="✓ Date noted — we'll confirm availability within a few hours."; return;
+    }
+    if(!res || !res.ok){
+      AVAIL = {date:d, closed:false, booked:[]}; syncBookingDate(d); renderCart();
+      st.className="avail-status wait"; st.textContent="Couldn't check live right now — add to cart and we'll confirm your date."; return;
+    }
+    AVAIL = {date:d, closed:!!res.closed, booked:res.booked||[]};
+    syncBookingDate(d); renderCart();
+    if(AVAIL.closed){
+      st.className="avail-status bad"; st.textContent="Sorry — we're unavailable on " + d + ". Please choose another date."; return;
+    }
+    var conflicts = cartGet().filter(function(k){ return AVAIL.booked.indexOf(k) > -1; });
+    if(conflicts.length){
+      var cn = conflicts.map(function(k){ return CATALOG[k]?CATALOG[k].name:k; });
+      st.className="avail-status bad";
+      st.textContent="⚠ " + cn.join(", ") + " already booked on " + d + " — we only have one of each. Remove it or pick another date.";
+    } else if(AVAIL.booked.length === 0){
+      st.className="avail-status ok"; st.textContent="✓ " + d + " is wide open — everything's available!";
+    } else {
+      var taken = AVAIL.booked.map(function(k){ return CATALOG[k]?CATALOG[k].name:k; });
+      st.className="avail-status ok"; st.textContent="✓ " + d + " is available. Already booked that day: " + taken.join(", ") + ".";
+    }
   });
 }
 function syncBookingDate(d){ var fd = document.getElementById('f_date'); if(fd && !fd.value) fd.value = d; }
@@ -928,6 +991,7 @@ function bookingSummary(){
     rental: r,
     cart: cartNames().length ? cartNames().join(", ") : "None",
     cartTotal: "$" + cartTotal(),
+    items: orderItemKeys().join(","),
     name: val('f_name'), phone: val('f_phone'), email: val('f_email'), zip: val('f_zip'),
     date: val('f_date'), time: val('f_time'),
     players: isNerf ? playersMap[players] : "—",

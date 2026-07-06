@@ -125,10 +125,13 @@ The **Check my date** picker asks your Google Apps Script whether a date is open
 
 1. Deploy `google-calendar.gs` as a Web App (see the header comment in that file) and
    paste the `/exec` URL into `GCAL_WEBHOOK_URL` in `index.html` **and** `index-wordpress.html`.
-2. The site calls `?action=availability&date=YYYY-MM-DD` via JSONP and shows
-   ✓ available / ✗ unavailable. **Until the URL is set, it gracefully falls back**
-   to "we'll confirm availability within a few hours."
-3. A date is reported **unavailable** when it already has `DAILY_CAPACITY` (default **2**)
-   "Party Porch" bookings, **or** you add an all-day calendar event whose title contains
-   `BLOCKED`, `CLOSED`, `UNAVAILABLE` or `VACATION` (your manual day-off). Change
-   `DAILY_CAPACITY` at the top of `google-calendar.gs`.
+2. The site calls `?action=availability&date=YYYY-MM-DD` via JSONP and marks each
+   item **available** or **Booked on this date**. **Until the URL is set, it gracefully
+   falls back** to "we'll confirm availability within a few hours."
+3. **Inventory model: you own one of each item to start.** An item shows as
+   **unavailable** on a date once it's already booked that day — every booking stores
+   its item keys in the calendar event description as `Items: nerf,movie` and later
+   checks read them back. Other items on that date stay available.
+4. To take a whole day off, add an **all-day calendar event** whose title contains
+   `BLOCKED`, `CLOSED`, `UNAVAILABLE` or `VACATION` — that date shows unavailable for
+   everything.
