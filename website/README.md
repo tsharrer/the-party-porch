@@ -69,3 +69,22 @@ Brand assets live in `assets/` (generated from porch.png):
 and `favicon-180.png` are the browser/phone icons. On WordPress, upload `logo.png` to the
 Media Library and swap the logo `src`, or set it as the Site Logo/Site Icon under
 **Appearance → Customize → Site Identity**.
+
+## Add your own photos (wired & ready)
+Drop these images into `website/assets/` and they'll appear automatically — no code
+needed. Until you add them, each spot shows a branded color as a fallback.
+
+| File | Where it shows | Suggested size |
+|------|----------------|----------------|
+| `hero.jpg` | Big hero banner behind the headline | 1600×900 |
+| `exp-nerf.jpg` | "Nerf Battles" tile | 800×600 |
+| `exp-snackbar.jpg` | "Snack Bar" tile | 800×600 |
+| `exp-photobooth.jpg` | "Photo Booth" tile | 800×600 |
+| `exp-backdrop.jpg` | "Flower Backdrop" tile | 800×600 |
+| `exp-water.jpg` | "Water & Gel Battles" tile | 800×600 |
+| `exp-custom.jpg` | "Custom Packages" tile | 800×600 |
+
+Tips: use bright, landscape photos of real parties; keep them under ~400 KB each
+(compress at tinypng.com). A dark gradient is layered on top so white text stays readable.
+On the WordPress version the tiles load these from the GitHub-hosted `assets/` folder,
+so just add the files to the repo and push.

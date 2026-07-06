@@ -126,7 +126,7 @@
   @media(max-width:560px){.hero-logo{height:112px}}
   .nav .btn{padding:10px 20px;font-size:.9rem}
 
-  .hero{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;padding:56px 0 64px;text-align:center;position:relative;overflow:hidden}
+  .hero{background-color:var(--navy);background-image:linear-gradient(160deg,rgba(18,38,58,.90),rgba(27,54,82,.90)),url('assets/hero.jpg');background-size:cover;background-position:center;color:#fff;padding:56px 0 64px;text-align:center;position:relative;overflow:hidden}
   .hero:before{content:"";position:absolute;inset:0;background:
     radial-gradient(circle at 15% 20%,rgba(255,183,3,.18),transparent 40%),
     radial-gradient(circle at 85% 30%,rgba(255,90,95,.22),transparent 45%)}
@@ -166,7 +166,8 @@
   /* Experiences grid (image-forward tiles) */
   .exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   .exp{position:relative;border-radius:18px;overflow:hidden;color:#fff;min-height:210px;display:flex;flex-direction:column;justify-content:flex-end;
-    padding:22px;text-decoration:none;box-shadow:0 10px 26px rgba(18,38,58,.16);transition:transform .15s ease, box-shadow .15s ease}
+    padding:22px;text-decoration:none;box-shadow:0 10px 26px rgba(18,38,58,.16);transition:transform .15s ease, box-shadow .15s ease;
+    background-color:var(--navy);background-size:cover;background-position:center;background-repeat:no-repeat}
   .exp:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(18,38,58,.24)}
   .exp .exp-emoji{position:absolute;top:16px;left:18px;font-size:2.6rem;filter:drop-shadow(0 3px 6px rgba(0,0,0,.25))}
   .exp h3{color:#fff;margin:0 0 4px;font-size:1.28rem}
@@ -269,53 +270,53 @@
   <div class="wrap">
     <img class="hero-logo" src="assets/logo.png" alt="The Party Porch logo">
     <span class="tag">📍 Serving Greater Houston, Katy, Sugar Land, The Woodlands &amp; beyond</span>
-    <h1>Mobile Nerf Battle Party Rentals in Houston</h1>
-    <p class="promise">🎉 We bring the party to you — you just bring the kids.</p>
-    <p class="lead">The Party Porch brings the ultimate backyard Nerf war birthday party right to your door. We deliver the blasters, darts, safety gear and battlefield — you set it up and let the darts fly, or add a referee and we run the whole show. Parents get to sit back, relax and watch the fun.</p>
+    <h1>Mobile Party Rentals in Houston</h1>
+    <p class="promise">🎉 We bring the party to you. Nerf battles are live now — with photo booths, flower backdrops, a snack bar &amp; more on the way.</p>
+    <p class="lead">The Party Porch is Greater Houston's mobile party company. We deliver the fun, set it up, and clean it up — you just bring the crew. Start with an all-inclusive backyard Nerf battle today, and watch this porch grow.</p>
     <div class="cta-row">
-      <a class="btn big" href="#book">🎯 Book Your Party</a>
-      <a class="btn big alt" href="#pricing">See Pricing</a>
+      <a class="btn big" href="#book">🎯 Book a Nerf Party</a>
+      <a class="btn big alt" href="#experiences">Explore Experiences</a>
     </div>
     <div class="trust">12 players from <b>$180</b> · Delivery + pickup included · Easy online booking</div>
   </div>
 </section>
 
-<section class="alt-bg">
+<section class="alt-bg" id="experiences">
   <div class="wrap">
     <div class="section-head">
       <div class="kicker">Our experiences</div>
-      <h2>One porch, endless ways to party</h2>
-      <p>We're a full mobile party company for Greater Houston. Nerf battles are live now — with more all-inclusive experiences rolling out. Bundle them to build the perfect event.</p>
+      <h2>Everything The Party Porch brings to your door</h2>
+      <p>We're building a full mobile party company for Greater Houston. Nerf battles are available now — the rest are launching soon. Bundle them to build the perfect event.</p>
     </div>
     <div class="exp-grid">
-      <a class="exp avail" href="#book" style="background:linear-gradient(150deg,#1b3652,#ff5a5f)">
+      <a class="exp avail" href="#book" style="background-image:linear-gradient(150deg,rgba(27,54,82,.62),rgba(255,90,95,.66)),url('assets/exp-nerf.jpg')">
         <span class="exp-emoji">🎯</span><span class="badge">Available now</span>
         <h3>Nerf Battles</h3>
         <p>Blasters, darts, safety gear &amp; inflatable bunkers delivered to your yard. Add a referee to run the games.</p>
         <span class="go">Book now →</span>
       </a>
-      <a class="exp avail" href="#pricing" style="background:linear-gradient(150deg,#e04347,#ffb703)">
+      <a class="exp avail" href="#pricing" style="background-image:linear-gradient(150deg,rgba(224,67,71,.66),rgba(255,183,3,.66)),url('assets/exp-snackbar.jpg')">
         <span class="exp-emoji">🍿</span><span class="badge">Add-on</span>
         <h3>Snack Bar</h3>
         <p>Fresh popcorn machine that keeps the whole crew fueled. Add it to any party for +$69.</p>
         <span class="go">Add to your party →</span>
       </a>
-      <div class="exp" style="background:linear-gradient(150deg,#7a5cff,#b06ab3)">
+      <div class="exp" style="background-image:linear-gradient(150deg,rgba(122,92,255,.62),rgba(176,106,179,.66)),url('assets/exp-photobooth.jpg')">
         <span class="exp-emoji">📸</span><span class="badge">Coming soon</span>
         <h3>Photo Booth</h3>
         <p>Props, prints &amp; instant memories — a hit with kids and parents alike.</p>
       </div>
-      <div class="exp" style="background:linear-gradient(150deg,#ff7eb3,#ff5a5f)">
+      <div class="exp" style="background-image:linear-gradient(150deg,rgba(255,126,179,.62),rgba(255,90,95,.66)),url('assets/exp-backdrop.jpg')">
         <span class="exp-emoji">🌸</span><span class="badge">Coming soon</span>
         <h3>Flower Backdrop</h3>
         <p>A gorgeous floral wall for photos, dessert tables &amp; that perfect party moment.</p>
       </div>
-      <div class="exp" style="background:linear-gradient(150deg,#00b4d8,#0077b6)">
+      <div class="exp" style="background-image:linear-gradient(150deg,rgba(0,180,216,.62),rgba(0,119,182,.7)),url('assets/exp-water.jpg')">
         <span class="exp-emoji">💦</span><span class="badge">Coming soon</span>
         <h3>Water &amp; Gel Battles</h3>
         <p>Beat the Houston heat with a splashy summer showdown for all ages.</p>
       </div>
-      <a class="exp" href="#book" style="background:linear-gradient(150deg,#1b3652,#12263a)">
+      <a class="exp" href="#book" style="background-image:linear-gradient(150deg,rgba(27,54,82,.72),rgba(18,38,58,.82)),url('assets/exp-custom.jpg')">
         <span class="exp-emoji">🎉</span><span class="badge">Bundle &amp; save</span>
         <h3>Custom Packages</h3>
         <p>Mix experiences into one unforgettable event. Big group? We'll build a custom quote.</p>
