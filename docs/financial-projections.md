@@ -4,16 +4,17 @@
 
 ## Per-party economics (rental + referee matrix)
 - Base (up to 12 players): **Rental $180** (you set up) · **+ Referee $100** (our host runs it)
-- Scales by player count: rental +$40 per 6 players; referee $100 each (~1 per 12 kids)
+- Scales by player count: rental ~$12/extra player (+$70 per 6); referee $100 each (1 host up to ~18 kids)
+- 12 players included in base — beats rivals (~8–10 at ~$180) and cheaper per extra player ($12 vs $15–16)
 - Launch blended average ticket: **~$240–280** (most bookings attach a referee or add-ons)
-- Variable cost/party: **~$30** (rental only) to **~$130** (big party + 2 refs)
-- **Net profit/party: ~$150 (rental only) to ~$330 (big party + refs + add-ons)**
+- Variable cost/party: **~$30** (rental only) to **~$110** (big party + 2 refs)
+- **Net profit/party: ~$150 (rental only) to ~$410 (big party + refs + add-ons)**
 
 | Option | Price | Cost | Net | Labor |
 |--------|-------|------|-----|-------|
 | Rental only (12) | $180 | ~$30 | ~$150 | drop/pickup |
 | + 1 Referee (12) | $280 | ~$70 | ~$210 | ~2.5 hr |
-| 24-player + 2 refs | $460 | ~$130 | ~$330 | ~2.5 hr ×2 |
+| 24-player + 2 refs | $520 | ~$110 | ~$410 | ~2.5 hr ×2 |
 
 > **Strategy:** the rental keeps the entry price low and honest; the referee upsell +
 > player-count scaling + add-ons (Snack Bar ~90%) carry the margin. Step each row up ~$20–40 in
@@ -45,8 +46,8 @@
 | Phase 0 kit | ~$600 (starting budget) |
 | Domain | ~$12/yr (owned) |
 | Popcorn machine (Phase 1) | ~$200 |
-| LLC filing | ~$50–500 (state-dependent) |
-| Event liability insurance | ~$40–60/mo |
+| DBA / Assumed Name (under existing LLC) | ~$25 (TX SOS Form 503) |
+| Event liability insurance | ~$40–60/mo (bind before first paid party) |
 | Booking software (later) | ~$20–40/mo |
 | Ads (when running) | $150–300/mo, scale with ROI |
 

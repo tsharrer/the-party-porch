@@ -46,12 +46,13 @@ row up ~$20–40 in 2027 as reviews build.
 | Players | Rental (you set up) | + Referee(s) | Full |
 |---------|--------------------|--------------|------|
 | Up to 12 | $180 | +$100 (1) | $280 |
-| 13–18 | $220 | +$100 (1) | $320 |
-| 19–24 | $260 | +$200 (2) | $460 |
-| 25–30 | $300 | +$200 (2) | $500 |
-| 31–36 | $340 | +$300 (3) | $640 |
+| Up to 18 | $250 | +$100 (1) | $350 |
+| Up to 24 | $320 | +$200 (2) | $520 |
+| Up to 30 | $390 | +$200 (2) | $590 |
+| Up to 36 | $460 | +$300 (3) | $760 |
 
-Rental +$40 per 6 extra players; referee $100 each (~1 per 12 kids).
+Rental ~$12/extra player (+$70 per 6); 12 players included in base (rivals ~8–10 at $180).
+Referee $100 each (1 host up to ~18 kids, 2 for ~30, 3 for ~36).
 
 | Add-on | Price |
 |--------|-------|
@@ -88,8 +89,8 @@ Rental +$40 per 6 extra players; referee $100 each (~1 per 12 kids).
 5-star reviews.
 
 ### Phase 1 — Validate (Oct–Dec 2026) — ~$1–3k/mo
-4–8 Nerf parties/mo solo. Pull ONE popcorn machine forward. Booking system, LLC, insurance.
-Milestone: 6+ bookings/mo, $500+ saved for Kit #2.
+4–8 Nerf parties/mo solo. Pull ONE popcorn machine forward. Booking system, DBA (under existing
+LLC), dedicated bank account, insurance. Milestone: 6+ bookings/mo, $500+ saved for Kit #2.
 
 ### Phase 2 — Add-ons + First Hire (Jan–May 2027) — ~$3–6k/mo
 Kit #2. Launch The Booth, The Backdrop, cotton candy. First part-time helper. Weekday

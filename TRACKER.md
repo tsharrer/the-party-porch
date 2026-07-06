@@ -14,14 +14,15 @@ Legend: 💰 spend · 📹 content · 📣 marketing · 🎯 milestone
 ## July 2026 — Foundation
 - [ ] Create business Gmail + password manager
 - [ ] Set up free Google Business Profile (service-area)
-- [ ] Reserve business name w/ Secretary of State
-- [ ] Open separate checking account
+- [ ] File DBA / Assumed Name for "The Party Porch" under existing LLC (TX SOS Form 503, ~$25)
+- [ ] Dedicate existing bank account to the biz (clean books)
 - [ ] 💰 Order the ~$600 starter kit (blasters + darts first)
 - [ ] Design logo + brand kit in Canva
 - [ ] Build 1-page site w/ booking form
 - [ ] Set up booking intake: Google Form → Calendar
 - [ ] Assemble + test kit; count darts, label bins
 - [ ] Write safety rules + liability waiver
+- [ ] 💰 Get event / general liability insurance quote + bind coverage (before first paid party)
 - [ ] 📹 Film brand-launch content
 - [ ] Fully set up all social profiles
 - [ ] 📹 Run FREE pilot party w/ friends' kids
@@ -56,7 +57,7 @@ Legend: 💰 spend · 📹 content · 📣 marketing · 🎯 milestone
 - [ ] Run 4–8 parties/mo solo
 - [ ] 📹 Post 4–5 videos/week
 - [ ] Add Snack Bar to every booking
-- [ ] 💰 File LLC + event liability insurance
+- [ ] 💰 Confirm insurance covers hired helpers/subs before Phase 2 hire
 - [ ] Set up Stripe/Square deposits
 - [ ] 📣 Holiday break camps + indoor venues
 - [ ] 🎯 6+ bookings/mo, $500+ for Kit #2

@@ -114,14 +114,15 @@ const TRACKER = [
   {phase:"July 2026 — Foundation", items:[
     {id:"j1", t:"Create business Gmail + password manager"},
     {id:"j2", t:"Set up free Google Business Profile (service-area)"},
-    {id:"j3", t:"Reserve business name w/ Secretary of State"},
-    {id:"j4", t:"Open separate checking account for clean books"},
+    {id:"j3", t:"File DBA / Assumed Name Certificate for \"The Party Porch\" under your existing LLC (TX SOS Form 503, ~$25)"},
+    {id:"j4", t:"Dedicate your separate bank account to the biz (link to Stripe/Square) for clean books"},
     {id:"j5", t:"Order the ~$600 starter kit (blasters + darts first)", tags:["spend"]},
     {id:"j6", t:"Design logo + brand kit in Canva"},
     {id:"j7", t:"Build 1-page site w/ booking form (Carrd/Google Site)"},
     {id:"j8", t:"Set up booking intake: Google Form → Calendar"},
     {id:"j9", t:"Assemble + test kit; count darts, label bins"},
     {id:"j10", t:"Write safety rules + liability waiver"},
+    {id:"j10b", t:"Get event / general liability insurance quote + bind coverage (before first paid party)", tags:["spend"]},
     {id:"j11", t:"Film brand-launch content (kit reveal, explainer)", tags:["content"]},
     {id:"j12", t:"Fully set up all social profiles (bio, link, highlights)"},
     {id:"j13", t:"Run FREE pilot party w/ friends' kids — film everything", tags:["content"]},
@@ -156,7 +157,7 @@ const TRACKER = [
     {id:"p1a", t:"Run 4–8 Nerf parties/month solo"},
     {id:"p1b", t:"Post 4–5 videos/week consistently", tags:["content"]},
     {id:"p1c", t:"Add Snack Bar (+$100) to every booking"},
-    {id:"p1d", t:"File LLC + get event liability insurance", tags:["spend"]},
+    {id:"p1d", t:"Confirm insurance covers hired helpers/subs before Phase 2 hire", tags:["spend"]},
     {id:"p1e", t:"Set up Stripe/Square for deposits"},
     {id:"p1f", t:"Holiday break camp + indoor-venue partnerships", tags:["mkt"]},
     {id:"p1g", t:"🎯 6+ bookings/mo, $500+ saved for Kit #2", tags:["goal"]},
@@ -300,7 +301,7 @@ CONTENT.Shopping = `
 
 CONTENT.Pricing = `
 <h2 class="section">Pricing — Rental + Referee Matrix</h2>
-<div class="tip">💥 <b>How it works:</b> start with the <b>rental</b> (we deliver the gear, you set it up & run it). Want it hands-off? Add a <b>referee</b> to run the games + safety. Price scales by <b>player count</b> — so a small party stays cheap and big parties pay their way.</div>
+<div class="tip">💥 <b>How it works:</b> start with the <b>rental</b> (we deliver the gear, you set it up & run it) — <b>12 players included</b>. Want it hands-off? Add a <b>referee</b> to run the games + safety. Extra players are just <b>~$12 each</b> (market charges $15–16). Small party stays cheap; big parties pay their way.</div>
 <div class="card"><h3>🎯 Base (up to 12 players, ~2 hrs, all gear)</h3>
 <table>
 <tr><td><b>Rental</b> — we deliver, you set up & run</td><td><b>$180</b></td></tr>
@@ -311,23 +312,23 @@ CONTENT.Pricing = `
 <table>
 <tr><th>Players</th><th>Rental</th><th>+ Referee(s)</th><th>Full (rental + refs)</th></tr>
 <tr><td>Up to 12</td><td>$180</td><td>+$100 (1)</td><td><b>$280</b></td></tr>
-<tr><td>13–18</td><td>$220</td><td>+$100 (1)</td><td><b>$320</b></td></tr>
-<tr><td>19–24</td><td>$260</td><td>+$200 (2)</td><td><b>$460</b></td></tr>
-<tr><td>25–30</td><td>$300</td><td>+$200 (2)</td><td><b>$500</b></td></tr>
-<tr><td>31–36</td><td>$340</td><td>+$300 (3)</td><td><b>$640</b></td></tr>
+<tr><td>Up to 18</td><td>$250</td><td>+$100 (1)</td><td><b>$350</b></td></tr>
+<tr><td>Up to 24</td><td>$320</td><td>+$200 (2)</td><td><b>$520</b></td></tr>
+<tr><td>Up to 30</td><td>$390</td><td>+$200 (2)</td><td><b>$590</b></td></tr>
+<tr><td>Up to 36</td><td>$460</td><td>+$300 (3)</td><td><b>$760</b></td></tr>
 </table>
-<p class="muted" style="font-size:12px">Rental +$40 per 6 extra players. Referee $100 each — we staff ~1 per 12 kids for safe, fast-moving games.</p></div>
+<p class="muted" style="font-size:12px">Rental ~$12/extra player (+$70 per 6). Referee $100 each — 1 host runs up to ~18 kids, 2 for ~30, 3 for ~36.</p></div>
 <div class="card"><h3>🥊 vs. Houston competitors</h3>
 <table>
-<tr><th>Company</th><th>Rental/DIY</th><th>Hosted</th></tr>
-<tr><td>Yard Wars</td><td>$245</td><td>$395</td></tr>
-<tr><td>Texas Premier</td><td>$325</td><td>$390</td></tr>
-<tr><td>Have Several Seats</td><td>$300+</td><td>$500</td></tr>
-<tr><td>Battlefield Houston</td><td>—</td><td>$349</td></tr>
-<tr><td>Epik Fun</td><td>quote</td><td>+host</td></tr>
-<tr><td><b>The Party Porch</b> ⭐</td><td><b>$180</b></td><td><b>$280</b></td></tr>
+<tr><th>Company</th><th>Base rental</th><th>Players incl.</th><th>Hosted</th></tr>
+<tr><td>Epik Fun</td><td>~$180</td><td>~8–10</td><td>+ref</td></tr>
+<tr><td>Yard Wars</td><td>$245</td><td>~10</td><td>$395</td></tr>
+<tr><td>Texas Premier</td><td>$325</td><td>~10</td><td>$390</td></tr>
+<tr><td>Have Several Seats</td><td>$300+</td><td>~12</td><td>$500</td></tr>
+<tr><td>Battlefield Houston</td><td>—</td><td>—</td><td>$349</td></tr>
+<tr><td><b>The Party Porch</b> ⭐</td><td><b>$180</b></td><td><b>12</b></td><td><b>$280</b></td></tr>
 </table>
-<p class="muted" style="font-size:12px">Undercut on rental AND fully-hosted at the 12-player base.</p></div>
+<p class="muted" style="font-size:12px">Epik Fun also starts ~$180 — but we include <b>12 players</b> (vs ~8–10), cheaper extra players (~$12 vs $15–16), and free delivery to <b>15 mi</b> (they charge $3/mi past 10). Same entry price, more value.</p></div>
 <div class="card"><h3>➕ Add-ons</h3>
 <table>
 <tr><td>We set up + tear down (skip DIY)</td><td>+$40</td></tr>
@@ -356,15 +357,15 @@ CONTENT.Money = `
 <div class="box"><div class="n">$240</div><div class="l">net/party</div></div>
 <div class="box"><div class="n">$10k</div><div class="l">net/mo</div></div>
 </div>
-<div class="tip">The <b>rental</b> nets ~$150 with almost no labor. Every <b>referee</b> and player-count step adds high margin on top. Goal: attach a referee (or add-ons) to most bookings to lift the blended ticket toward ~$280+.</div>
-<div class="card"><h3>🧮 Economics (12-player base)</h3>
+<div class="tip">The <b>rental</b> nets ~$150 with almost no labor. Extra players (~$12 each) cost you ~$1–2 in dart wear — nearly all profit. Every <b>referee</b> and add-on layers more margin. Goal: attach a referee (or add-ons) to most bookings to lift the blended ticket toward ~$300+.</div>
+<div class="card"><h3>🧮 Economics</h3>
 <table>
 <tr><th>Option</th><th>Price</th><th>Cost</th><th>Net</th><th>Labor</th></tr>
-<tr><td>Rental only</td><td>$180</td><td>~$30</td><td>~$150</td><td>drop/pickup</td></tr>
-<tr><td>+ 1 Referee</td><td>$280</td><td>~$70</td><td>~$210</td><td>~2.5 hr</td></tr>
-<tr><td>24-player + 2 refs</td><td>$460</td><td>~$130</td><td>~$330</td><td>~2.5 hr ×2</td></tr>
+<tr><td>Rental only (12)</td><td>$180</td><td>~$30</td><td>~$150</td><td>drop/pickup</td></tr>
+<tr><td>+ 1 Referee (12)</td><td>$280</td><td>~$70</td><td>~$210</td><td>~2.5 hr</td></tr>
+<tr><td>24-player + 2 refs</td><td>$520</td><td>~$110</td><td>~$410</td><td>~2.5 hr ×2</td></tr>
 </table>
-<p class="muted" style="font-size:12px">Cost = gas + dart wear + referee labor (~$30–40/ref). Add-ons (Snack Bar ~90% margin) lift every ticket.</p></div>
+<p class="muted" style="font-size:12px">Cost = gas + dart wear (~$1–2/extra player) + referee labor (~$30–40/ref). Add-ons (Snack Bar ~90% margin) lift every ticket.</p></div>
 <div class="card"><h3>📈 Revenue ramp</h3>
 <table>
 <tr><th>Phase</th><th>When</th><th>Net/mo</th></tr>

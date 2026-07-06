@@ -18,26 +18,29 @@ within 15 miles.
 | Players | Rental | + Referee(s) | Full (rental + refs) |
 |---------|--------|--------------|----------------------|
 | Up to 12 | $180 | +$100 (1 ref) | **$280** |
-| 13–18 | $220 | +$100 (1 ref) | **$320** |
-| 19–24 | $260 | +$200 (2 refs) | **$460** |
-| 25–30 | $300 | +$200 (2 refs) | **$500** |
-| 31–36 | $340 | +$300 (3 refs) | **$640** |
+| Up to 18 | $250 | +$100 (1 ref) | **$350** |
+| Up to 24 | $320 | +$200 (2 refs) | **$520** |
+| Up to 30 | $390 | +$200 (2 refs) | **$590** |
+| Up to 36 | $460 | +$300 (3 refs) | **$760** |
 
-- **Rental** scales +$40 per 6 extra players ($180 → $220 → $260 → $300 → $340).
-- **Referee** is $100 each; we staff ~1 referee per 12 kids for safe, fast-moving games.
+- **Rental** scales ~$12 per extra player (+$70 per 6): $180 → $250 → $320 → $390 → $460.
+  This beats the market rate of $15–16/extra player.
+- **12 players included** in the base — most rivals include only ~8–10 at the same ~$180.
+- **Referee** is $100 each; 1 host runs up to ~18 kids, 2 for ~30, 3 for ~36.
 
 ## Houston competitor benchmark
-| Company | Rental / DIY | Hosted |
-|---------|--------------|--------|
-| Yard Wars | $245 | $395 |
-| Texas Premier | $325 | $390 |
-| Have Several Seats | $300+ | $500 |
-| Battlefield Houston | — | $349 |
-| Epik Fun (Sugar Land) | quote (deliver+setup incl.) | + host add-on |
-| **The Party Porch** ⭐ | **$180** | **$280** (12 players, 1 ref) |
+| Company | Base rental | Players incl. | Hosted |
+|---------|-------------|---------------|--------|
+| Epik Fun (Sugar Land) | ~$180 | ~8–10 | + host add-on |
+| Yard Wars | $245 | ~10 | $395 |
+| Texas Premier | $325 | ~10 | $390 |
+| Have Several Seats | $300+ | ~12 | $500 |
+| Battlefield Houston | — | — | $349 |
+| **The Party Porch** ⭐ | **$180** | **12** | **$280** (1 ref) |
 
-*We undercut on both the rental AND the fully-hosted (rental + referee) price at the 12-player
-base. Sources: company sites, July 2026.*
+*Epik Fun matches our ~$180 entry price, but we include **12 players** (vs ~8–10), charge less
+per extra player (~$12 vs $15–16), and give free delivery to 15 mi (they charge $3/mi past 10).
+Same entry price, more value. Sources: company sites, July 2026.*
 
 ## Add-ons
 | Item | Price |
@@ -65,7 +68,7 @@ base. Sources: company sites, July 2026.*
 |--------|-------|-----------------------|-----|-------|
 | Rental only | $180 | ~$30 | ~$150 | drop/pickup |
 | + 1 Referee | $280 | ~$70 | ~$210 | ~2.5 hr |
-| 24-player + 2 refs | $460 | ~$130 | ~$330 | ~2.5 hr ×2 |
+| 24-player + 2 refs | $520 | ~$110 | ~$410 | ~2.5 hr ×2 |
 
 The **rental** carries a fat margin with almost no labor — it's the volume engine. Each
 **referee** and player-count step layers high margin on top. The Snack Bar add-on is ~90% margin.
