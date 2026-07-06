@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- Favicons / touch icon -->
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
+<meta name="theme-color" content="#ff5a5f">
+
 <!-- ============ SEO: PRIMARY META ============ -->
 <title>Nerf Battle Party Rental Houston, TX | Mobile Nerf War Birthday Parties | The Party Porch</title>
 <meta name="description" content="Book a mobile Nerf battle party rental in Houston with The Party Porch. We deliver blasters, darts, safety gear & bunkers to your backyard — 12 players from $180. Add a referee to run the games. Serving Katy, Sugar Land, The Woodlands, Pearland, Cypress & more. Book online!">
@@ -28,6 +34,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Nerf Battle Party Rental Houston | The Party Porch">
 <meta name="twitter:description" content="Mobile Nerf battle parties delivered to your Houston backyard. 12 players from $180. Book online.">
+<meta property="og:image" content="https://yourpartyporch.com/assets/logo.png">
+<meta property="og:image:alt" content="The Party Porch — Events Rental Company">
+<meta name="twitter:image" content="https://yourpartyporch.com/assets/logo.png">
 
 <!-- ============ SEO: STRUCTURED DATA (rich results) ============ -->
 <script type="application/ld+json">
@@ -111,7 +120,10 @@
     border-bottom:1px solid var(--line)}
   .nav{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;max-width:960px;margin:0 auto}
   .brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:1.15rem;color:var(--navy);text-decoration:none}
+  .brand img{height:46px;width:auto;display:block}
   .brand .dot{font-size:1.4rem}
+  .hero-logo{height:150px;width:auto;display:block;margin:0 auto 18px;filter:drop-shadow(0 8px 22px rgba(0,0,0,.28))}
+  @media(max-width:560px){.hero-logo{height:112px}}
   .nav .btn{padding:10px 20px;font-size:.9rem}
 
   .hero{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;padding:56px 0 64px;text-align:center;position:relative;overflow:hidden}
@@ -216,7 +228,7 @@
 
 <header>
   <div class="nav">
-    <a class="brand" href="#top"><span class="dot">🎉</span> The Party Porch</a>
+    <a class="brand" href="#top"><img src="assets/logo.png" alt="The Party Porch — Events Rental Company"></a>
     <a class="btn" href="#book">Book Now</a>
   </div>
 </header>
@@ -224,6 +236,7 @@
 <a id="top"></a>
 <section class="hero">
   <div class="wrap">
+    <img class="hero-logo" src="assets/logo.png" alt="The Party Porch logo">
     <span class="tag">📍 Serving Greater Houston, Katy, Sugar Land, The Woodlands &amp; beyond</span>
     <h1>Mobile Nerf Battle Party Rentals in Houston</h1>
     <p class="lead">The Party Porch brings the ultimate backyard Nerf war birthday party right to your door. We deliver the blasters, darts, safety gear and battlefield — you set it up and let the darts fly, or add a referee and we run the whole show. Parents get to sit back, relax and watch the fun.</p>
@@ -450,6 +463,8 @@
 var BUSINESS_EMAIL = "yourpartyporch@gmail.com";   // <-- CHANGE to your email
 var BUSINESS_PHONE = "";                            // optional digits-only, e.g. "17135550123"
 var FORMSPREE_ID   = "xdarjgjk";                            // optional, e.g. "xyzabcd"
+var STRIPE_DEPOSIT_URL = "";   // Stripe Payment Link for the $50 deposit, e.g. "https://buy.stripe.com/xxxxxxxx"
+var GCAL_WEBHOOK_URL   = "";   // Google Apps Script web-app /exec URL that adds each booking to your calendar
 
 document.getElementById('yr').textContent = new Date().getFullYear();
 document.getElementById('footEmail').href = "mailto:" + BUSINESS_EMAIL;
@@ -494,6 +509,7 @@ function bookingSummary(){
 function submitBooking(e){
   e.preventDefault();
   var s = bookingSummary();
+  sendToCalendar(s);
   if(FORMSPREE_ID){
     var fd = new FormData(document.getElementById('bookForm'));
     fd.append("estimate", s.estimate);
@@ -503,13 +519,42 @@ function submitBooking(e){
       body: fd
     }).then(function(r){
       if(!r.ok) throw new Error("bad response");
-      alert("🎉 Booking request sent! We'll reply soon to confirm your date.");
-      document.getElementById('bookForm').reset(); calcEstimate();
+      afterBooked(s);
     }).catch(function(){ openEmail(s); });
     return false;
   }
   openEmail(s);
   return false;
+}
+
+/* Fire-and-forget: POST the booking to your Google Apps Script so it lands on
+   your Google Calendar. no-cors keeps it simple (we don't need the response). */
+function sendToCalendar(s){
+  if(!GCAL_WEBHOOK_URL) return;
+  try{
+    fetch(GCAL_WEBHOOK_URL, {
+      method:"POST", mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify(s)
+    });
+  }catch(err){}
+}
+
+/* After a booking is captured: send them to pay the $50 Stripe deposit
+   (if a Payment Link is set), otherwise just confirm. */
+function afterBooked(s){
+  document.getElementById('bookForm').reset(); calcEstimate();
+  if(STRIPE_DEPOSIT_URL){
+    var ref = (s.name + "_" + s.date).replace(/[^a-zA-Z0-9_-]/g,"").slice(0,180);
+    var sep = STRIPE_DEPOSIT_URL.indexOf("?") > -1 ? "&" : "?";
+    var url = STRIPE_DEPOSIT_URL + sep +
+      "prefilled_email=" + encodeURIComponent(s.email) +
+      "&client_reference_id=" + encodeURIComponent(ref);
+    alert("🎉 Booking received! Next: pay your $50 deposit to lock in " + s.date + " — taking you to secure checkout now.");
+    window.location.href = url;
+  } else {
+    alert("🎉 Booking request sent! We'll reply soon to confirm your date and send your $50 deposit link.");
+  }
 }
 
 function openEmail(s){

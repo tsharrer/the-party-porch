@@ -46,3 +46,26 @@ Tip: if your WordPress theme already adds a header/footer, you can delete this f
   reviews and keep the name/URL consistent with this site.
 - Add real party **photos** with descriptive `alt` text.
 - Get early **Google reviews** — they're the #1 local ranking factor.
+
+## Take the $50 deposit with Stripe (no server needed)
+1. Log in at [stripe.com](https://dashboard.stripe.com) (create the account with yourpartyporch@gmail.com).
+2. **Product catalog → Payment links → New** (or **Payments → Payment Links**).
+3. Add a product named **"Party deposit"**, price **$50**, one-time. Create the link.
+4. Copy the link (looks like `https://buy.stripe.com/xxxxxxxx`).
+5. In `index.html` (and `index-wordpress.html`) CONFIG block, set:
+   `var STRIPE_DEPOSIT_URL = "https://buy.stripe.com/xxxxxxxx";`
+   Now, right after a customer submits the booking form, they're taken to Stripe to
+   pay the $50 deposit (their email is pre-filled). Leave it blank to skip online payment.
+
+## Put bookings on your Google Calendar (free, no server)
+See **google-calendar.gs** — paste it into [script.google.com](https://script.google.com),
+deploy as a Web App (Execute as: Me · Access: Anyone), copy the `/exec` URL, and set:
+`var GCAL_WEBHOOK_URL = "https://script.google.com/macros/s/AKfyc.../exec";`
+Every booking then creates a calendar event and (optionally) emails the customer an invite.
+
+## Logo & favicon
+Brand assets live in `assets/` (generated from porch.png):
+`logo.png` (transparent) is used in the header + hero; `favicon.ico`, `favicon-32.png`,
+and `favicon-180.png` are the browser/phone icons. On WordPress, upload `logo.png` to the
+Media Library and swap the logo `src`, or set it as the Site Logo/Site Icon under
+**Appearance → Customize → Site Identity**.
