@@ -7,7 +7,7 @@ Drop it into WordPress.org, any host, or open it locally in a browser.
 Open `index.html`, find the **CONFIG** block near the bottom (in `<script>`), and set your email:
 
 ```js
-var BUSINESS_EMAIL = "hello@yourpartyporch.com";  // <-- your real email
+var BUSINESS_EMAIL = "yourpartyporch@gmail.com";  // your inbox
 var BUSINESS_PHONE = "";                           // optional, digits only
 var FORMSPREE_ID   = "";                           // optional (see below)
 ```
