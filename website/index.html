@@ -87,7 +87,7 @@
     {"@type":"Question","name":"How much is a Nerf party in Houston?","acceptedAnswer":{"@type":"Answer","text":"Our mobile Nerf battle party rental starts at $180 for up to 12 players and about 2 hours. That includes delivery, blasters, darts, safety glasses and battlefield obstacles. Add a referee for +$100 to have our host run every game."}},
     {"@type":"Question","name":"How much do the snack machines cost?","acceptedAnswer":{"@type":"Answer","text":"Add a popcorn Snack Bar for +$69, a Cotton Candy machine for +$79, or a Shaved Ice machine for +$79 to any party. Supplies, setup and pickup are included. Ice for the shaved ice machine is not included — you provide the ice."}},
     {"@type":"Question","name":"How much is a photo booth rental in Houston?","acceptedAnswer":{"@type":"Answer","text":"Our photo booth launches soon at an intro price of $299 — below the $400 to $900 most Houston booths charge. You can add it to your booking now to lock in the rate."}},
-    {"@type":"Question","name":"How much do flower backdrops, soft play, bounce houses and yard games cost?","acceptedAnswer":{"@type":"Answer","text":"Launching soon at intro prices that undercut typical Houston rates: Flower Backdrop $199, Soft Play $249, White Bounce House $199, Yard Games (Giant Connect Four, Jenga, cornhole) $89, and Water Battles $249 for up to 20 players."}},
+    {"@type":"Question","name":"How much do flower backdrops, soft play, bounce houses, yard games and movie nights cost?","acceptedAnswer":{"@type":"Answer","text":"Launching soon at intro prices that undercut typical Houston rates: Flower Backdrop $199, Soft Play $249, White Bounce House $199, Yard Games (Giant Connect Four, Jenga, cornhole) $89, Water Battles $249 for up to 20 players, and Movie Night (projector + 15ft screen, evenings only) $249."}},
     {"@type":"Question","name":"Can I bundle several experiences together?","acceptedAnswer":{"@type":"Answer","text":"Yes. Pick a main rental and add any others, including coming-soon items, right in the booking form, or choose a Custom Package and we will build one quote for the whole event."}},
     {"@type":"Question","name":"What ages are your parties for?","acceptedAnswer":{"@type":"Answer","text":"Something for every age: Soft Play for toddlers, bounce houses and yard games for all ages, and Nerf battles for ages 5 and up — birthdays, school events, church and community groups, even adults."}},
     {"@type":"Question","name":"What areas do you serve?","acceptedAnswer":{"@type":"Answer","text":"We serve the Greater Houston area including Katy, Sugar Land, The Woodlands, Pearland, Cypress, Spring, Humble, Kingwood, Tomball, Friendswood and League City. Delivery and pickup are free within 15 miles."}},
@@ -341,6 +341,12 @@
         <p>Clean, modern white bounce houses that match any theme and photograph beautifully.</p>
         <span class="go">Learn more →</span>
       </a>
+      <a class="exp" href="experiences/movie-night.html" style="background-image:linear-gradient(150deg,rgba(30,20,60,.66),rgba(122,92,255,.62)),url('assets/exp-movie.jpg')">
+        <span class="exp-emoji">🎬</span><span class="badge">Coming soon</span>
+        <h3>Movie Night</h3>
+        <p>Projector + 15ft screen for an outdoor movie under the stars. Evenings / after dark only.</p>
+        <span class="go">Learn more →</span>
+      </a>
       <a class="exp" href="experiences/custom-packages.html" style="background-image:linear-gradient(150deg,rgba(27,54,82,.72),rgba(18,38,58,.82)),url('assets/exp-custom.jpg')">
         <span class="exp-emoji">🎉</span><span class="badge">Bundle &amp; save</span>
         <h3>Custom Packages</h3>
@@ -448,6 +454,7 @@
       <div class="addon"><span>🎲 Yard Games (Connect Four, Jenga &amp; more) <em style="color:var(--muted);font-style:normal">· soon</em></span><b>$89</b></div>
       <div class="addon"><span>🧸 Soft Play <em style="color:var(--muted);font-style:normal">· soon</em></span><b>$249</b></div>
       <div class="addon"><span>🏰 White Bounce House <em style="color:var(--muted);font-style:normal">· soon</em></span><b>$199</b></div>
+      <div class="addon"><span>🎬 Movie Night (projector + 15ft screen, evenings only) <em style="color:var(--muted);font-style:normal">· soon</em></span><b>$249</b></div>
     </div>
     <p class="note">Items marked <strong>· soon</strong> are launching shortly at these intro prices — below what most Houston companies charge. Reserve now and we'll honor the rate.</p>
   </div>
@@ -472,6 +479,7 @@
           <option value="Yard Games">🎲 Yard Games (coming soon)</option>
           <option value="Soft Play">🧸 Soft Play (coming soon)</option>
           <option value="White Bounce Houses">🏰 White Bounce Houses (coming soon)</option>
+          <option value="Movie Night">🎬 Movie Night — projector + 15ft screen (coming soon)</option>
           <option value="Custom Package">🎉 Custom Package — mix &amp; match</option>
         </select>
         <div id="rentalNote" class="form-note" style="margin:4px 0 14px"></div>
@@ -519,6 +527,7 @@
           <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Yard Games (coming soon)" data-price="89" onchange="calcEstimate()"> 🎲 Yard Games $89 (soon)</label>
           <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Soft Play (coming soon)" data-price="249" onchange="calcEstimate()"> 🧸 Soft Play $249 (soon)</label>
           <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="White Bounce House (coming soon)" data-price="199" onchange="calcEstimate()"> 🏰 White Bounce House $199 (soon)</label>
+          <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Movie Night (coming soon)" data-price="249" onchange="calcEstimate()"> 🎬 Movie Night $249 (soon, evenings only)</label>
         </div>
         <div class="form-note" style="margin-top:8px">Items marked <strong>(soon)</strong> are launching shortly at these intro prices. Add them now to reserve the rate — we'll confirm the exact date when they go live.</div>
 
@@ -567,6 +576,7 @@
     <details><summary>Do you have soft play or bounce houses for little kids?</summary><p>Both launch soon: <strong>Soft Play for $249</strong> (toddler-safe padded sets &amp; ball pit) and a modern <strong>White Bounce House for $199</strong>. That undercuts typical Houston rates of $350–$450 and $275–$400.</p></details>
     <details><summary>Do you rent yard games?</summary><p>Yes — Giant Connect Four, Giant Jenga, cornhole and more as a bundle for <strong>$89</strong>, launching soon. Most Houston companies charge $100–$200 for the same set.</p></details>
     <details><summary>Do you do water parties?</summary><p>Our Water Battles experience launches soon at <strong>$249</strong> for up to 20 players — under the ~$299 competitors charge. A perfect way to beat the Houston heat.</p></details>
+    <details><summary>Do you offer outdoor movie nights?</summary><p>Yes — Movie Night launches soon with a projector and a big <strong>15ft screen</strong> for <strong>$249</strong>, well under the $425–$500 most Houston movie-screen packages charge. Because it runs on projection it's an <strong>evening / after-dark</strong> experience; you supply the movie or streaming device.</p></details>
     <details><summary>Can I bundle several experiences together?</summary><p>Absolutely. Pick a main rental and add any others (including coming-soon items) right in the booking form, or choose <strong>Custom Package</strong> and we'll build one quote for the whole event.</p></details>
     <details><summary>What ages are your parties for?</summary><p>Something for every age: Soft Play for toddlers, bounce houses and yard games for all ages, and Nerf battles for ages 5 and up — birthdays, team parties, church &amp; community events, even adults.</p></details>
     <details><summary>What areas do you serve?</summary><p>The Greater Houston area — Katy, Sugar Land, The Woodlands, Pearland, Cypress, Spring, Humble, Kingwood, Tomball, Friendswood, League City and more. Free delivery within 15 miles; $2/mile beyond that.</p></details>
@@ -628,6 +638,7 @@ var RENTALS = {
   "Yard Games":          {players:false, soon:true},
   "Soft Play":           {players:false, soon:true},
   "White Bounce Houses": {players:false, soon:true},
+  "Movie Night":         {players:false, soon:true},
   "Custom Package":      {players:false, custom:true, note:"Tell us what you'd like to combine in the notes below and we'll build a custom quote."}
 };
 
