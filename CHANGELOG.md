@@ -6,6 +6,18 @@ Newest entries first. Dates in America/Chicago.
 ## 2026-07-06
 
 ### Added
+- **Tracker: Gantt growth-timeline tab.** New "Gantt" tab renders an 18-month
+  (Jul '26 → Mar '28) CSS-grid Gantt showing phases, product-line launches, hires,
+  and a predicted net/mo revenue ramp toward +$10k/mo, plus a milestone-dates table.
+- **Tracker: ROI stress-test tab.** New "ROI" tab pressure-tests the $10k goal with
+  downside/base/upside scenarios (subtracting fixed overhead), a "what it takes to net
+  $10k" sensitivity table, break-even + starter-kit payback KPIs, and a risk/mitigation
+  register.
+- **Tracker: marked completed work.** Added a "✅ Website & Booking System (DONE)" phase
+  (site live, cart, per-item availability, calendar booking, confirmation email, pricing,
+  Movie Night) and checked off the site/booking-intake foundation tasks.
+
+### Added — earlier same day
 - **Automated customer confirmation email with deposit link.** When a booking is
   submitted, the Google Apps Script backend (`website/google-calendar.gs`) now emails
   the customer a branded "booking received" confirmation via `MailApp`, including a

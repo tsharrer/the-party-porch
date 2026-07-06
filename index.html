@@ -93,6 +93,29 @@
   a{color:var(--accent2)}
   .foot{text-align:center;color:var(--muted);font-size:12px;margin:24px 0 8px}
   details summary{cursor:pointer;font-weight:600;padding:6px 0}
+  /* ---- Gantt ---- */
+  .gantt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:14px;background:var(--card);margin:6px 0 14px}
+  .gantt{display:grid;grid-template-columns:132px repeat(21,minmax(30px,1fr));gap:5px 4px;min-width:820px;padding:14px 12px;align-items:center}
+  .g-lbl{grid-column:1;font-size:12px;font-weight:600;white-space:nowrap;color:var(--text)}
+  .g-sec{grid-column:1 / -1;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--accent2);font-weight:800;margin-top:8px}
+  .g-year{text-align:center;font-size:11px;font-weight:800;color:var(--muted);background:var(--card2);border-radius:6px;padding:3px 0}
+  .g-mon{text-align:center;font-size:10px;color:var(--muted)}
+  .g-mon.q{color:var(--accent);font-weight:800}
+  .gbar{height:24px;border-radius:8px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:700;color:#fff;overflow:hidden;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+  .gp0{background:linear-gradient(90deg,#7c3aed,#a855f7)}
+  .gp1{background:linear-gradient(90deg,#2563eb,#38bdf8)}
+  .gp2{background:linear-gradient(90deg,#0891b2,#22d3ee);color:#062430}
+  .gp3{background:linear-gradient(90deg,#059669,#34d399);color:#052e1c}
+  .gp4{background:linear-gradient(90deg,#d97706,#fbbf24);color:#3b1d00}
+  .gprod{height:22px;background:rgba(168,85,247,.18);border:1px solid #a855f7;color:#e9d5ff}
+  .gteam{height:22px;background:rgba(236,72,153,.18);border:1px solid var(--pink);color:#fbcfe8}
+  .grev{height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+  .grev1{background:#14532d;color:#bbf7d0}.grev2{background:#166534;color:#dcfce7}
+  .grev3{background:#15803d;color:#fff}.grev4{background:#22c55e;color:#052e1c}
+  .grev5{background:linear-gradient(90deg,#a3e635,#facc15);color:#1a2e05}
+  .g-legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--muted);margin:2px 0 10px}
+  .g-legend span{display:inline-flex;align-items:center;gap:5px}
+  .g-legend i{width:14px;height:14px;border-radius:4px;display:inline-block}
 </style>
 </head>
 <body>
@@ -107,12 +130,21 @@
 
 <script>
 /* ---------------- DATA ---------------- */
-const TABS = ["Tracker","Leads","Expenses","Timeline","Marketing","Clients","Scripts","Shopping","Pricing","Money","Plan"];
+const TABS = ["Tracker","Leads","Expenses","Timeline","Gantt","Marketing","Clients","Scripts","Shopping","Pricing","Money","ROI","Plan"];
 
 // TRACKER: phases -> tasks. id must be stable (used for localStorage).
 const TRACKER = [
   {phase:"✅ Brand (DONE)", items:[
     {id:"b1", t:"Secure name, domain (yourpartyporch.com) + all social handles", tags:[], done:true},
+  ]},
+  {phase:"✅ Website & Booking System (DONE)", items:[
+    {id:"w1", t:"Brand-first website live (GitHub Pages) with product tiles + experience pages", done:true},
+    {id:"w2", t:"Add-to-cart shopping experience + cart drawer (modeled after Sky High)", done:true},
+    {id:"w3", t:"Real-time per-item availability via Google Calendar (one of each item)", done:true},
+    {id:"w4", t:"Booking form → auto-creates a Google Calendar event", done:true},
+    {id:"w5", t:"Automated customer confirmation email + $50 deposit CTA (deposit link pending)", done:true},
+    {id:"w6", t:"Pricing set most-affordable-in-Houston; free delivery ≤12 mi of 77018; setup +$40 add-on", done:true},
+    {id:"w7", t:"Movie Night launched (flat $375)", done:true},
   ]},
   {phase:"July 2026 — Foundation", items:[
     {id:"j1", t:"Create business Gmail + password manager"},
@@ -121,8 +153,8 @@ const TRACKER = [
     {id:"j4", t:"Dedicate your separate bank account to the biz (link to Stripe/Square) for clean books"},
     {id:"j5", t:"Order the ~$600 starter kit (blasters + darts first)", tags:["spend"]},
     {id:"j6", t:"Design logo + brand kit in Canva"},
-    {id:"j7", t:"Build 1-page site w/ booking form (Carrd/Google Site)"},
-    {id:"j8", t:"Set up booking intake: Google Form → Calendar"},
+    {id:"j7", t:"Build 1-page site w/ booking form (Carrd/Google Site)", done:true},
+    {id:"j8", t:"Set up booking intake: Google Form → Calendar", done:true},
     {id:"j9", t:"Assemble + test kit; count darts, label bins"},
     {id:"j10", t:"Write safety rules + liability waiver"},
     {id:"j10b", t:"Get event / general liability insurance quote + bind coverage (before first paid party)", tags:["spend"]},
@@ -213,6 +245,99 @@ CONTENT.Timeline = `
 <li><b>Summer '27:</b> peak — 2 crews, corporate events, 360 booth</li>
 <li><b>Nov '27–Mar '28:</b> scale to 34+ parties/mo → <b>$10k/mo net</b></li>
 </ul></div>`;
+
+CONTENT.Gantt = `
+<h2 class="section">Growth Timeline — Gantt</h2>
+<div class="tip">📍 You are here: <b>July 2026</b>. Bars show when each phase, product line, and hire goes live — and when revenue is predicted to climb toward <b>+$10k/mo net</b> by early 2028. Scroll the chart sideways on mobile.</div>
+<div class="g-legend">
+  <span><i style="background:#a855f7"></i>Phase</span>
+  <span><i style="background:rgba(168,85,247,.4);border:1px solid #a855f7"></i>Product live</span>
+  <span><i style="background:rgba(236,72,153,.4);border:1px solid #ec4899"></i>Team/hire</span>
+  <span><i style="background:#22c55e"></i>Predicted net/mo</span>
+</div>
+<div class="gantt-wrap"><div class="gantt">
+  <div class="g-lbl" style="grid-row:1">18-month plan</div>
+  <div class="g-year" style="grid-row:1;grid-column:2/8">2026</div>
+  <div class="g-year" style="grid-row:1;grid-column:8/20">2027</div>
+  <div class="g-year" style="grid-row:1;grid-column:20/23">2028</div>
+
+  <div class="g-lbl" style="grid-row:2">Month</div>
+  <div class="g-mon q" style="grid-row:2;grid-column:2">J</div>
+  <div class="g-mon" style="grid-row:2;grid-column:3">A</div>
+  <div class="g-mon" style="grid-row:2;grid-column:4">S</div>
+  <div class="g-mon" style="grid-row:2;grid-column:5">O</div>
+  <div class="g-mon" style="grid-row:2;grid-column:6">N</div>
+  <div class="g-mon" style="grid-row:2;grid-column:7">D</div>
+  <div class="g-mon q" style="grid-row:2;grid-column:8">J</div>
+  <div class="g-mon" style="grid-row:2;grid-column:9">F</div>
+  <div class="g-mon" style="grid-row:2;grid-column:10">M</div>
+  <div class="g-mon" style="grid-row:2;grid-column:11">A</div>
+  <div class="g-mon" style="grid-row:2;grid-column:12">M</div>
+  <div class="g-mon" style="grid-row:2;grid-column:13">J</div>
+  <div class="g-mon" style="grid-row:2;grid-column:14">J</div>
+  <div class="g-mon" style="grid-row:2;grid-column:15">A</div>
+  <div class="g-mon" style="grid-row:2;grid-column:16">S</div>
+  <div class="g-mon" style="grid-row:2;grid-column:17">O</div>
+  <div class="g-mon" style="grid-row:2;grid-column:18">N</div>
+  <div class="g-mon" style="grid-row:2;grid-column:19">D</div>
+  <div class="g-mon q" style="grid-row:2;grid-column:20">J</div>
+  <div class="g-mon" style="grid-row:2;grid-column:21">F</div>
+  <div class="g-mon" style="grid-row:2;grid-column:22">M</div>
+
+  <div class="g-sec" style="grid-row:3">Phases</div>
+  <div class="g-lbl" style="grid-row:4">0 · Launch</div>
+  <div class="gbar gp0" style="grid-row:4;grid-column:2/5">Foundation → Public launch</div>
+  <div class="g-lbl" style="grid-row:5">1 · Validate</div>
+  <div class="gbar gp1" style="grid-row:5;grid-column:5/8">Solo parties + reviews</div>
+  <div class="g-lbl" style="grid-row:6">2 · Add-ons+Hire</div>
+  <div class="gbar gp2" style="grid-row:6;grid-column:8/13">Kit #2, first helper</div>
+  <div class="g-lbl" style="grid-row:7">3 · Crews</div>
+  <div class="gbar gp3" style="grid-row:7;grid-column:13/18">2 crews, corporate</div>
+  <div class="g-lbl" style="grid-row:8">4 · Scale</div>
+  <div class="gbar gp4" style="grid-row:8;grid-column:18/23">34+ parties/mo</div>
+
+  <div class="g-sec" style="grid-row:9">Product launches</div>
+  <div class="g-lbl" style="grid-row:10">🔫 Nerf + 🎬 Movie</div>
+  <div class="gbar gprod" style="grid-row:10;grid-column:2/23">Live now</div>
+  <div class="g-lbl" style="grid-row:11">🍿 Snack Bar</div>
+  <div class="gbar gprod" style="grid-row:11;grid-column:3/23">Popcorn</div>
+  <div class="g-lbl" style="grid-row:12">📸 Booth + 🌸 Backdrop</div>
+  <div class="gbar gprod" style="grid-row:12;grid-column:8/23">Photo booth + walls</div>
+  <div class="g-lbl" style="grid-row:13">🍭 Cotton candy</div>
+  <div class="gbar gprod" style="grid-row:13;grid-column:9/23"></div>
+  <div class="g-lbl" style="grid-row:14">🍧 Snow cone + 🧸 Soft play</div>
+  <div class="gbar gprod" style="grid-row:14;grid-column:13/23">Tiny Porch</div>
+  <div class="g-lbl" style="grid-row:15">🎪 360 booth</div>
+  <div class="gbar gprod" style="grid-row:15;grid-column:14/23">Adult/wedding</div>
+  <div class="g-lbl" style="grid-row:16">✨ Glow Zone</div>
+  <div class="gbar gprod" style="grid-row:16;grid-column:18/23"></div>
+
+  <div class="g-sec" style="grid-row:17">Team</div>
+  <div class="g-lbl" style="grid-row:18">👤 First helper</div>
+  <div class="gbar gteam" style="grid-row:18;grid-column:11/23">Part-time referee</div>
+  <div class="g-lbl" style="grid-row:19">👥 2nd crew</div>
+  <div class="gbar gteam" style="grid-row:19;grid-column:13/23">Parallel parties</div>
+  <div class="g-lbl" style="grid-row:20">👑 Crew chief</div>
+  <div class="gbar gteam" style="grid-row:20;grid-column:18/23">Runs w/o you</div>
+
+  <div class="g-sec" style="grid-row:21">Predicted net / month</div>
+  <div class="g-lbl" style="grid-row:22">Revenue ramp</div>
+  <div class="grev grev1" style="grid-row:22;grid-column:2/5">$0–1k</div>
+  <div class="grev grev2" style="grid-row:22;grid-column:5/8">$1–3k</div>
+  <div class="grev grev3" style="grid-row:22;grid-column:8/13">$3–6k</div>
+  <div class="grev grev4" style="grid-row:22;grid-column:13/18">$6–8k</div>
+  <div class="grev grev5" style="grid-row:22;grid-column:18/23">$10k+ 🎯</div>
+</div></div>
+<div class="card"><h3>🎯 Milestone dates</h3>
+<table>
+<tr><th>When</th><th>Milestone</th><th>Target net/mo</th></tr>
+<tr><td><b>Sep '26</b></td><td>🚀 Public launch — first full-price booking</td><td>~$0–1k</td></tr>
+<tr><td><b>Dec '26</b></td><td>Validated: 6+ bookings/mo, reviews flowing</td><td>~$1–3k</td></tr>
+<tr><td><b>Apr '27</b></td><td>First helper hired; Booth + Backdrop live</td><td>~$3–6k</td></tr>
+<tr><td><b>Oct '27</b></td><td>2 crews running in parallel</td><td>~$6–8k</td></tr>
+<tr><td><b>Mar '28</b></td><td>🏆 +$10k/mo net — runs without you on-site</td><td><b>$10k+</b></td></tr>
+</table>
+<p class="muted" style="font-size:12px">18-month goal from July 2026 → the $10k/mo mark lands right at the plan's end (early 2028). Pull it forward by attaching add-ons to more bookings (see the ROI tab).</p></div>`;
 
 CONTENT.Marketing = `
 <h2 class="section">Marketing Engine</h2>
@@ -401,6 +526,61 @@ CONTENT.Money = `
 <li>First helper</li><li>Kit #3 + crews</li><li>Snow cone/soft play/360 booth</li>
 <li>Paid ads + software</li><li>Crew chief + premium bundles</li>
 </ol></div>`;
+
+CONTENT.ROI = `
+<h2 class="section">ROI Stress Test</h2>
+<div class="tip">Pressure-tests the $10k/mo goal. Unlike the Money tab (which shows contribution per party), this <b>subtracts monthly fixed overhead</b> and models a bad, expected, and great case — so you know the downside, the break-even, and exactly what it takes to hit $10k net.</div>
+
+<div class="card"><h3>🧾 Assumptions</h3>
+<table>
+<tr><th>Driver</th><th>Note</th></tr>
+<tr><td><b>Avg ticket</b></td><td>Blended price incl. add-ons (rental + referee + snacks/booth)</td></tr>
+<tr><td><b>Net / party</b></td><td>Contribution after variable cost (gas, dart/consumable wear, helper labor)</td></tr>
+<tr><td><b>Fixed overhead</b></td><td>~$1,200/mo at scale: insurance, booking/software, storage, ads, phone, accounting</td></tr>
+<tr><td><b>Monthly net</b></td><td>(parties × net/party) − fixed overhead</td></tr>
+</table>
+<p class="muted" style="font-size:12px">Early on your fixed overhead is far lower (~$150–300/mo) because ads, storage, and insurance ramp later — so early months keep more of each party.</p></div>
+
+<div class="card"><h3>📊 Steady-state scenarios (Phase 4)</h3>
+<table>
+<tr><th>Case</th><th>Parties/mo</th><th>Net/party</th><th>Gross contrib.</th><th>− Fixed</th><th>Net/mo</th></tr>
+<tr><td>😟 Downside</td><td>24</td><td>$180</td><td>$4,320</td><td>$1,200</td><td><b>$3,120</b></td></tr>
+<tr><td>🙂 Base</td><td>38</td><td>$240</td><td>$9,120</td><td>$1,200</td><td><b>$7,920</b></td></tr>
+<tr><td>🤩 Upside</td><td>46</td><td>$280</td><td>$12,880</td><td>$1,300</td><td><b>$11,580</b></td></tr>
+</table>
+<p class="muted" style="font-size:12px">Downside = slow weekends + heavy discounting + more paid labor. Upside = strong add-on attach + bundles + efficient crews.</p></div>
+
+<div class="card"><h3>🎯 What it actually takes to net $10k/mo</h3>
+<div class="tip">Because fixed overhead (~$1,200) comes off the top, you need <b>(10,000 + 1,200) ÷ net-per-party</b> parties. Raising your average ticket is the fastest lever — it cuts the parties you need.</div>
+<table>
+<tr><th>Net/party</th><th>How to get there</th><th>Parties/mo for $10k net</th></tr>
+<tr><td>$220</td><td>Mostly rental-only, light add-ons</td><td>~51 / mo (~13/wk)</td></tr>
+<tr><td>$260</td><td>Referee + Snack Bar on most bookings</td><td>~43 / mo (~11/wk)</td></tr>
+<tr><td>$300</td><td>Bundles (Booth + Backdrop + snacks)</td><td>~38 / mo (~9–10/wk)</td></tr>
+<tr><td>$360</td><td>Premium/corporate + Ultimate bundles</td><td>~31 / mo (~8/wk)</td></tr>
+</table>
+<p class="muted" style="font-size:12px">Two crews at ~5 parties each per weekend = ~40/mo — reachable at a $260–300 ticket.</p></div>
+
+<div class="card"><h3>⚖️ Break-even & starter-kit payback</h3>
+<div class="kpi">
+<div class="box"><div class="n">~5</div><div class="l">parties/mo to cover overhead</div></div>
+<div class="box"><div class="n">3–4</div><div class="l">parties to repay $600 kit</div></div>
+<div class="box"><div class="n">&lt;30 days</div><div class="l">kit payback once booking</div></div>
+</div>
+<p class="muted" style="font-size:12px">At even a $180 downside net/party, the $600 starter kit is repaid in 3–4 parties, and ~5 parties/mo covers a $1,200 overhead. Everything above that is profit. The capital risk is genuinely low — the risk is <b>demand and consistency</b>, not cost.</p></div>
+
+<div class="card"><h3>🛟 Downside risks & mitigations</h3>
+<table>
+<tr><th>Risk</th><th>Mitigation</th></tr>
+<tr><td>Winter/seasonal dip</td><td>Break camps, indoor venues, gift certificates, movie nights</td></tr>
+<tr><td>Cancellations / no-shows</td><td>Non-refundable $50 deposit (already built into booking flow)</td></tr>
+<tr><td>Weather (outdoor)</td><td>Reschedule policy + indoor-venue partners + covered options</td></tr>
+<tr><td>Single-inventory bottleneck</td><td>Only one of each to start → buy Kit #2 early to unlock parallel bookings</td></tr>
+<tr><td>Helper reliability</td><td>Train 2, pay per-party, promote best to crew chief</td></tr>
+<tr><td>Injury / liability</td><td>Waivers now; bind general-liability insurance before scaling paid crews</td></tr>
+</table></div>
+
+<div class="tip">✅ <b>Verdict:</b> Low capital risk (kit repays in weeks, break-even ~5 parties/mo). Hitting $10k net is realistic in the 18-month window <b>if</b> you (1) keep the average ticket at $260–300 via add-ons/bundles, and (2) add a 2nd kit + crew so weekends aren't capped by one-of-everything inventory.</div>`;
 
 CONTENT.Plan = `
 <h2 class="section">The Model</h2>
