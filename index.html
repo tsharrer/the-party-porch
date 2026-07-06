@@ -107,7 +107,7 @@
 
 <script>
 /* ---------------- DATA ---------------- */
-const TABS = ["Tracker","Leads","Timeline","Marketing","Clients","Scripts","Shopping","Pricing","Money","Plan"];
+const TABS = ["Tracker","Leads","Expenses","Timeline","Marketing","Clients","Scripts","Shopping","Pricing","Money","Plan"];
 
 // TRACKER: phases -> tasks. id must be stable (used for localStorage).
 const TRACKER = [
@@ -116,7 +116,7 @@ const TRACKER = [
   ]},
   {phase:"July 2026 — Foundation", items:[
     {id:"j1", t:"Create business Gmail + password manager"},
-    {id:"j2", t:"Set up free Google Business Profile (service-area)"},
+    {id:"j2", t:"⏸️ Set up Google Business Profile — ON HOLD until printed materials arrive (needs mailed postcard verification)"},
     {id:"j3", t:"File DBA / Assumed Name Certificate for \"The Party Porch\" under your existing LLC (TX SOS Form 503, ~$25)"},
     {id:"j4", t:"Dedicate your separate bank account to the biz (link to Stripe/Square) for clean books"},
     {id:"j5", t:"Order the ~$600 starter kit (blasters + darts first)", tags:["spend"]},
@@ -573,12 +573,71 @@ function renderLeads(){
   return h;
 }
 
-let active="Tracker";
+/* ---------- Expenses ---------- */
+const EXP_CATS=["Startup","Gear/Kit","Marketing","Software","Insurance","Legal","Fuel","Other"];
+function loadExpenses(){
+  const raw=localStorage.getItem('ppExpenses');
+  if(raw===null){ // first load — seed with the domain purchase
+    const seed=[{id:'E'+Date.now(),item:'Domain (yourpartyporch.com)',amount:45,cat:'Startup',date:'Jul 6, 2026'}];
+    localStorage.setItem('ppExpenses',JSON.stringify(seed));
+    return seed;
+  }
+  try{return JSON.parse(raw)}catch(e){return []}
+}
+function saveExpenses(x){localStorage.setItem('ppExpenses',JSON.stringify(x))}
+let expenses=loadExpenses();
+function addExpense(){
+  const g=id=>document.getElementById(id).value.trim();
+  const item=g('x_item'); const amount=parseFloat(g('x_amount'));
+  if(!item){alert('Add what you spent on');return;}
+  if(isNaN(amount)){alert('Add an amount');return;}
+  expenses.unshift({id:'E'+Date.now(),item,amount,cat:g('x_cat'),date:g('x_date')||'—'});
+  saveExpenses(expenses);render();
+}
+function delExpense(id){if(confirm('Delete this expense?')){expenses=expenses.filter(x=>x.id!==id);saveExpenses(expenses);render();}}
+function renderExpenses(){
+  const total=expenses.reduce((s,x)=>s+(parseFloat(x.amount)||0),0);
+  const budgetLeft=600-total;
+  const byCat={};
+  expenses.forEach(x=>{byCat[x.cat]=(byCat[x.cat]||0)+(parseFloat(x.amount)||0)});
+  let h='<h2 class="section">Expenses</h2>';
+  h+=`<div class="kpi">
+    <div class="box"><div class="n">$${total.toFixed(0)}</div><div class="l">spent</div></div>
+    <div class="box"><div class="n">${expenses.length}</div><div class="l">items</div></div>
+    <div class="box"><div class="n">$${budgetLeft.toFixed(0)}</div><div class="l">of $600 left</div></div></div>`;
+  h+=`<div class="card"><h3>➕ Add an expense</h3>
+    <div class="field"><label>What for</label><input id="x_item" placeholder="e.g. Blasters, darts, insurance"></div>
+    <div class="row2">
+      <div class="field"><label>Amount ($)</label><input id="x_amount" inputmode="decimal" placeholder="45"></div>
+      <div class="field"><label>Date</label><input id="x_date" placeholder="Jul 6"></div>
+    </div>
+    <div class="field"><label>Category</label><select id="x_cat">${EXP_CATS.map(c=>`<option>${c}</option>`).join('')}</select></div>
+    <button class="btn" onclick="addExpense()">Add expense</button></div>`;
+  if(Object.keys(byCat).length){
+    h+='<div class="card"><h3>📊 By category</h3>';
+    Object.keys(byCat).forEach(c=>{h+=`<div class="lead" style="padding:8px 12px"><div class="top"><div class="nm">${c}</div><div class="nm">$${byCat[c].toFixed(0)}</div></div></div>`});
+    h+='</div>';
+  }
+  if(expenses.length===0){
+    h+='<div class="card muted">No expenses yet. Log every dollar (gear, ads, insurance, fuel) here to keep clean books and know your real profit.</div>';
+  }else{
+    expenses.forEach(x=>{
+      h+=`<div class="lead"><div class="top">
+        <div><div class="nm">${x.item}</div>
+        <div class="meta">${[x.date&&('📅 '+x.date),x.cat&&('🏷️ '+x.cat)].filter(Boolean).join(' · ')||'—'}</div></div>
+        <div class="nm">$${(parseFloat(x.amount)||0).toFixed(2)}</div>
+      </div>
+      <div style="text-align:right;margin-top:2px"><button class="del" onclick="delExpense('${x.id}')">🗑️</button></div></div>`;
+    });
+  }
+  h+='<div class="foot">Keep this account separate for clean books. Saved on this device.</div>';
+  return h;
+}
 function render(){
   const nav=document.getElementById('nav');
   nav.innerHTML=TABS.map(t=>`<button class="${t===active?'active':''}" onclick="go('${t}')">${t}</button>`).join('');
   const main=document.getElementById('main');
-  main.innerHTML=`<div class="tab active">${active==='Tracker'?renderTracker():active==='Leads'?renderLeads():CONTENT[active]}</div>`;
+  main.innerHTML=`<div class="tab active">${active==='Tracker'?renderTracker():active==='Leads'?renderLeads():active==='Expenses'?renderExpenses():CONTENT[active]}</div>`;
   updateProgress();
   window.scrollTo(0,0);
 }

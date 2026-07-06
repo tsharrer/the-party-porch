@@ -22,6 +22,8 @@ status (Lead → Quoted → Booked → Done → Lost) and value so you learn whi
 | Doc | Purpose |
 |-----|---------|
 | [TRACKER.md](TRACKER.md) | ✅ Master task tracker — check things off as you go |
+| [website/index.html](website/index.html) | 🌐 **Booking website** — SEO-optimized, self-contained, ready for WordPress.org |
+| [website/README.md](website/README.md) | How to publish the site + the SEO features built in |
 | [docs/business-plan.md](docs/business-plan.md) | Full business plan, unit economics, 18-month ramp |
 | [docs/launch-timeline.md](docs/launch-timeline.md) | Week-by-week plan: July → September 2026 launch |
 | [docs/marketing-plan.md](docs/marketing-plan.md) | Content engine, channels, referrals, paid ads, partnerships |
