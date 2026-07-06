@@ -46,8 +46,8 @@
     {"@type":"Question","name":"What experiences and rentals do you offer?","acceptedAnswer":{"@type":"Answer","text":"We are a full mobile party company for the Houston area. Available now: Nerf Battles, Movie Night (projector + 15ft screen, evenings only), plus snack machines (popcorn, cotton candy, shaved ice). Launching soon at intro prices: Photo Booth, Flower Backdrop, Water Battles, Yard Games, Soft Play and White Bounce Houses. Mix any of them into one Custom Package."}},
     {"@type":"Question","name":"How much is a Nerf party in Houston?","acceptedAnswer":{"@type":"Answer","text":"Our mobile Nerf battle party rental starts at $180 for up to 12 players and about 2 hours. That includes delivery, blasters, darts, safety glasses and battlefield obstacles. Add a referee for +$100 to have our host run every game."}},
     {"@type":"Question","name":"How much do the snack machines cost?","acceptedAnswer":{"@type":"Answer","text":"Add a popcorn Snack Bar for +$69, a Cotton Candy machine for +$79, or a Shaved Ice machine for +$79 to any party. Supplies, delivery and pickup are included. Ice for the shaved ice machine is not included — you provide the ice."}},
-    {"@type":"Question","name":"How much is a photo booth rental in Houston?","acceptedAnswer":{"@type":"Answer","text":"Our photo booth launches soon at an intro price of $375 — the most affordable in Houston. You can add it to your booking now to lock in the rate."}},
-    {"@type":"Question","name":"How much do flower backdrops, soft play, bounce houses, yard games and movie nights cost?","acceptedAnswer":{"@type":"Answer","text":"Our intro prices are the most affordable in Houston: Photo Booth $375, Flower Backdrop $225, Soft Play $295, White Bounce House $255, Yard Games (Giant Connect Four, Jenga, cornhole) $89, Water Battles $225 for up to 20 players, and Movie Night (projector + 15ft screen, evenings only) $375. Movie Night is available now; the others launch soon."}},
+    {"@type":"Question","name":"How much is a photo booth rental in Houston?","acceptedAnswer":{"@type":"Answer","text":"Our photo booth launches soon at an intro price of $375. You can add it to your booking now to lock in the rate."}},
+    {"@type":"Question","name":"How much do flower backdrops, soft play, bounce houses, yard games and movie nights cost?","acceptedAnswer":{"@type":"Answer","text":"Our intro prices: Photo Booth $375, Flower Backdrop $225, Soft Play $295, White Bounce House $255, Yard Games (Giant Connect Four, Jenga, cornhole) $89, Water Battles $225 for up to 20 players, and Movie Night (projector + 15ft screen, evenings only) $375. Movie Night is available now; the others launch soon."}},
     {"@type":"Question","name":"Can I bundle several experiences together?","acceptedAnswer":{"@type":"Answer","text":"Yes. Pick a main rental and add any others, including coming-soon items, right in the booking form, or choose a Custom Package and we will build one quote for the whole event."}},
     {"@type":"Question","name":"What ages are your parties for?","acceptedAnswer":{"@type":"Answer","text":"Something for every age: Soft Play for toddlers, bounce houses and yard games for all ages, and Nerf battles for ages 5 and up — birthdays, school events, church and community groups, even adults."}},
     {"@type":"Question","name":"What areas do you serve?","acceptedAnswer":{"@type":"Answer","text":"We serve the Greater Houston area including Katy, Sugar Land, The Woodlands, Pearland, Cypress, Spring, Humble, Kingwood, Tomball, Friendswood and League City. Delivery and pickup are free within 12 miles of ZIP 77018; otherwise a delivery fee is charged ($2/mile beyond that)."}},
@@ -216,12 +216,70 @@
     .grid2{grid-template-columns:1fr}.checks{grid-template-columns:1fr}.addons{grid-template-columns:1fr}
     .perfect{grid-template-columns:1fr 1fr}
     section{padding:40px 0}
+    .shop-grid{grid-template-columns:1fr 1fr}
+    .cart-drawer{width:100%}
   }
+
+  /* ---------- Build-your-party shop + cart ---------- */
+  .avail-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;max-width:640px;margin:0 auto 24px}
+  .avail-bar .fld{display:flex;flex-direction:column;gap:4px;text-align:left}
+  .avail-bar label{font-size:12px;font-weight:700;color:var(--muted)}
+  .avail-bar input{padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:#0f0b1e;color:var(--text);font-size:15px}
+  .avail-status{width:100%;text-align:center;font-weight:700;font-size:14px;min-height:20px}
+  .avail-status.ok{color:#37d67a}.avail-status.bad{color:#ff6b6b}.avail-status.wait{color:var(--gold)}
+  .shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .prod{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:6px;position:relative}
+  .prod .pe{font-size:1.9rem}
+  .prod h3{margin:2px 0 0;font-size:1.05rem}
+  .prod .pnote{color:var(--muted);font-size:12px;flex:1}
+  .prod .pprice{font-weight:800;font-size:1.15rem;color:var(--gold)}
+  .prod .soon-tag{position:absolute;top:12px;right:12px;background:#2a2350;color:#c9c2ff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px}
+  .prod .addcart{margin-top:6px;border:0;border-radius:10px;padding:11px;font-weight:800;cursor:pointer;background:var(--red);color:#fff;font-size:14px;transition:transform .05s}
+  .prod .addcart:hover{transform:translateY(-1px)}
+  .prod .addcart.in{background:#1f7a4d}
+  .cart-fab{position:fixed;right:18px;bottom:18px;z-index:60;background:var(--red);color:#fff;border:0;border-radius:50px;padding:14px 20px;font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .cart-fab .cc{background:#fff;color:var(--red);border-radius:20px;padding:1px 8px;margin-left:6px;font-size:13px}
+  .cart-scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:70;opacity:0;pointer-events:none;transition:opacity .2s}
+  .cart-scrim.open{opacity:1;pointer-events:auto}
+  .cart-drawer{position:fixed;top:0;right:0;height:100%;width:380px;max-width:92vw;background:#161029;border-left:1px solid var(--line);z-index:80;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column}
+  .cart-drawer.open{transform:none}
+  .cart-drawer h3{margin:0;font-size:1.15rem}
+  .cart-head{display:flex;justify-content:space-between;align-items:center;padding:18px;border-bottom:1px solid var(--line)}
+  .cart-x{background:0;border:0;color:var(--muted);font-size:26px;cursor:pointer;line-height:1}
+  .cart-body{flex:1;overflow:auto;padding:14px 18px}
+  .cart-line{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .cart-line .cl-name{font-weight:700;font-size:14px}
+  .cart-line .cl-sub{color:var(--muted);font-size:12px}
+  .cart-line .cl-rm{background:0;border:0;color:#ff6b6b;cursor:pointer;font-size:13px;font-weight:700}
+  .cart-empty{color:var(--muted);text-align:center;padding:30px 10px}
+  .cart-foot{padding:16px 18px;border-top:1px solid var(--line)}
+  .cart-foot .row{display:flex;justify-content:space-between;font-weight:800;margin-bottom:10px}
+  .cart-foot .btn{width:100%}
+  .order-box{background:var(--card);border:1px dashed var(--gold);border-radius:14px;padding:14px;margin-bottom:16px}
+  .order-box h4{margin:0 0 8px;font-size:14px}
+  .order-box .ob-line{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}
+  .order-box .ob-total{border-top:1px solid var(--line);margin-top:6px;padding-top:6px;font-weight:800}
 </style>
 </head>
 <body>
 
 
+
+<!-- Cart drawer -->
+<div class="cart-scrim" id="cartScrim" onclick="closeCart()"></div>
+<aside class="cart-drawer" id="cartDrawer" aria-label="Your cart">
+  <div class="cart-head">
+    <h3>🛒 Your party cart</h3>
+    <button class="cart-x" type="button" onclick="closeCart()" aria-label="Close">×</button>
+  </div>
+  <div class="cart-body" id="cartBody"></div>
+  <div class="cart-foot">
+    <div class="row"><span>Subtotal</span><span id="cartTotal">$0</span></div>
+    <div class="form-note" style="margin:0 0 10px">Delivery, taxes &amp; options confirmed at booking. A $50 deposit reserves your date.</div>
+    <button class="btn big" type="button" onclick="cartCheckout()">Reserve my date →</button>
+  </div>
+</aside>
+<button class="cart-fab" id="cartFab" type="button" onclick="openCart()" style="display:none">🛒 Cart <span class="cc" id="fabCount">0</span></button>
 
 <a id="top"></a>
 <section class="hero">
@@ -229,7 +287,7 @@
     <img class="hero-logo" src="https://tsharrer.github.io/the-party-porch/website/assets/logo.png" alt="The Party Porch logo">
     <span class="tag">📍 Serving Greater Houston, Katy, Sugar Land, The Woodlands &amp; beyond</span>
     <h1>Mobile Party Rentals in Houston</h1>
-    <p class="promise">🎉 We bring the party to you.</p>
+    <p class="promise">🎉 We bring the party to you — the most affordable rentals in Houston.</p>
     <p class="lead">The Party Porch is Greater Houston's mobile party company. Pick an experience below — Nerf battles are ready to book today, with photo booths, flower backdrops, snacks &amp; more launching soon. We deliver and pick up. You just bring the crew.</p>
     <div class="cta-row">
       <a class="btn big" href="#experiences">🎈 See What We Offer</a>
@@ -410,7 +468,26 @@
       <div class="addon"><span>🏰 White Bounce House <em style="color:var(--muted);font-style:normal">· soon</em></span><b>$255</b></div>
       <div class="addon"><span>🎬 Movie Night (projector + 15ft screen, evenings only)</span><b>$375</b></div>
     </div>
-    <p class="note">Some experiences are <strong>launching soon</strong> (marked · soon) at these intro prices — the most affordable in Houston. Reserve now and we'll honor the rate.</p>
+    <p class="note">Some experiences are <strong>launching soon</strong> (marked · soon) at these intro prices. Reserve now and we'll honor the rate.</p>
+  </div>
+</section>
+
+<section class="alt-bg" id="shop">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker" style="color:var(--gold)">Build your party</div>
+      <h2>Add what you want &amp; check your date</h2>
+      <p>Pick your date to see if we're available, then add experiences to your cart. We'll confirm everything and send your $50 deposit link.</p>
+    </div>
+    <div class="avail-bar">
+      <div class="fld">
+        <label for="availDate">Your event date</label>
+        <input type="date" id="availDate" onchange="onAvailDate()">
+      </div>
+      <button class="btn" type="button" onclick="runAvailability()">Check my date</button>
+      <div class="avail-status" id="availStatus"></div>
+    </div>
+    <div class="shop-grid" id="shopGrid"></div>
   </div>
 </section>
 
@@ -423,6 +500,12 @@
     </div>
     <div class="form-card">
       <form id="bookForm" onsubmit="return submitBooking(event)">
+        <div class="order-box" id="orderBox" style="display:none">
+          <h4>🛒 Your cart</h4>
+          <div id="orderLines"></div>
+          <div class="ob-line ob-total"><span>Subtotal</span><span id="orderTotal">$0</span></div>
+          <div class="form-note" style="margin-top:8px">Add or remove items in the <a href="#" onclick="openCart();return false">cart</a> or the catalog above.</div>
+        </div>
         <label class="f">What would you like to rent? <span class="req">*</span></label>
         <select id="f_rental" name="rental" onchange="onRentalChange()">
           <option value="Nerf Battles">🎯 Nerf Battles</option>
@@ -525,12 +608,12 @@
     <details open><summary>What experiences and rentals do you offer?</summary><p>We're a full mobile party company for the Houston area. Available now: <strong>Nerf Battles</strong>, <strong>Movie Night</strong> (projector + 15ft screen, evenings only), plus snack machines (popcorn, cotton candy, shaved ice). Launching soon at intro prices: <strong>Photo Booth, Flower Backdrop, Water Battles, Yard Games, Soft Play</strong> and <strong>White Bounce Houses</strong>. Mix any of them into one <strong>Custom Package</strong>.</p></details>
     <details><summary>How much is a Nerf party in Houston?</summary><p>Our mobile Nerf battle party rental starts at $180 for up to 12 players and about 2 hours. That includes delivery, blasters, darts, safety glasses and battlefield obstacles. Add a referee for +$100 to have our host run every game and handle safety.</p></details>
     <details><summary>What do the snack machines cost?</summary><p>Add a popcorn <strong>Snack Bar for +$69</strong>, a <strong>Cotton Candy machine for +$79</strong>, or a <strong>Shaved Ice machine for +$79</strong> to any party — supplies, delivery and pickup included. <em>Note: ice for the shaved ice machine is not included — you provide the ice.</em></p></details>
-    <details><summary>How much is a photo booth?</summary><p>Our photo booth launches soon at an intro <strong>$375</strong> — the most affordable in Houston. Add it to your booking now to lock in the rate.</p></details>
-    <details><summary>Do you rent flower backdrops / flower walls?</summary><p>Yes — launching soon at <strong>$225</strong>, the most affordable flower wall in Houston. Perfect behind a cake table or as a photo backdrop.</p></details>
-    <details><summary>Do you have soft play or bounce houses for little kids?</summary><p>Both launch soon: <strong>Soft Play for $295</strong> (toddler-safe padded sets &amp; ball pit) and a modern <strong>White Bounce House for $255</strong> — the most affordable in Houston.</p></details>
-    <details><summary>Do you rent yard games?</summary><p>Yes — Giant Connect Four, Giant Jenga, cornhole and more as a bundle for <strong>$89</strong>, launching soon. The most affordable yard games in Houston.</p></details>
-    <details><summary>Do you do water parties?</summary><p>Our Water Battles experience launches soon at <strong>$225</strong> for up to 20 players — the most affordable water party in Houston. A perfect way to beat the Houston heat.</p></details>
-    <details><summary>Do you offer outdoor movie nights?</summary><p>Yes — <strong>Movie Night is available now</strong> with a projector and a big <strong>15ft screen</strong> for <strong>$375</strong>, the most affordable outdoor movie night in Houston. Because it runs on projection it's an <strong>evening / after-dark</strong> experience; you supply the movie or streaming device.</p></details>
+    <details><summary>How much is a photo booth?</summary><p>Our photo booth launches soon at an intro <strong>$375</strong>. Add it to your booking now to lock in the rate.</p></details>
+    <details><summary>Do you rent flower backdrops / flower walls?</summary><p>Yes — launching soon at <strong>$225</strong>. Perfect behind a cake table or as a photo backdrop.</p></details>
+    <details><summary>Do you have soft play or bounce houses for little kids?</summary><p>Both launch soon: <strong>Soft Play for $295</strong> (toddler-safe padded sets &amp; ball pit) and a modern <strong>White Bounce House for $255</strong>.</p></details>
+    <details><summary>Do you rent yard games?</summary><p>Yes — Giant Connect Four, Giant Jenga, cornhole and more as a bundle for <strong>$89</strong>, launching soon.</p></details>
+    <details><summary>Do you do water parties?</summary><p>Our Water Battles experience launches soon at <strong>$225</strong> for up to 20 players. A perfect way to beat the Houston heat.</p></details>
+    <details><summary>Do you offer outdoor movie nights?</summary><p>Yes — <strong>Movie Night is available now</strong> with a projector and a big <strong>15ft screen</strong> for <strong>$375</strong>. Because it runs on projection it's an <strong>evening / after-dark</strong> experience; you supply the movie or streaming device.</p></details>
     <details><summary>Can I bundle several experiences together?</summary><p>Absolutely. Pick a main rental and add any others (including coming-soon items) right in the booking form, or choose <strong>Custom Package</strong> and we'll build one quote for the whole event.</p></details>
     <details><summary>What ages are your parties for?</summary><p>Something for every age: Soft Play for toddlers, bounce houses and yard games for all ages, and Nerf battles for ages 5 and up — birthdays, team parties, church &amp; community events, even adults.</p></details>
     <details><summary>What areas do you serve?</summary><p>The Greater Houston area — Katy, Sugar Land, The Woodlands, Pearland, Cypress, Spring, Humble, Kingwood, Tomball, Friendswood, League City and more. Free delivery within 12 miles of ZIP 77018; otherwise a delivery fee is charged ($2/mile beyond that).</p></details>
@@ -592,6 +675,128 @@ var RENTALS = {
 
 function currentRental(){ return document.getElementById('f_rental').value; }
 
+/* ====================================================================
+   CATALOG + CART + AVAILABILITY
+   ==================================================================== */
+var CATALOG = {
+  "nerf":       {name:"Nerf Battles",        price:180, emoji:"🎯", soon:false, note:"Up to 12 players · +$100 referee option"},
+  "movie":      {name:"Movie Night",         price:375, emoji:"🎬", soon:false, note:"Projector + 15ft screen · evenings only"},
+  "popcorn":    {name:"Snack Bar — Popcorn", price:69,  emoji:"🍿", soon:false, note:"Fresh popcorn machine + supplies"},
+  "cottoncandy":{name:"Cotton Candy",        price:79,  emoji:"🍭", soon:false, note:"Cotton candy machine + supplies"},
+  "shavedice":  {name:"Shaved Ice",          price:79,  emoji:"🍧", soon:false, note:"Machine + syrups · ice not included"},
+  "photobooth": {name:"Photo Booth",         price:375, emoji:"📸", soon:true,  note:"Props, prints & digital copies"},
+  "flower":     {name:"Flower Backdrop",     price:225, emoji:"🌸", soon:true,  note:"Flower wall + freestanding frame"},
+  "water":      {name:"Water Battles",       price:225, emoji:"💦", soon:true,  note:"Water blasters for up to 20"},
+  "yardgames":  {name:"Yard Games",          price:89,  emoji:"🎲", soon:true,  note:"Giant Connect Four, Jenga, cornhole & more"},
+  "softplay":   {name:"Soft Play",           price:295, emoji:"🧸", soon:true,  note:"Padded soft-play set + ball pit"},
+  "bounce":     {name:"White Bounce House",  price:255, emoji:"🏰", soon:true,  note:"Modern white bounce house"}
+};
+
+function cartGet(){ try{ return JSON.parse(localStorage.getItem('pp_cart')||'[]'); }catch(e){ return []; } }
+function cartSet(a){ try{ localStorage.setItem('pp_cart', JSON.stringify(a)); }catch(e){} renderCart(); }
+function cartHas(k){ return cartGet().indexOf(k) > -1; }
+function cartToggle(k){ var a=cartGet(); var i=a.indexOf(k); if(i>-1){a.splice(i,1);}else{a.push(k);} cartSet(a); if(a.indexOf(k)>-1) openCart(); }
+function cartRemove(k){ var a=cartGet(); var i=a.indexOf(k); if(i>-1){a.splice(i,1); cartSet(a);} }
+function cartTotal(){ return cartGet().reduce(function(s,k){ return s + ((CATALOG[k]&&CATALOG[k].price)||0); }, 0); }
+function cartNames(){ return cartGet().map(function(k){ return CATALOG[k] ? CATALOG[k].name + (CATALOG[k].soon?" (soon)":"") : k; }); }
+
+function renderShop(){
+  var g = document.getElementById('shopGrid'); if(!g) return;
+  var html = "";
+  Object.keys(CATALOG).forEach(function(k){
+    var c = CATALOG[k];
+    html += '<div class="prod">' +
+      (c.soon ? '<span class="soon-tag">Coming soon</span>' : '') +
+      '<span class="pe">'+c.emoji+'</span>' +
+      '<h3>'+c.name+'</h3>' +
+      '<div class="pnote">'+(c.note||'')+'</div>' +
+      '<div class="pprice">$'+c.price+'</div>' +
+      '<button type="button" class="addcart" data-k="'+k+'" onclick="cartToggle(\''+k+'\')">Add to cart</button>' +
+    '</div>';
+  });
+  g.innerHTML = html;
+}
+
+function renderCart(){
+  var items = cartGet();
+  var n = items.length, tot = cartTotal();
+  // header + fab counters
+  var nc = document.getElementById('navCount'); if(nc) nc.textContent = "("+n+")";
+  var fc = document.getElementById('fabCount'); if(fc) fc.textContent = n;
+  var fab = document.getElementById('cartFab'); if(fab) fab.style.display = n ? "" : "none";
+  // drawer body
+  var body = document.getElementById('cartBody');
+  if(body){
+    if(!n){ body.innerHTML = '<div class="cart-empty">Your cart is empty.<br>Add experiences from the catalog to get started.</div>'; }
+    else {
+      body.innerHTML = items.map(function(k){
+        var c = CATALOG[k]||{name:k,price:0};
+        return '<div class="cart-line"><div><div class="cl-name">'+c.emoji+' '+c.name+(c.soon?' <span style="color:var(--muted);font-weight:400">(soon)</span>':'')+'</div><div class="cl-sub">$'+c.price+'</div></div><button class="cl-rm" type="button" onclick="cartRemove(\''+k+'\')">Remove</button></div>';
+      }).join("");
+    }
+  }
+  var ct = document.getElementById('cartTotal'); if(ct) ct.textContent = "$"+tot;
+  // shop button states
+  document.querySelectorAll('.addcart').forEach(function(b){
+    var inCart = cartHas(b.getAttribute('data-k'));
+    b.textContent = inCart ? "✓ In cart — remove" : "Add to cart";
+    b.classList.toggle('in', inCart);
+  });
+  // order box in the form
+  var ob = document.getElementById('orderBox');
+  if(ob){
+    if(!n){ ob.style.display = "none"; }
+    else {
+      ob.style.display = "";
+      document.getElementById('orderLines').innerHTML = items.map(function(k){
+        var c = CATALOG[k]||{name:k,price:0};
+        return '<div class="ob-line"><span>'+c.emoji+' '+c.name+'</span><span>$'+c.price+'</span></div>';
+      }).join("");
+      document.getElementById('orderTotal').textContent = "$"+tot;
+    }
+  }
+  if(typeof calcEstimate === "function") calcEstimate();
+}
+
+function openCart(){ document.getElementById('cartScrim').classList.add('open'); document.getElementById('cartDrawer').classList.add('open'); }
+function closeCart(){ document.getElementById('cartScrim').classList.remove('open'); document.getElementById('cartDrawer').classList.remove('open'); }
+function cartCheckout(){
+  closeCart();
+  // carry the chosen availability date into the booking form
+  var ad = document.getElementById('availDate');
+  if(ad && ad.value){ var fd = document.getElementById('f_date'); if(fd && !fd.value) fd.value = ad.value; }
+  var el = document.getElementById('book'); if(el) el.scrollIntoView({behavior:"smooth"});
+}
+
+/* ---- Real-time availability via Google Apps Script (JSONP) ---- */
+function checkAvailability(dateStr, cb){
+  if(!GCAL_WEBHOOK_URL){ cb({ok:true, unknown:true}); return; }
+  var fn = "ppAvail_" + Date.now() + "_" + Math.floor(Math.random()*1e6);
+  var s = document.createElement('script');
+  var done = false;
+  window[fn] = function(res){ done = true; try{ cb(res); } finally { try{ delete window[fn]; }catch(e){ window[fn]=undefined; } if(s.parentNode) s.parentNode.removeChild(s); } };
+  s.onerror = function(){ if(!done){ cb({ok:false, error:'network'}); try{ delete window[fn]; }catch(e){} if(s.parentNode) s.parentNode.removeChild(s); } };
+  var sep = GCAL_WEBHOOK_URL.indexOf('?') > -1 ? '&' : '?';
+  s.src = GCAL_WEBHOOK_URL + sep + "action=availability&date=" + encodeURIComponent(dateStr) + "&callback=" + fn;
+  document.body.appendChild(s);
+  setTimeout(function(){ if(!done){ s.onerror(); } }, 8000);
+}
+function onAvailDate(){ var st = document.getElementById('availStatus'); if(st){ st.className = "avail-status"; st.textContent = ""; } }
+function runAvailability(){
+  var d = document.getElementById('availDate').value;
+  var st = document.getElementById('availStatus');
+  if(!d){ st.className = "avail-status bad"; st.textContent = "Please pick a date first."; return; }
+  st.className = "avail-status wait"; st.textContent = "Checking " + d + "…";
+  checkAvailability(d, function(res){
+    if(res && res.unknown){ st.className="avail-status wait"; st.textContent="✓ Date noted — we'll confirm availability within a few hours."; syncBookingDate(d); return; }
+    if(!res || !res.ok){ st.className="avail-status wait"; st.textContent="Couldn't check live right now — add to cart and we'll confirm your date."; syncBookingDate(d); return; }
+    if(res.available){ st.className="avail-status ok"; st.textContent="✓ "+d+" is available! Add your experiences below."; syncBookingDate(d); }
+    else { st.className="avail-status bad"; st.textContent = res.closed ? "Sorry — "+d+" is unavailable. Please choose another date." : "Sorry — "+d+" is fully booked. Please choose another date."; }
+  });
+}
+function syncBookingDate(d){ var fd = document.getElementById('f_date'); if(fd && !fd.value) fd.value = d; }
+
+
 /* Show/hide fields based on what they're renting */
 function onRentalChange(){
   var r = currentRental();
@@ -613,28 +818,30 @@ function calcEstimate(){
   document.querySelectorAll('.addon-c:checked').forEach(function(c){
     addonTotal += parseInt(c.getAttribute('data-price'),10);
   });
+  var ct = (typeof cartTotal === "function") ? cartTotal() : 0;
 
   if(cfg.soon){
+    if(ct){ amtEl.textContent = "$"+ct; noteEl.textContent = "Cart subtotal · a $50 deposit reserves your date"; return; }
     amtEl.textContent = "Coming soon";
     noteEl.textContent = "Join the waitlist — we'll send pricing when it launches";
     return;
   }
   if(cfg.custom){
-    amtEl.textContent = "Custom quote";
+    amtEl.textContent = ct ? "$"+ct+"+" : "Custom quote";
     noteEl.textContent = "We'll build a tailored quote after you submit";
     return;
   }
   if(cfg.base !== undefined){
-    amtEl.textContent = "$" + (cfg.base + addonTotal);
+    amtEl.textContent = "$" + (cfg.base + addonTotal + ct);
     noteEl.textContent = "Estimated total · a $50 deposit reserves your date";
     return;
   }
   if(r === "Snack Bar"){
-    if(addonTotal === 0){
+    if(addonTotal === 0 && ct === 0){
       amtEl.textContent = "Pick a machine";
       noteEl.textContent = "Select popcorn, cotton candy or shaved ice below";
     } else {
-      amtEl.textContent = "$" + addonTotal;
+      amtEl.textContent = "$" + (addonTotal + ct);
       noteEl.textContent = "Estimated total · a $50 deposit reserves your date";
     }
     return;
@@ -648,7 +855,7 @@ function calcEstimate(){
   }
   var total = RENTAL[players] || 0;
   if(document.getElementById('f_service').value === "referee") total += REF[players] || 0;
-  total += addonTotal;
+  total += addonTotal + ct;
   amtEl.textContent = "$" + total;
   noteEl.textContent = "Estimated total · a $50 deposit reserves your date";
 }
@@ -664,6 +871,8 @@ function bookingSummary(){
   document.querySelectorAll('.addon-c:checked').forEach(function(c){ addons.push(c.value); });
   return {
     rental: r,
+    cart: cartNames().length ? cartNames().join(", ") : "None",
+    cartTotal: "$" + cartTotal(),
     name: val('f_name'), phone: val('f_phone'), email: val('f_email'), zip: val('f_zip'),
     date: val('f_date'), time: val('f_time'),
     players: isNerf ? playersMap[players] : "—",
@@ -680,7 +889,9 @@ function submitBooking(e){
   if(FORMSPREE_ID){
     var fd = new FormData(document.getElementById('bookForm'));
     fd.append("estimate", s.estimate);
-    fd.append("_subject", "New booking: " + s.rental + " — " + s.name + " (" + s.date + ")");
+    fd.append("cart", s.cart);
+    fd.append("cart_total", s.cartTotal);
+    fd.append("_subject", "New booking: " + (s.cart !== "None" ? s.cart : s.rental) + " — " + s.name + " (" + s.date + ")");
     fetch("https://formspree.io/f/" + FORMSPREE_ID, {
       method:"POST", headers:{"Accept":"application/json"},
       body: fd
@@ -710,7 +921,9 @@ function sendToCalendar(s){
 /* After a booking is captured: send them to pay the $50 Stripe deposit
    (if a Payment Link is set), otherwise just confirm. */
 function afterBooked(s){
-  document.getElementById('bookForm').reset(); calcEstimate();
+  document.getElementById('bookForm').reset();
+  try{ localStorage.removeItem('pp_cart'); }catch(e){}
+  renderCart(); calcEstimate();
   if(STRIPE_DEPOSIT_URL){
     var ref = (s.name + "_" + s.date).replace(/[^a-zA-Z0-9_-]/g,"").slice(0,180);
     var sep = STRIPE_DEPOSIT_URL.indexOf("?") > -1 ? "&" : "?";
@@ -728,7 +941,8 @@ function openEmail(s){
   var subject = "Party Booking Request — " + s.rental + " — " + s.name + " (" + s.date + ")";
   var body =
     "New booking request from The Party Porch website:%0D%0A%0D%0A" +
-    "Renting: " + enc(s.rental) + "%0D%0A" +
+    "Cart: " + enc(s.cart) + " (" + enc(s.cartTotal) + ")%0D%0A" +
+    "Main rental: " + enc(s.rental) + "%0D%0A" +
     "Name: " + enc(s.name) + "%0D%0A" +
     "Phone: " + enc(s.phone) + "%0D%0A" +
     "Email: " + enc(s.email) + "%0D%0A" +
@@ -747,13 +961,19 @@ function enc(t){ return encodeURIComponent(t || "—"); }
 /* Preselect the rental type from a ?exp= link (from the experience pages), then adapt the form. */
 (function(){
   try{
-    var exp = new URLSearchParams(location.search).get('exp');
+    var params = new URLSearchParams(location.search);
+    var exp = params.get('exp');
     if(exp){
       var sel = document.getElementById('f_rental');
       for(var i=0;i<sel.options.length;i++){
         if(sel.options[i].value === exp){ sel.selectedIndex = i; break; }
       }
     }
+    renderShop();
+    var add = params.get('add');
+    if(add && CATALOG[add] && !cartHas(add)){ var a=cartGet(); a.push(add); cartSet(a); }
+    renderCart();
+    if(add){ setTimeout(openCart, 300); }
   }catch(err){}
   onRentalChange();
 })();

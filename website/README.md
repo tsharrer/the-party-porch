@@ -105,3 +105,30 @@ Each page shows a 4-photo gallery. Replace the placeholders by dropping real pho
 The booking form adapts to the selected rental: Nerf shows player count + referee,
 Snack Bar prices by machine, coming-soon items show a waitlist message, and Custom
 requests a quote.
+
+## Add-to-cart shopping + real-time availability
+
+Modeled on how the big Houston rental sites work:
+
+- **Build your party** section (`#shop`) shows every experience as a product card
+  with an **Add to cart** button. Each experience page also has an "🛒 Add to cart"
+  button that deep-links back with `?add=<key>` and opens the cart.
+- The **cart** lives in the browser (`localStorage` key `pp_cart`), with a slide-in
+  drawer, a header button and a floating button showing the item count + subtotal.
+  Cart items flow into the booking form's order box, the estimate, the emailed/Formspree
+  order, and are cleared after a successful booking.
+- Catalog + prices are defined once in the `CATALOG` map in `index.html` — edit prices there.
+
+### Real-time date availability (Google Calendar)
+
+The **Check my date** picker asks your Google Apps Script whether a date is open:
+
+1. Deploy `google-calendar.gs` as a Web App (see the header comment in that file) and
+   paste the `/exec` URL into `GCAL_WEBHOOK_URL` in `index.html` **and** `index-wordpress.html`.
+2. The site calls `?action=availability&date=YYYY-MM-DD` via JSONP and shows
+   ✓ available / ✗ unavailable. **Until the URL is set, it gracefully falls back**
+   to "we'll confirm availability within a few hours."
+3. A date is reported **unavailable** when it already has `DAILY_CAPACITY` (default **2**)
+   "Party Porch" bookings, **or** you add an all-day calendar event whose title contains
+   `BLOCKED`, `CLOSED`, `UNAVAILABLE` or `VACATION` (your manual day-off). Change
+   `DAILY_CAPACITY` at the top of `google-calendar.gs`.
