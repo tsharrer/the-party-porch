@@ -135,6 +135,7 @@
   .hero .tag{display:inline-block;background:rgba(255,255,255,.14);color:#ffe;padding:6px 14px;border-radius:20px;
     font-weight:700;font-size:.85rem;margin-bottom:16px;letter-spacing:.3px}
   .hero p.lead{font-size:1.2rem;color:#d9e4ef;max-width:640px;margin:0 auto 26px}
+  .hero .promise{font-size:1.35rem;font-weight:800;color:#fff;margin:2px auto 14px;max-width:640px}
   .hero .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
   .trust{margin-top:22px;color:#aebfcf;font-size:.9rem}
 
@@ -161,6 +162,36 @@
   .perfect .p span{display:block;font-size:1.6rem;margin-bottom:4px}
   .perfect .p.soon{background:var(--cream);border-style:dashed}
   .tag-soon{display:inline-block;margin-top:8px;font-size:.66rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--coral-d);background:#fff;border:1px solid #ffd9cf;border-radius:999px;padding:2px 9px}
+
+  /* Experiences grid (image-forward tiles) */
+  .exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .exp{position:relative;border-radius:18px;overflow:hidden;color:#fff;min-height:210px;display:flex;flex-direction:column;justify-content:flex-end;
+    padding:22px;text-decoration:none;box-shadow:0 10px 26px rgba(18,38,58,.16);transition:transform .15s ease, box-shadow .15s ease}
+  .exp:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(18,38,58,.24)}
+  .exp .exp-emoji{position:absolute;top:16px;left:18px;font-size:2.6rem;filter:drop-shadow(0 3px 6px rgba(0,0,0,.25))}
+  .exp h3{color:#fff;margin:0 0 4px;font-size:1.28rem}
+  .exp p{color:rgba(255,255,255,.92);font-size:.9rem;margin:0;line-height:1.4}
+  .exp .badge{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.92);color:var(--navy);font-weight:800;font-size:.66rem;text-transform:uppercase;letter-spacing:.5px;padding:4px 10px;border-radius:999px}
+  .exp.avail .badge{background:var(--gold);color:var(--navy)}
+  .exp .go{display:inline-block;margin-top:10px;font-weight:800;font-size:.85rem;color:#fff}
+  @media(max-width:820px){.exp-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.exp-grid{grid-template-columns:1fr}}
+
+  /* Benefit / trust cards */
+  .benefits{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .benefit{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 18px;text-align:center}
+  .benefit .bi{font-size:2rem;display:block;margin-bottom:10px}
+  .benefit h3{font-size:1.02rem;margin:0 0 6px;color:var(--navy)}
+  .benefit p{font-size:.86rem;color:var(--muted);margin:0;line-height:1.45}
+  @media(max-width:820px){.benefits{grid-template-columns:1fr 1fr}}
+
+  /* Social follow strip */
+  .follow{background:var(--cream);text-align:center;padding:34px 18px}
+  .follow h2{margin:0 0 6px}
+  .follow .handles{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+  .follow .handles a{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;
+    padding:10px 18px;font-weight:800;color:var(--navy);text-decoration:none}
+  .follow .handles a:hover{border-color:var(--coral)}
 
   .alt-bg{background:#fff}
   table.price{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;
@@ -239,12 +270,58 @@
     <img class="hero-logo" src="assets/logo.png" alt="The Party Porch logo">
     <span class="tag">📍 Serving Greater Houston, Katy, Sugar Land, The Woodlands &amp; beyond</span>
     <h1>Mobile Nerf Battle Party Rentals in Houston</h1>
+    <p class="promise">🎉 We bring the party to you — you just bring the kids.</p>
     <p class="lead">The Party Porch brings the ultimate backyard Nerf war birthday party right to your door. We deliver the blasters, darts, safety gear and battlefield — you set it up and let the darts fly, or add a referee and we run the whole show. Parents get to sit back, relax and watch the fun.</p>
     <div class="cta-row">
       <a class="btn big" href="#book">🎯 Book Your Party</a>
       <a class="btn big alt" href="#pricing">See Pricing</a>
     </div>
     <div class="trust">12 players from <b>$180</b> · Delivery + pickup included · Easy online booking</div>
+  </div>
+</section>
+
+<section class="alt-bg">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Our experiences</div>
+      <h2>One porch, endless ways to party</h2>
+      <p>We're a full mobile party company for Greater Houston. Nerf battles are live now — with more all-inclusive experiences rolling out. Bundle them to build the perfect event.</p>
+    </div>
+    <div class="exp-grid">
+      <a class="exp avail" href="#book" style="background:linear-gradient(150deg,#1b3652,#ff5a5f)">
+        <span class="exp-emoji">🎯</span><span class="badge">Available now</span>
+        <h3>Nerf Battles</h3>
+        <p>Blasters, darts, safety gear &amp; inflatable bunkers delivered to your yard. Add a referee to run the games.</p>
+        <span class="go">Book now →</span>
+      </a>
+      <a class="exp avail" href="#pricing" style="background:linear-gradient(150deg,#e04347,#ffb703)">
+        <span class="exp-emoji">🍿</span><span class="badge">Add-on</span>
+        <h3>Snack Bar</h3>
+        <p>Fresh popcorn machine that keeps the whole crew fueled. Add it to any party for +$69.</p>
+        <span class="go">Add to your party →</span>
+      </a>
+      <div class="exp" style="background:linear-gradient(150deg,#7a5cff,#b06ab3)">
+        <span class="exp-emoji">📸</span><span class="badge">Coming soon</span>
+        <h3>Photo Booth</h3>
+        <p>Props, prints &amp; instant memories — a hit with kids and parents alike.</p>
+      </div>
+      <div class="exp" style="background:linear-gradient(150deg,#ff7eb3,#ff5a5f)">
+        <span class="exp-emoji">🌸</span><span class="badge">Coming soon</span>
+        <h3>Flower Backdrop</h3>
+        <p>A gorgeous floral wall for photos, dessert tables &amp; that perfect party moment.</p>
+      </div>
+      <div class="exp" style="background:linear-gradient(150deg,#00b4d8,#0077b6)">
+        <span class="exp-emoji">💦</span><span class="badge">Coming soon</span>
+        <h3>Water &amp; Gel Battles</h3>
+        <p>Beat the Houston heat with a splashy summer showdown for all ages.</p>
+      </div>
+      <a class="exp" href="#book" style="background:linear-gradient(150deg,#1b3652,#12263a)">
+        <span class="exp-emoji">🎉</span><span class="badge">Bundle &amp; save</span>
+        <h3>Custom Packages</h3>
+        <p>Mix experiences into one unforgettable event. Big group? We'll build a custom quote.</p>
+        <span class="go">Ask us →</span>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -294,6 +371,22 @@
       <div class="p"><span>🏘️</span>HOA &amp; block parties</div>
       <div class="p"><span>💼</span>Corporate team building</div>
       <div class="p"><span>🎉</span>Neighborhood get-togethers</div>
+    </div>
+  </div>
+</section>
+
+<section class="alt-bg">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Why families choose us</div>
+      <h2>All the fun, none of the hassle</h2>
+      <p>We handle the gear, the setup and the cleanup so you can actually enjoy the party.</p>
+    </div>
+    <div class="benefits">
+      <div class="benefit"><span class="bi">🚚</span><h3>We come to you</h3><p>Delivery, setup and pickup are included — right to your backyard, park or venue.</p></div>
+      <div class="benefit"><span class="bi">🛡️</span><h3>Safety first</h3><p>Safety glasses for everyone and an optional trained host to run every game.</p></div>
+      <div class="benefit"><span class="bi">⭐</span><h3>All-inclusive</h3><p>One simple price covers the blasters, darts, gear and battlefield. No surprises.</p></div>
+      <div class="benefit"><span class="bi">📆</span><h3>Book in minutes</h3><p>Reserve online, pay a $50 deposit, and your date is locked in. Easy.</p></div>
     </div>
   </div>
 </section>
@@ -410,22 +503,6 @@
 <section>
   <div class="wrap">
     <div class="section-head">
-      <div class="kicker" style="color:var(--gold)">More on the way</div>
-      <h2>The Party Porch is just getting started</h2>
-      <p>Nerf battles are our first act. We're rolling out more ways to make your Houston event unforgettable — ask us when you book and you'll be first to know.</p>
-    </div>
-    <div class="perfect">
-      <div class="p soon"><span>📸</span>Photo Booth<div class="tag-soon">Coming soon</div></div>
-      <div class="p soon"><span>🌸</span>Flower Backdrop<div class="tag-soon">Coming soon</div></div>
-      <div class="p soon"><span>💦</span>Water &amp; Gel Battles<div class="tag-soon">Coming soon</div></div>
-    </div>
-    <p class="note" style="text-align:center;margin-top:18px">Want one of these at your party? <a href="#book">Mention it when you book</a> — we'll let you know the moment it launches.</p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="section-head">
       <div class="kicker">Good to know</div>
       <h2>Nerf party FAQ</h2>
     </div>
@@ -436,6 +513,18 @@
     <details><summary>What if it rains?</summary><p>No problem — reschedule with 48 hours' notice and your deposit transfers to your new date.</p></details>
     <details><summary>How far in advance should I book?</summary><p>We recommend booking 3–4 weeks ahead to secure your preferred date, especially for weekend parties in spring and fall when dates fill fast. Need something sooner? Ask us — we'll do our best.</p></details>
     <details><summary>How do I reserve my date?</summary><p>Submit the booking form above. We'll confirm availability and send a simple invoice — a $50 deposit locks in your date, with the balance due the day of the party.</p></details>
+  </div>
+</section>
+
+<section class="follow">
+  <div class="wrap">
+    <div class="kicker" style="color:var(--coral-d)">Follow the fun</div>
+    <h2>See real Houston parties on our feed</h2>
+    <p style="color:var(--muted);max-width:520px;margin:6px auto 0">Tag us in your party pics and follow along for game ideas, behind-the-scenes and booking drops.</p>
+    <div class="handles">
+      <a href="https://instagram.com/yourpartyporch" target="_blank" rel="noopener">📸 @yourpartyporch</a>
+      <a href="https://tiktok.com/@yourpartyporch" target="_blank" rel="noopener">🎵 @yourpartyporch</a>
+    </div>
   </div>
 </section>
 
