@@ -37,7 +37,7 @@ captions, trending audio. Film once, cut into a Reel + TikTok + Short + 3 Storie
 ### 7 · What's Included
 > HOOK: "Here's exactly what you get when you book us."
 > CUTS: blasters → darts → safety glasses → obstacles → "and a host who runs every game."
-> CTA: "Standard party, up to 14 kids. DM 'BATTLE'."
+> CTA: "Pick your level: Drop & Go, We Set Up, or Full Service. DM 'BATTLE'."
 
 ### 8 · Founding Family Offer
 > HOOK: "We're brand new — so our first 5 families get a deal."
