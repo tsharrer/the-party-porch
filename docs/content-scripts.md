@@ -37,11 +37,11 @@ captions, trending audio. Film once, cut into a Reel + TikTok + Short + 3 Storie
 ### 7 · What's Included
 > HOOK: "Here's exactly what you get when you book us."
 > CUTS: blasters → darts → safety glasses → obstacles → "and a host who runs every game."
-> CTA: "Pick your level: Drop & Go, We Set Up, or Full Service. DM 'BATTLE'."
+> CTA: "Rental $180, or add a referee to run it. DM 'BATTLE'."
 
 ### 8 · Founding Family Offer
 > HOOK: "We're brand new — so our first 5 families get a deal."
-> VO: "Founding Family price: full Nerf war party for $149. All I ask is an honest review."
+> VO: "Founding Family deal: book the rental and we'll throw in the referee FREE. All I ask is an honest review."
 > CTA: "Only 5 spots. Comment 'BATTLE' to claim one."
 
 ### 9 · Halloween Zombie Battle Teaser

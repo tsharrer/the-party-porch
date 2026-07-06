@@ -1,61 +1,76 @@
-# Pricing & Packages (Houston — service-ladder undercut)
+# Pricing & Packages (Rental + Referee matrix)
 
-**Our edge:** most Houston rivals sell one expensive hosted package. We sell **three service
-levels** so families pay only for what they want — and we're the cheapest at every level.
-Penetration pricing to win reviews now; step each tier up ~$20–40 in 2027 as the brand builds.
+**How it works:** the base is a **rental** — we deliver the gear, the family sets it up and
+runs it. If they want it hands-off, they **add a referee** (our host) to run the games and
+handle safety. Price scales by **player count**, so small parties stay cheap and big parties
+pay their way.
 
-## Service ladder (base: up to 12 kids, ~2 hrs, all gear: blasters, darts, glasses, bunkers)
-| Tier | What we do | Price |
-|------|-----------|-------|
-| **1 · Drop & Go** | We deliver + pick up. You set up & run it. | **$119** |
-| **2 · We Set Up** ⭐ | We deliver, build the battlefield + tear down/pick up. You run the games. | **$169** |
-| **3 · Full Service** | We deliver, set up, a host runs every game + safety, then clean up. | **$219** |
+## Base (up to 12 players, ~2 hrs, all gear)
+| Option | Price |
+|--------|-------|
+| **Rental** — we deliver, you set up & run | **$180** |
+| **+ Referee** — our host runs every game + safety | **+$100** |
 
-- **Self-pickup** (you grab & return the gear, no delivery): **−$25** off any tier.
-- Base covers up to 12 players; scale up with the extra-players modifier.
+Gear included: blasters, darts, safety glasses, bunkers/obstacles. Delivery + pickup included
+within 15 miles.
+
+## Player-count matrix
+| Players | Rental | + Referee(s) | Full (rental + refs) |
+|---------|--------|--------------|----------------------|
+| Up to 12 | $180 | +$100 (1 ref) | **$280** |
+| 13–18 | $220 | +$100 (1 ref) | **$320** |
+| 19–24 | $260 | +$200 (2 refs) | **$460** |
+| 25–30 | $300 | +$200 (2 refs) | **$500** |
+| 31–36 | $340 | +$300 (3 refs) | **$640** |
+
+- **Rental** scales +$40 per 6 extra players ($180 → $220 → $260 → $300 → $340).
+- **Referee** is $100 each; we staff ~1 referee per 12 kids for safe, fast-moving games.
 
 ## Houston competitor benchmark
-| Company | DIY / drop-off | Hosted |
-|---------|----------------|--------|
+| Company | Rental / DIY | Hosted |
+|---------|--------------|--------|
 | Yard Wars | $245 | $395 |
 | Texas Premier | $325 | $390 |
 | Have Several Seats | $300+ | $500 |
 | Battlefield Houston | — | $349 |
 | Epik Fun (Sugar Land) | quote (deliver+setup incl.) | + host add-on |
-| FunHQ (national) | $149 (10 players) | — |
-| **The Party Porch** ⭐ | **$119** | **$219** |
+| **The Party Porch** ⭐ | **$180** | **$280** (12 players, 1 ref) |
 
-*We undercut DIY by ~$125+ and hosted by ~$130+. Sources: company sites, July 2026.*
+*We undercut on both the rental AND the fully-hosted (rental + referee) price at the 12-player
+base. Sources: company sites, July 2026.*
 
-## Modifiers & add-ons
+## Add-ons
 | Item | Price |
 |------|-------|
-| Extra 5 players | +$25 |
+| We set up + tear down (skip DIY setup) | +$40 |
 | Extra hour | +$40 |
 | Glow / Night battle | +$79 |
 | The Snack Bar (per machine) | +$69 |
 | The Booth (photo booth) | +$99 |
 | The Backdrop (flower/balloon wall) | +$79 |
+| Self-pickup (you grab & return gear) | −$25 |
 | Delivery beyond 15 mi | $2/mi |
 
 **Delivery differentiator:** free within 15 miles. (Epik Fun charges $3/mi past just 10 mi.)
 
-## Bundles (anchor on Full Service)
+## Bundles (anchor on rental + referee)
 | Bundle | Price |
 |--------|-------|
-| Full Service + Snack Bar | $279 |
-| Party Pack (Full Service + Booth + 1 snack + Backdrop) | $429 |
-| Ultimate (+ 360 booth, flower wall, uplighting) | $649+ |
+| Battle + Snack Bar (12 players, 1 ref) | $340 |
+| Party Pack (+ Booth + 1 snack + Backdrop) | $489 |
+| Ultimate (+ 360 booth, flower wall, uplighting) | $699+ |
 
-## Per-tier economics
-| Tier | Price | Cost (gas+wear+labor) | Net | Labor |
-|------|-------|-----------------------|-----|-------|
-| Drop & Go | $119 | ~$30 | ~$90 | tiny (deliver+pickup) |
-| We Set Up | $169 | ~$55 | ~$115 | ~1 hr |
-| Full Service | $219 | ~$90 | ~$130 | ~2.5 hr |
+## Economics (12-player base)
+| Option | Price | Cost (gas+wear+labor) | Net | Labor |
+|--------|-------|-----------------------|-----|-------|
+| Rental only | $180 | ~$30 | ~$150 | drop/pickup |
+| + 1 Referee | $280 | ~$70 | ~$210 | ~2.5 hr |
+| 24-player + 2 refs | $460 | ~$130 | ~$330 | ~2.5 hr ×2 |
 
-The **Drop & Go** tier is the volume engine — almost no labor, so one person/crew can run
-several a day. Full Service + add-ons carries the margin. Snack Bar add-on is ~90% margin.
+The **rental** carries a fat margin with almost no labor — it's the volume engine. Each
+**referee** and player-count step layers high margin on top. The Snack Bar add-on is ~90% margin.
+Referees double as your paid crew: each hired ref lets you run more parties in parallel while
+you keep the rental margin.
 
 ## Booking terms
 - **$50 deposit** reserves the date (applied to total).
@@ -64,15 +79,16 @@ several a day. Full Service + add-ons carries the margin. Snack Bar add-on is ~9
 - Waiver signed at booking; eye protection required (we provide it).
 
 ## Founding Family launch offer (Aug–Sep 2026)
-First 5–10 **Full Service** parties at **$149** in exchange for a review + permission to film.
+First 5–10 parties get the **referee free** (rental + host at the rental price) in exchange for
+a review + permission to film.
 
 ## Pricing strategy notes
-- **Why undercut + tier:** you're new with no reviews. Being the clear value pick AND the
-  flexible option (DIY → hosted) wins the first wave of bookings + footage fast.
-- **Step-up plan:** once you have ~20 five-star reviews and steady demand (Phase 2, 2027),
-  raise each tier ~$20–40. Grandfather repeat customers.
-- **Protect margin** via add-ons/bundles rather than racing to the bottom on the base price.
+- **Why rental + referee:** keeps the entry price low and honest (families who want to run it
+  themselves save money), while the referee upsell + player-count scaling + add-ons carry margin.
+- **Step-up plan:** once you have ~20 five-star reviews and steady demand (Phase 2, 2027), raise
+  each row ~$20–40. Grandfather repeat customers.
+- **Protect margin** via referees, player-count scaling, and add-ons/bundles.
 
 ## Targets
-- Blended launch average ticket: **~$200** → **~$320** with add-ons/bundles.
-- Blended net/party: ~$90–160 depending on tier + add-ons (rises as prices normalize).
+- Blended launch average ticket: **~$240–280** (most bookings attach a referee or add-ons).
+- Blended net/party: ~$150 (rental only) to ~$330 (big party + refs + add-ons).

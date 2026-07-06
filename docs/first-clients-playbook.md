@@ -18,8 +18,8 @@ You need footage and reviews more than money right now. Trade parties for conten
 ---
 
 ## Stage 2: The First 10 (paid, discounted) — Founding Family offer
-- Offer the **first 5–10 paid Full Service parties at $149** (normally $219) labeled
-  "Founding Family — Fall 2026." Scarcity + a deal + social proof from Stage 1.
+- Offer the **first 5–10 paid parties with the referee FREE** (rental + our host for the
+  rental price, e.g. $180 instead of $280 at 12 players) labeled "Founding Family — Fall 2026."
 - Promote in: local FB parent groups, Nextdoor, Marketplace, your Stories with a countdown.
 - Every one of these = more reviews and footage → makes full-price sales easy.
 
@@ -34,8 +34,8 @@ Once you have ~10 reviews + a content bank, the flywheel spins: content → inqu
 ## The inquiry → booking conversion flow
 1. **Respond fast** (< 1 hour). Speed wins party bookings.
 2. **Ask 4 questions:** date, child's age, # of kids, location (to confirm you serve the area).
-3. **Show the 3 tiers, recommend "We Set Up" or "Full Service"** + one add-on (anchor on the
-   hosted tier — they can step down to a cheaper service level instead of walking away).
+3. **Quote the rental, then upsell the referee** + one add-on (anchor on the full experience;
+   families who want to run it themselves keep the rental).
 4. **Send the booking link / form** + a photo or 15-sec video so they can visualize it.
 5. **Secure with a deposit** ($50–100 non-refundable) via Stripe/Square/Venmo — this is the
    difference between an inquiry and a booking. No deposit = not booked.
@@ -55,9 +55,10 @@ Once you have ~10 reviews + a content bank, the flywheel spins: content → inqu
 **Inquiry response:**
 > Hi [name]! So excited to help make [child]'s birthday awesome! 🎉 A few quick questions so
 > I can get you the perfect setup: 1) What date are you thinking? 2) How old is the birthday
-> star? 3) About how many kids? 4) What area are you in? We have 3 options: Drop & Go ($119,
-> we deliver + pick up, you run it), We Set Up ($169, we build it, you run the games), or Full
-> Service ($219, our host runs everything). Most families love Full Service — want me to hold your date?
+> star? 3) About how many kids? 4) What area are you in? It's simple: the rental is $180 (up
+> to 12 kids — we deliver the gear, you set up & run it), and you can add a referee for +$100
+> to have our host run every game + safety. Bigger group? Price scales by headcount. Want me to
+> hold your date?
 
 **Deposit ask:**
 > Awesome, [date] is available! To lock it in I take a $50 deposit (goes toward your total).

@@ -2,41 +2,42 @@
 
 > Directional model, not a guarantee. Update with real numbers monthly.
 
-## Per-party economics (Houston service-ladder undercut)
-- Three tiers: Drop & Go **$119** · We Set Up **$169** · Full Service **$219**
-- Launch blended average ticket: **~$200** (with add-ons/bundles → **~$320**)
-- Variable cost/party: **~$30** (Drop & Go, deliver+pickup only) to **~$90** (Full Service)
-- **Net profit/party: ~$90 (DIY) to ~$130 (Full Service)**, higher with add-ons
+## Per-party economics (rental + referee matrix)
+- Base (up to 12 players): **Rental $180** (you set up) · **+ Referee $100** (our host runs it)
+- Scales by player count: rental +$40 per 6 players; referee $100 each (~1 per 12 kids)
+- Launch blended average ticket: **~$240–280** (most bookings attach a referee or add-ons)
+- Variable cost/party: **~$30** (rental only) to **~$130** (big party + 2 refs)
+- **Net profit/party: ~$150 (rental only) to ~$330 (big party + refs + add-ons)**
 
-| Tier | Price | Cost | Net | Labor |
-|------|-------|------|-----|-------|
-| Drop & Go | $119 | ~$30 | ~$90 | tiny |
-| We Set Up | $169 | ~$55 | ~$115 | ~1 hr |
-| Full Service | $219 | ~$90 | ~$130 | ~2.5 hr |
+| Option | Price | Cost | Net | Labor |
+|--------|-------|------|-----|-------|
+| Rental only (12) | $180 | ~$30 | ~$150 | drop/pickup |
+| + 1 Referee (12) | $280 | ~$70 | ~$210 | ~2.5 hr |
+| 24-player + 2 refs | $460 | ~$130 | ~$330 | ~2.5 hr ×2 |
 
-> **Undercut strategy:** we price below Houston's competitors at every service level to win the
-> first wave of reviews/footage, then step each tier up ~$20–40 in 2027 and lean on high-margin
-> add-ons (Snack Bar ~90%) / bundles to protect margin.
+> **Strategy:** the rental keeps the entry price low and honest; the referee upsell +
+> player-count scaling + add-ons (Snack Bar ~90%) carry the margin. Step each row up ~$20–40 in
+> 2027 as reviews build. Referees double as your paid crew for running parties in parallel.
 
 ## The $10k/month target
 | Metric | Value |
 |--------|-------|
-| Parties/month | ~50 (launch pricing) → fewer as add-on attach + 2027 step-up raise avg ticket |
-| Net profit/party | ~$200 blended (tier + add-ons) |
+| Parties/month | ~42 (launch pricing) → fewer as add-on attach + 2027 step-up raise avg ticket |
+| Net profit/party | ~$240 blended (rental + referee/add-ons) |
 | **Net/month** | **~$10,000** |
-| Spread | high-volume DIY tiers + Full Service across 2–3 kits + crews + weekday events |
+| Spread | rentals + hosted parties across 2–3 kits + hired referees + weekday events |
 
-**Biggest lever:** the near-zero-labor Drop & Go tier makes high volume realistic; add-ons +
-the 2027 price step-up then lift blended net/party so you're not grinding forever.
+**Biggest lever:** the near-zero-labor rental is the volume engine; the referee upsell + the
+2027 price step-up lift blended net/party so you're not grinding forever.
 
 ## Month-by-month ramp (directional)
 | Phase | Window | Parties/mo | Avg ticket | Net/mo |
 |-------|--------|-----------|-----------|--------|
-| 0 Launch | Sep '26 | 3–6 | $170 | ~$0–1k |
-| 1 Validate | Oct–Dec '26 | 8–14 | $190 | ~$1–3k |
-| 2 Add-ons + Hire | Jan–May '27 | 18–26 | $230 | ~$3–6k |
-| 3 Crews | Jun–Oct '27 | 30–40 | $260 | ~$6–8k |
-| 4 Scale | Nov '27–Mar '28 | 45–55 | $290–320 | **$10k+** |
+| 0 Launch | Sep '26 | 3–6 | $220 | ~$0–1k |
+| 1 Validate | Oct–Dec '26 | 8–12 | $250 | ~$1–3k |
+| 2 Add-ons + Hire | Jan–May '27 | 14–22 | $260 | ~$3–6k |
+| 3 Crews | Jun–Oct '27 | 24–34 | $270 | ~$6–8k |
+| 4 Scale | Nov '27–Mar '28 | 38–46 | $280–300 | **$10k+** |
 
 ## Startup + operating costs
 | Item | Cost |

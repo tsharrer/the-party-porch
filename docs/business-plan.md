@@ -37,38 +37,47 @@ SEO/listing line: *"Nerf war parties, photo booths, snack bars & party rentals �
 ## Unit Economics
 
 **Core product:** mobile Nerf war party (up to 12 kids, ~2 hr). All gear included.
-**Houston strategy:** a **3-tier service ladder** that undercuts every rival at every level
-— families pay only for what they want (DIY drop-off → fully hosted). Competitors
-(Yard Wars $245/$395, Texas Premier $325/$390, Have Several Seats $300/$500, Battlefield
-Houston $349, Epik Fun) mostly sell one pricey package. Penetration pricing now → step each
-tier up ~$20–40 in 2027 as reviews build.
+**Houston strategy:** a **rental + referee matrix** that scales by player count. Base is a
+rental (we deliver, family sets up & runs); families add a referee (our host) to run the games.
+Undercuts rivals on both the rental AND the fully-hosted price (Yard Wars $245/$395, Texas
+Premier $325/$390, Have Several Seats $300/$500, Battlefield Houston $349, Epik Fun). Step each
+row up ~$20–40 in 2027 as reviews build.
 
-| Tier | What we do | Price |
-|------|-----------|-------|
-| 1 · Drop & Go | We deliver + pick up; you set up & run | $119 |
-| 2 · We Set Up | We deliver, build + tear down/pick up; you run games | $169 |
-| 3 · Full Service | We deliver, set up, host runs games + safety, clean up | $219 |
-| Modifier: self-pickup | −$25 any tier |  |
-| Add-on: extra 5 players | +$25 |  |
-| Add-on: extra hour | +$40 |  |
-| Add-on: Glow/Night battle | +$79 |  |
-| Add-on: The Booth | +$99 |  |
-| Add-on: The Backdrop | +$79 |  |
-| Add-on: The Snack Bar (per machine) | +$69 |  |
-| Delivery beyond 15 mi | $2/mi |  |
+| Players | Rental (you set up) | + Referee(s) | Full |
+|---------|--------------------|--------------|------|
+| Up to 12 | $180 | +$100 (1) | $280 |
+| 13–18 | $220 | +$100 (1) | $320 |
+| 19–24 | $260 | +$200 (2) | $460 |
+| 25–30 | $300 | +$200 (2) | $500 |
+| 31–36 | $340 | +$300 (3) | $640 |
 
-- **Launch blended avg ticket:** ~$200 → ~$320 with add-ons/bundles
-- **Variable cost/party:** ~$30 (Drop & Go) to ~$90 (Full Service) — gas, dart wear, labor
-- **Net profit/party:** ~$90 (DIY) to ~$130 (Full Service), higher with add-ons
+Rental +$40 per 6 extra players; referee $100 each (~1 per 12 kids).
+
+| Add-on | Price |
+|--------|-------|
+| We set up + tear down | +$40 |
+| Extra hour | +$40 |
+| Glow/Night battle | +$79 |
+| The Booth | +$99 |
+| The Backdrop | +$79 |
+| The Snack Bar (per machine) | +$69 |
+| Self-pickup | −$25 |
+| Delivery beyond 15 mi | $2/mi |
+
+- **Launch blended avg ticket:** ~$240–280 (most attach a referee or add-ons)
+- **Variable cost/party:** ~$30 (rental only) to ~$130 (big party + refs) — gas, dart wear, referee labor
+- **Net profit/party:** ~$150 (rental only) to ~$330 (big party + refs + add-ons)
 
 ### Path to $10k/month NET
-- ~**50 parties/month** at ~$200 net blended, OR fewer as add-on attach + the 2027 price
+- ~**42 parties/month** at ~$240 net blended, OR fewer as add-on attach + the 2027 price
   step-up raise the average ticket. Reality is a mix.
-- The **Drop & Go** tier has near-zero labor, so it's the volume engine that makes ~50/mo
-  realistic across 2–3 kits + crews (not solo).
+- The **rental** carries a fat margin with near-zero labor — it's the volume engine; the
+  **referee** upsell + player-count scaling layer margin on top.
+- Referees double as your paid crew: each hired ref lets you run more parties in parallel while
+  you keep the rental margin.
 - Weekday revenue (schools, camps, church/community, corporate) fills the gap.
-- **Biggest lever:** cheap flexible tiers win reviews + volume early, then add-ons/bundles +
-  the price step-up lift net/party without losing bookings.
+- **Biggest lever:** attach a referee (or add-ons) to most bookings, then the 2027 price
+  step-up lifts net/party without losing volume.
 
 ---
 
@@ -111,7 +120,7 @@ Green light if: **payback ≤ 4 rentals, low labor, fits in the van, cross-sells
 
 | Product | Upfront | Charge/event | Payback | Verdict |
 |---------|---------|--------------|---------|---------|
-| Nerf war battle (core) | $600 | $119–219 | 3 | ✅ START |
+| Nerf war battle (core) | $600 | $180–640 | 3 | ✅ START |
 | Balloon/flower backdrop | $150–250 | +$125 | 2 | ✅ P2 |
 | Popcorn machine | ~$200 | +$100 | 2 | ✅ P1 |
 | Cotton candy | ~$250 | +$100 | 3 | ✅ P2 |
@@ -125,10 +134,10 @@ Green light if: **payback ≤ 4 rentals, low labor, fits in the van, cross-sells
 | Chairs & tables | — | — | — | ❌ EXCLUDED |
 
 ## Bundling Ladder (drives average order value)
-- **Full Service Battle** — $219
-- **Full Service + Snack Bar** — $279
-- **Party Pack** = Full Service + Booth + 1 snack + Backdrop — $429
-- **Ultimate** = Full Service + 360 booth + Snack Bar + flower wall + uplighting — $649+
+- **Rental + Referee** (12 players) — $280
+- **Battle + Snack Bar** (12 players, 1 ref) — $340
+- **Party Pack** = + Booth + 1 snack + Backdrop — $489
+- **Ultimate** = + 360 booth + flower wall + uplighting — $699+
 
 ## Risk / Watch-outs
 - **Trademark:** "Nerf" only in descriptive copy, never the brand.

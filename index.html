@@ -132,7 +132,7 @@ const TRACKER = [
     {id:"a1", t:'Announce "Now booking Fall parties!" everywhere', tags:["mkt"]},
     {id:"a2", t:"Post in 10+ local Facebook parent/community groups", tags:["mkt"]},
     {id:"a3", t:"List on Nextdoor + Facebook Marketplace"},
-    {id:"a4", t:"Launch Founding Family offer: first 5 parties $149", tags:["mkt"]},
+    {id:"a4", t:"Launch Founding Family offer: first 5 parties get the referee free", tags:["mkt"]},
     {id:"a5", t:"Buy popcorn machine (~$200) → launch The Snack Bar", tags:["spend"]},
     {id:"a6", t:"Create pricing one-pager + shareable booking link"},
     {id:"a7", t:"DM 3 local micro-influencer moms (free party for a post)", tags:["mkt"]},
@@ -258,12 +258,12 @@ CONTENT.Clients = `
 <li>Each = 5+ clips, 3+ photos, 1 review, 1 testimonial</li>
 </ul></div>
 <div class="card"><h3>🔟 First 10 (paid, discounted)</h3>
-<p class="muted">First 5–10 paid parties at <b>$149</b> labeled "Founding Family — Fall 2026." Scarcity + deal + social proof.</p></div>
+<p class="muted">First 5–10 paid parties get the <b>referee FREE</b> (rental + host at rental price) labeled "Founding Family — Fall 2026." Scarcity + deal + social proof.</p></div>
 <div class="card"><h3>⚡ Inquiry → booking flow</h3>
 <ul class="clean">
 <li>Respond in &lt; 1 hour (speed wins)</li>
 <li>Ask: date, child's age, # kids, location</li>
-<li>Recommend Standard + 1 add-on (anchor high)</li>
+<li>Quote the rental, upsell the referee + 1 add-on</li>
 <li>Send booking link + a photo/video</li>
 <li><b>Secure with $50 deposit</b> — no deposit = not booked</li>
 <li>Confirm details 3 days before</li>
@@ -299,63 +299,72 @@ CONTENT.Shopping = `
 </ul></div>`;
 
 CONTENT.Pricing = `
-<h2 class="section">Pricing — Pay For What You Want</h2>
-<div class="tip">💥 <b>Our edge: 3 service levels.</b> Most Houston rivals only sell one expensive hosted package. We let families choose — DIY drop-off (cheapest) up to fully hosted — so we're the best value at every level.</div>
-<div class="card"><h3>🎚️ Service ladder (base: up to 12 kids, ~2 hrs, all gear)</h3>
+<h2 class="section">Pricing — Rental + Referee Matrix</h2>
+<div class="tip">💥 <b>How it works:</b> start with the <b>rental</b> (we deliver the gear, you set it up & run it). Want it hands-off? Add a <b>referee</b> to run the games + safety. Price scales by <b>player count</b> — so a small party stays cheap and big parties pay their way.</div>
+<div class="card"><h3>🎯 Base (up to 12 players, ~2 hrs, all gear)</h3>
 <table>
-<tr><th>Tier</th><th>What we do</th><th>Price</th></tr>
-<tr><td><b>1 · Drop & Go</b></td><td>We deliver + pick up. You set up & run it.</td><td><b>$119</b></td></tr>
-<tr><td><b>2 · We Set Up</b> ⭐</td><td>We deliver, build the battlefield + tear down/pick up. You run the games.</td><td><b>$169</b></td></tr>
-<tr><td><b>3 · Full Service</b></td><td>We deliver, set up, a host runs every game + safety, then clean up.</td><td><b>$219</b></td></tr>
+<tr><td><b>Rental</b> — we deliver, you set up & run</td><td><b>$180</b></td></tr>
+<tr><td><b>+ Referee</b> — our host runs every game + safety</td><td><b>+$100</b></td></tr>
 </table>
-<p class="muted" style="font-size:12px">Self-pickup (you grab & return the gear): <b>−$25</b> off any tier.</p></div>
+<p class="muted" style="font-size:12px">Gear = blasters, darts, safety glasses, bunkers/obstacles. Delivery + pickup included within 15 mi.</p></div>
+<div class="card"><h3>📊 Player-count matrix</h3>
+<table>
+<tr><th>Players</th><th>Rental</th><th>+ Referee(s)</th><th>Full (rental + refs)</th></tr>
+<tr><td>Up to 12</td><td>$180</td><td>+$100 (1)</td><td><b>$280</b></td></tr>
+<tr><td>13–18</td><td>$220</td><td>+$100 (1)</td><td><b>$320</b></td></tr>
+<tr><td>19–24</td><td>$260</td><td>+$200 (2)</td><td><b>$460</b></td></tr>
+<tr><td>25–30</td><td>$300</td><td>+$200 (2)</td><td><b>$500</b></td></tr>
+<tr><td>31–36</td><td>$340</td><td>+$300 (3)</td><td><b>$640</b></td></tr>
+</table>
+<p class="muted" style="font-size:12px">Rental +$40 per 6 extra players. Referee $100 each — we staff ~1 per 12 kids for safe, fast-moving games.</p></div>
 <div class="card"><h3>🥊 vs. Houston competitors</h3>
 <table>
-<tr><th>Company</th><th>DIY</th><th>Hosted</th></tr>
+<tr><th>Company</th><th>Rental/DIY</th><th>Hosted</th></tr>
 <tr><td>Yard Wars</td><td>$245</td><td>$395</td></tr>
 <tr><td>Texas Premier</td><td>$325</td><td>$390</td></tr>
 <tr><td>Have Several Seats</td><td>$300+</td><td>$500</td></tr>
 <tr><td>Battlefield Houston</td><td>—</td><td>$349</td></tr>
 <tr><td>Epik Fun</td><td>quote</td><td>+host</td></tr>
-<tr><td><b>The Party Porch</b> ⭐</td><td><b>$119</b></td><td><b>$219</b></td></tr>
+<tr><td><b>The Party Porch</b> ⭐</td><td><b>$180</b></td><td><b>$280</b></td></tr>
 </table>
-<p class="muted" style="font-size:12px">We undercut DIY by ~$125+ and hosted by ~$130+.</p></div>
-<div class="card"><h3>➕ Modifiers & add-ons</h3>
+<p class="muted" style="font-size:12px">Undercut on rental AND fully-hosted at the 12-player base.</p></div>
+<div class="card"><h3>➕ Add-ons</h3>
 <table>
-<tr><td>Extra 5 players</td><td>+$25</td></tr>
+<tr><td>We set up + tear down (skip DIY)</td><td>+$40</td></tr>
 <tr><td>Extra hour</td><td>+$40</td></tr>
 <tr><td>Glow / Night battle</td><td>+$79</td></tr>
 <tr><td>The Snack Bar (per machine)</td><td>+$69</td></tr>
 <tr><td>The Booth (photo booth)</td><td>+$99</td></tr>
 <tr><td>The Backdrop</td><td>+$79</td></tr>
+<tr><td>Self-pickup (you grab & return gear)</td><td>−$25</td></tr>
 <tr><td>Delivery beyond 15 mi</td><td>$2/mi</td></tr>
 </table>
 <p class="muted" style="font-size:12px">Free delivery within 15 mi (Epik Fun charges $3/mi past just 10 mi).</p></div>
-<div class="card"><h3>📦 Bundles (anchor on Full Service)</h3>
+<div class="card"><h3>📦 Bundles (anchor on rental + referee)</h3>
 <table>
-<tr><td>Full Service + Snack Bar</td><td>$279</td></tr>
-<tr><td>Party Pack (Full Service + Booth + snack + Backdrop)</td><td>$429</td></tr>
-<tr><td>Ultimate (+360 booth, flower wall, uplighting)</td><td>$649+</td></tr>
+<tr><td>Battle + Snack Bar (12 players, 1 ref)</td><td>$340</td></tr>
+<tr><td>Party Pack (+ Booth + snack + Backdrop)</td><td>$489</td></tr>
+<tr><td>Ultimate (+360 booth, flower wall, uplighting)</td><td>$699+</td></tr>
 </table></div>
-<div class="warn">🚀 <b>Founding Family launch offer:</b> first 5–10 Full Service parties at <b>$149</b> for reviews + footage.</div>
-<div class="tip">Deposit: $50 to reserve. <b>Penetration pricing:</b> undercut now to win reviews & market share, then step each tier up ~$20–40 in 2027 as your brand builds. Blended avg ticket ~$200 → ~$320 with add-ons/bundles.</div>`;
+<div class="warn">🚀 <b>Founding Family launch offer:</b> first 5–10 parties get the referee FREE (rental + host at rental price) for reviews + footage.</div>
+<div class="tip">Deposit: $50 to reserve. Rent-only stays affordable; the referee upsell + player-count scaling + add-ons carry the margin. Step prices up ~$20–40/tier in 2027 as reviews build.</div>`;
 
 CONTENT.Money = `
 <h2 class="section">The $10k/Month Math</h2>
 <div class="kpi">
-<div class="box"><div class="n">~50</div><div class="l">parties/mo</div></div>
-<div class="box"><div class="n">$200</div><div class="l">net/party</div></div>
+<div class="box"><div class="n">~42</div><div class="l">parties/mo</div></div>
+<div class="box"><div class="n">$240</div><div class="l">net/party</div></div>
 <div class="box"><div class="n">$10k</div><div class="l">net/mo</div></div>
 </div>
-<div class="tip">Low entry price = <b>more volume</b>. Drop & Go has almost NO labor (deliver + pick up), so you can run lots of them cheaply. Mix: high-volume DIY tiers + higher-margin Full Service + add-ons + a price step-up in 2027.</div>
-<div class="card"><h3>🧮 Per-tier economics</h3>
+<div class="tip">The <b>rental</b> nets ~$150 with almost no labor. Every <b>referee</b> and player-count step adds high margin on top. Goal: attach a referee (or add-ons) to most bookings to lift the blended ticket toward ~$280+.</div>
+<div class="card"><h3>🧮 Economics (12-player base)</h3>
 <table>
-<tr><th>Tier</th><th>Price</th><th>Cost</th><th>Net</th><th>Labor</th></tr>
-<tr><td>Drop & Go</td><td>$119</td><td>~$30</td><td>~$90</td><td>tiny</td></tr>
-<tr><td>We Set Up</td><td>$169</td><td>~$55</td><td>~$115</td><td>~1 hr</td></tr>
-<tr><td>Full Service</td><td>$219</td><td>~$90</td><td>~$130</td><td>~2.5 hr</td></tr>
+<tr><th>Option</th><th>Price</th><th>Cost</th><th>Net</th><th>Labor</th></tr>
+<tr><td>Rental only</td><td>$180</td><td>~$30</td><td>~$150</td><td>drop/pickup</td></tr>
+<tr><td>+ 1 Referee</td><td>$280</td><td>~$70</td><td>~$210</td><td>~2.5 hr</td></tr>
+<tr><td>24-player + 2 refs</td><td>$460</td><td>~$130</td><td>~$330</td><td>~2.5 hr ×2</td></tr>
 </table>
-<p class="muted" style="font-size:12px">Cost = gas + dart wear + helper labor. Add-ons (Snack Bar ~90% margin) lift every ticket.</p></div>
+<p class="muted" style="font-size:12px">Cost = gas + dart wear + referee labor (~$30–40/ref). Add-ons (Snack Bar ~90% margin) lift every ticket.</p></div>
 <div class="card"><h3>📈 Revenue ramp</h3>
 <table>
 <tr><th>Phase</th><th>When</th><th>Net/mo</th></tr>
@@ -365,7 +374,7 @@ CONTENT.Money = `
 <tr><td>3 Crews</td><td>Jun–Oct '27</td><td>~$6–8k</td></tr>
 <tr><td>4 Scale</td><td>Nov '27–Mar '28</td><td><b>$10k+</b></td></tr>
 </table></div>
-<div class="tip">⚖️ Honest tradeoff: cheaper base price means you need volume (~50 parties/mo) OR heavy add-on attach + the 2027 price step-up. The DIY tier's near-zero labor is what makes that volume realistic across 2–3 crews.</div>
+<div class="tip">⚖️ ~42 parties/mo at ~$240 net = $10k. Referees are your paid crew — each hired ref lets you run more parties in parallel while you keep the rental margin.</div>
 <div class="card"><h3>🪜 Reinvestment order</h3>
 <ol class="clean" style="padding-left:20px">
 <li>Popcorn machine</li><li>Kit #2</li><li>Booth + Backdrop</li>
@@ -435,11 +444,11 @@ CTA: "Stress-free birthday? Link in bio."</div></div>
 <div class="card"><h3>7 · What's Included</h3>
 <div class="quote">HOOK: "Here's exactly what you get when you book us."
 CUTS: point to blasters → darts → safety glasses → obstacles → "and a host who runs every game."
-CTA: "Standard party, up to 14 kids. DM 'BATTLE'."</div></div>
+CTA: "Rental $180, or add a referee to run it. DM 'BATTLE'."</div></div>
 
 <div class="card"><h3>8 · Founding Family Offer</h3>
 <div class="quote">HOOK: "We're brand new — so our first 5 families get a deal."
-VO: "Founding Family price: full Nerf war party for $149. All I ask is an honest review."
+VO: "Founding Family deal: book the rental and we'll throw in the referee FREE. All I ask is an honest review."
 CTA: "Only 5 spots. Comment 'BATTLE' to claim one."</div></div>
 
 <div class="card"><h3>9 · Halloween Zombie Battle Teaser</h3>
