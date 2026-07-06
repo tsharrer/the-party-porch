@@ -9,6 +9,12 @@
 - **Goal:** **+$10,000/month net profit within 18 months** (by ~March 2028)
 - **Starting budget:** $600
 
+## 📱 Live tracker (open on your phone)
+**https://tsharrer.github.io/the-party-porch/** — interactive app; tap tasks to check them
+off (saves on your device). Tabs: **Tracker · Leads · Timeline · Marketing · Clients ·
+Scripts · Shopping · Pricing · Money · Plan**. The **Leads** tab logs inquiries with source,
+status (Lead → Quoted → Booked → Done → Lost) and value so you learn which channel books best.
+
 ---
 
 ## 📁 What's in this repo
@@ -20,6 +26,7 @@
 | [docs/launch-timeline.md](docs/launch-timeline.md) | Week-by-week plan: July → September 2026 launch |
 | [docs/marketing-plan.md](docs/marketing-plan.md) | Content engine, channels, referrals, paid ads, partnerships |
 | [docs/first-clients-playbook.md](docs/first-clients-playbook.md) | Exactly how to land your first 3, then first 10 bookings |
+| [docs/content-scripts.md](docs/content-scripts.md) | 10 launch-week TikTok/Reel scripts (hook → cuts → CTA) |
 | [docs/shopping-list.md](docs/shopping-list.md) | Detailed $600 starter kit with quantities & specs |
 | [docs/content-calendar.md](docs/content-calendar.md) | 30-day content plan + 15 ready-to-film video ideas |
 | [docs/pricing-and-packages.md](docs/pricing-and-packages.md) | Packages, add-ons, bundles, booking terms |

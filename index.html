@@ -71,6 +71,22 @@
   .tip{background:#12261b;border:1px solid #14532d;border-radius:12px;padding:10px 12px;font-size:13px;color:#bbf7d0;margin:10px 0}
   .quote{background:var(--card2);border-left:3px solid var(--accent);padding:10px 12px;border-radius:8px;font-size:13px;margin:8px 0;white-space:pre-wrap}
   .reset{display:block;width:100%;margin-top:20px;background:transparent;color:var(--muted);border:1px solid var(--line);padding:12px;border-radius:12px;font-size:13px}
+  .field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+  .field label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  input,select,textarea{width:100%;background:var(--card2);border:1px solid var(--line);color:var(--text);
+    padding:12px;border-radius:10px;font-size:16px;font-family:inherit}
+  select{appearance:none}
+  .row2{display:flex;gap:10px}.row2 .field{flex:1}
+  .btn{width:100%;background:linear-gradient(135deg,#7c3aed,#db2777);color:#fff;border:none;
+    padding:14px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px}
+  .lead{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+  .lead .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .lead .nm{font-weight:700;font-size:16px}
+  .lead .meta{font-size:12px;color:var(--muted);margin-top:3px}
+  .st{font-size:11px;font-weight:800;padding:4px 10px;border-radius:12px;border:none;cursor:pointer;color:#fff}
+  .st-Lead{background:#475569}.st-Quoted{background:#b45309}.st-Booked{background:#15803d}
+  .st-Done{background:#6d28d9}.st-Lost{background:#7f1d1d}
+  .del{background:none;border:none;color:#7f5a7a;font-size:18px;cursor:pointer;padding:4px 8px}
   a{color:var(--accent2)}
   .foot{text-align:center;color:var(--muted);font-size:12px;margin:24px 0 8px}
   details summary{cursor:pointer;font-weight:600;padding:6px 0}
@@ -88,7 +104,7 @@
 
 <script>
 /* ---------------- DATA ---------------- */
-const TABS = ["Tracker","Timeline","Marketing","Clients","Shopping","Pricing","Money","Plan"];
+const TABS = ["Tracker","Leads","Timeline","Marketing","Clients","Scripts","Shopping","Pricing","Money","Plan"];
 
 // TRACKER: phases -> tasks. id must be stable (used for localStorage).
 const TRACKER = [
@@ -362,6 +378,63 @@ CONTENT.Plan = `
 <li>Safety + professionalism = referrals</li>
 </ul></div>`;
 
+CONTENT.Scripts = `
+<h2 class="section">10 Launch-Week TikTok/Reel Scripts</h2>
+<div class="tip">Format: HOOK (first 1 sec) → quick cuts → CTA. Keep each 15–30 sec. Film vertical. Add on-screen captions + trending audio.</div>
+
+<div class="card"><h3>1 · The $600 Origin Story</h3>
+<div class="quote">HOOK (on-screen): "I started a party business with $600. Here's the whole kit."
+CUTS: unbox blasters → pour 2,000 darts into bin → lay out safety glasses → load the wagon.
+VO: "14 blasters, 2,000 darts, obstacles, and a plan to make it $10k/month."
+CTA: "Follow the journey. Booking fall parties now → @yourpartyporch"</div></div>
+
+<div class="card"><h3>2 · Backyard Transformation</h3>
+<div class="quote">HOOK: "This normal backyard becomes a warzone in 60 seconds."
+CUTS: empty yard → timelapse setting up bunkers → finished arena → kids run in.
+CTA: "Want this in YOUR backyard? Link in bio."</div></div>
+
+<div class="card"><h3>3 · Kid Reaction (money shot)</h3>
+<div class="quote">HOOK: "Watch his face when he sees his birthday setup."
+CUTS: kid rounds the corner → jaw drops → grabs a blaster → chaos + laughing.
+CTA: "Make your kid's jaw drop. Booking now."</div></div>
+
+<div class="card"><h3>4 · POV Pull-Up</h3>
+<div class="quote">HOOK (on-screen): "POV: it's your birthday and The Party Porch just pulled up."
+CUTS: van door opens → gear rolls out → arena builds → battle montage.
+CTA: "We bring the party to you. @yourpartyporch"</div></div>
+
+<div class="card"><h3>5 · Slow-Mo Highlights</h3>
+<div class="quote">HOOK: "Nerf hits in slow motion just hit different." (trending audio)
+CUTS: 4–5 slow-mo dart impacts, dives behind bunkers, a victory jump.
+CTA: "This could be your party. Fall dates open."</div></div>
+
+<div class="card"><h3>6 · Why It Beats a Normal Party</h3>
+<div class="quote">HOOK: "3 reasons a Nerf war beats the usual birthday:"
+CUTS w/ captions: "1. Every kid is ACTIVE (no bored corner)" → "2. Zero cleanup for you" → "3. We run the WHOLE thing."
+CTA: "Stress-free birthday? Link in bio."</div></div>
+
+<div class="card"><h3>7 · What's Included</h3>
+<div class="quote">HOOK: "Here's exactly what you get when you book us."
+CUTS: point to blasters → darts → safety glasses → obstacles → "and a host who runs every game."
+CTA: "Standard party, up to 14 kids. DM 'BATTLE'."</div></div>
+
+<div class="card"><h3>8 · Founding Family Offer</h3>
+<div class="quote">HOOK: "We're brand new — so our first 5 families get a deal."
+VO: "Founding Family price: full Nerf war party for $199. All I ask is an honest review."
+CTA: "Only 5 spots. Comment 'BATTLE' to claim one."</div></div>
+
+<div class="card"><h3>9 · Halloween Zombie Battle Teaser</h3>
+<div class="quote">HOOK: "We turned a birthday into a zombie survival mission." 🧟
+CUTS: costumes → glow darts → foggy dusk battle → "survivors win."
+CTA: "Booking spooky-season battles now. @yourpartyporch"</div></div>
+
+<div class="card"><h3>10 · Giveaway / Launch Day</h3>
+<div class="quote">HOOK: "We're giving away a FREE party to launch. Here's how to win:"
+VO: "Follow us, like this video, and tag 2 parents. Winner picked Friday."
+CTA: "Tag your party crew 👇 @yourpartyporch"</div></div>
+
+<div class="tip">💡 Repurpose each: 1 film session → a Reel + TikTok + YouTube Short + 3 Stories. Reuse winners as boosted ads later.</div>`;
+
 /* ---------------- RENDER ---------------- */
 const tagMap={spend:['💰','p-spend'],content:['📹','p-content'],mkt:['📣','p-mkt'],goal:['🎯','p-goal']};
 let allIds=[];
@@ -397,12 +470,72 @@ function updateProgress(){
   document.getElementById('progtxt').textContent=`${done}/${allIds.length} done · ${pct}%`;
 }
 
+/* ---------------- LEADS LOG ---------------- */
+const STATUSES=["Lead","Quoted","Booked","Done","Lost"];
+function loadLeads(){try{return JSON.parse(localStorage.getItem('ppLeads')||'[]')}catch(e){return []}}
+function saveLeads(l){localStorage.setItem('ppLeads',JSON.stringify(l))}
+let leads=loadLeads();
+function addLead(){
+  const g=id=>document.getElementById(id).value.trim();
+  const name=g('l_name');
+  if(!name){alert('Add a name/contact');return;}
+  leads.unshift({id:'L'+Date.now(),name,date:g('l_date'),kids:g('l_kids'),
+    source:g('l_source'),value:g('l_value'),status:'Lead'});
+  saveLeads(leads);render();
+}
+function cycleStatus(id){
+  const l=leads.find(x=>x.id===id);if(!l)return;
+  l.status=STATUSES[(STATUSES.indexOf(l.status)+1)%STATUSES.length];
+  saveLeads(leads);render();
+}
+function delLead(id){if(confirm('Delete this lead?')){leads=leads.filter(x=>x.id!==id);saveLeads(leads);render();}}
+function renderLeads(){
+  const booked=leads.filter(l=>l.status==='Booked'||l.status==='Done');
+  const pipeVal=leads.filter(l=>l.status!=='Lost'&&l.status!=='Done')
+    .reduce((s,l)=>s+(parseFloat(l.value)||0),0);
+  const wonVal=leads.filter(l=>l.status==='Done').reduce((s,l)=>s+(parseFloat(l.value)||0),0);
+  let h='<h2 class="section">Leads &amp; Bookings</h2>';
+  h+=`<div class="kpi">
+    <div class="box"><div class="n">${leads.length}</div><div class="l">leads</div></div>
+    <div class="box"><div class="n">${booked.length}</div><div class="l">booked</div></div>
+    <div class="box"><div class="n">$${pipeVal}</div><div class="l">pipeline</div></div>
+    <div class="box"><div class="n">$${wonVal}</div><div class="l">earned</div></div></div>`;
+  h+=`<div class="card"><h3>➕ Add a lead</h3>
+    <div class="field"><label>Name / contact</label><input id="l_name" placeholder="e.g. Sarah (Insta DM)"></div>
+    <div class="row2">
+      <div class="field"><label>Party date</label><input id="l_date" placeholder="Sep 20"></div>
+      <div class="field"><label># kids</label><input id="l_kids" inputmode="numeric" placeholder="12"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Source</label><select id="l_source">
+        <option>Instagram</option><option>TikTok</option><option>Facebook group</option>
+        <option>Nextdoor</option><option>Marketplace</option><option>Referral</option>
+        <option>Google</option><option>Repeat</option><option>Other</option></select></div>
+      <div class="field"><label>Est. $ value</label><input id="l_value" inputmode="numeric" placeholder="349"></div>
+    </div>
+    <button class="btn" onclick="addLead()">Add lead</button></div>`;
+  if(leads.length===0){
+    h+='<div class="card muted">No leads yet. Every inquiry goes here — tap a status chip to move Lead → Quoted → Booked → Done. Track which source books best.</div>';
+  }else{
+    leads.forEach(l=>{
+      h+=`<div class="lead"><div class="top">
+        <div><div class="nm">${l.name}</div>
+        <div class="meta">${[l.date&&('📅 '+l.date),l.kids&&('👦 '+l.kids),l.source&&('📣 '+l.source),l.value&&('💵 $'+l.value)].filter(Boolean).join(' · ')||'—'}</div></div>
+        <button class="st st-${l.status}" onclick="cycleStatus('${l.id}')">${l.status}</button>
+      </div>
+      <div style="text-align:right;margin-top:2px"><button class="del" onclick="delLead('${l.id}')">🗑️</button></div></div>`;
+    });
+  }
+  h+='<div class="foot">Tip: tap the status chip to advance it. Saved on this device.</div>';
+  return h;
+}
+
 let active="Tracker";
 function render(){
   const nav=document.getElementById('nav');
   nav.innerHTML=TABS.map(t=>`<button class="${t===active?'active':''}" onclick="go('${t}')">${t}</button>`).join('');
   const main=document.getElementById('main');
-  main.innerHTML=`<div class="tab active">${active==='Tracker'?renderTracker():CONTENT[active]}</div>`;
+  main.innerHTML=`<div class="tab active">${active==='Tracker'?renderTracker():active==='Leads'?renderLeads():CONTENT[active]}</div>`;
   updateProgress();
   window.scrollTo(0,0);
 }
