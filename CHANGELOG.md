@@ -6,16 +6,19 @@ Newest entries first. Dates in America/Chicago.
 ## 2026-07-06
 
 ### Added
-- **Tracker: Gantt growth-timeline tab.** New "Gantt" tab renders an 18-month
-  (Jul '26 → Mar '28) CSS-grid Gantt showing phases, product-line launches, hires,
-  and a predicted net/mo revenue ramp toward +$10k/mo, plus a milestone-dates table.
-- **Tracker: ROI stress-test tab.** New "ROI" tab pressure-tests the $10k goal with
-  downside/base/upside scenarios (subtracting fixed overhead), a "what it takes to net
-  $10k" sensitivity table, break-even + starter-kit payback KPIs, and a risk/mitigation
-  register.
-- **Tracker: marked completed work.** Added a "✅ Website & Booking System (DONE)" phase
-  (site live, cart, per-item availability, calendar booking, confirmation email, pricing,
-  Movie Night) and checked off the site/booking-intake foundation tasks.
+- **Tracker: much more detailed Gantt.** Rebuilt the Gantt tab into 9 swimlanes
+  (Key milestones, Setup & legal, Website & tech, Product launches, Marketing & content,
+  Sales/bookings, Team/hiring, Finance/reinvestment, Predicted net/mo) — 51 activity bars,
+  6 milestone diamonds, and a revenue ramp across Jul '26 → Mar '28.
+- **Tracker: reinvestment & kit-buying schedule.** New card tying each purchase
+  (popcorn, Kit #2/#3, Booth+Backdrop, cotton candy, ads, snow cone/soft play/360, Glow
+  Zone) to a **cash + demand trigger** ("buy the next kit only when current inventory is
+  turning away bookings"; keep a 1-month cushion; reinvest ~30–40% of net).
+- **Tracker: custom-domain task.** Added pending task `j7b` — point **yourpartyporch.com**
+  to GitHub Pages (custom domain + HTTPS); site is NOT yet live on the domain.
+
+### Added — earlier same day
+- **Gantt growth-timeline tab + ROI stress-test tab.** (superseded Gantt now expanded above)
 
 ### Added — earlier same day
 - **Automated customer confirmation email with deposit link.** When a booking is

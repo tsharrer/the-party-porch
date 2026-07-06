@@ -109,6 +109,13 @@
   .gp4{background:linear-gradient(90deg,#d97706,#fbbf24);color:#3b1d00}
   .gprod{height:22px;background:rgba(168,85,247,.18);border:1px solid #a855f7;color:#e9d5ff}
   .gteam{height:22px;background:rgba(236,72,153,.18);border:1px solid var(--pink);color:#fbcfe8}
+  .gset{height:22px;background:rgba(148,163,184,.16);border:1px solid #94a3b8;color:#e2e8f0}
+  .gweb{height:22px;background:rgba(139,92,246,.18);border:1px solid #8b5cf6;color:#ddd6fe}
+  .gmkt{height:22px;background:rgba(6,182,212,.16);border:1px solid #06b6d4;color:#a5f3fc}
+  .gsale{height:22px;background:rgba(34,197,94,.16);border:1px solid #22c55e;color:#bbf7d0}
+  .gfin{height:22px;background:rgba(245,158,11,.16);border:1px solid #f59e0b;color:#fde68a}
+  .gdone{box-shadow:inset 0 0 0 2px rgba(34,197,94,.7)}
+  .gmile{height:22px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--accent2);font-weight:900}
   .grev{height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
   .grev1{background:#14532d;color:#bbf7d0}.grev2{background:#166534;color:#dcfce7}
   .grev3{background:#15803d;color:#fff}.grev4{background:#22c55e;color:#052e1c}
@@ -154,6 +161,7 @@ const TRACKER = [
     {id:"j5", t:"Order the ~$600 starter kit (blasters + darts first)", tags:["spend"]},
     {id:"j6", t:"Design logo + brand kit in Canva"},
     {id:"j7", t:"Build 1-page site w/ booking form (Carrd/Google Site)", done:true},
+    {id:"j7b", t:"🌐 Point yourpartyporch.com to GitHub Pages (custom domain + HTTPS) — site NOT live on the domain yet"},
     {id:"j8", t:"Set up booking intake: Google Form → Calendar", done:true},
     {id:"j9", t:"Assemble + test kit; count darts, label bins"},
     {id:"j10", t:"Write safety rules + liability waiver"},
@@ -247,20 +255,23 @@ CONTENT.Timeline = `
 </ul></div>`;
 
 CONTENT.Gantt = `
-<h2 class="section">Growth Timeline — Gantt</h2>
-<div class="tip">📍 You are here: <b>July 2026</b>. Bars show when each phase, product line, and hire goes live — and when revenue is predicted to climb toward <b>+$10k/mo net</b> by early 2028. Scroll the chart sideways on mobile.</div>
+<h2 class="section">Growth Timeline — Detailed Gantt</h2>
+<div class="tip">📍 You are here: <b>July 2026</b>. Swimlanes show setup, website, product launches, marketing, sales volume, hiring, and — importantly — <b>when to reinvest / buy each kit</b>. Bars are calendar targets; the reinvestment card below ties each purchase to a <b>cash + demand trigger</b> so you never over-buy. Scroll sideways on mobile.</div>
 <div class="g-legend">
-  <span><i style="background:#a855f7"></i>Phase</span>
-  <span><i style="background:rgba(168,85,247,.4);border:1px solid #a855f7"></i>Product live</span>
-  <span><i style="background:rgba(236,72,153,.4);border:1px solid #ec4899"></i>Team/hire</span>
-  <span><i style="background:#22c55e"></i>Predicted net/mo</span>
+  <span><i style="background:#94a3b8"></i>Setup</span>
+  <span><i style="background:#8b5cf6"></i>Website</span>
+  <span><i style="background:#a855f7"></i>Product</span>
+  <span><i style="background:#06b6d4"></i>Marketing</span>
+  <span><i style="background:#22c55e"></i>Sales</span>
+  <span><i style="background:#ec4899"></i>Team</span>
+  <span><i style="background:#f59e0b"></i>Reinvest</span>
+  <span><i style="background:#facc15"></i>Net/mo</span>
 </div>
 <div class="gantt-wrap"><div class="gantt">
   <div class="g-lbl" style="grid-row:1">18-month plan</div>
   <div class="g-year" style="grid-row:1;grid-column:2/8">2026</div>
   <div class="g-year" style="grid-row:1;grid-column:8/20">2027</div>
   <div class="g-year" style="grid-row:1;grid-column:20/23">2028</div>
-
   <div class="g-lbl" style="grid-row:2">Month</div>
   <div class="g-mon q" style="grid-row:2;grid-column:2">J</div>
   <div class="g-mon" style="grid-row:2;grid-column:3">A</div>
@@ -283,249 +294,163 @@ CONTENT.Gantt = `
   <div class="g-mon q" style="grid-row:2;grid-column:20">J</div>
   <div class="g-mon" style="grid-row:2;grid-column:21">F</div>
   <div class="g-mon" style="grid-row:2;grid-column:22">M</div>
-
-  <div class="g-sec" style="grid-row:3">Phases</div>
-  <div class="g-lbl" style="grid-row:4">0 · Launch</div>
-  <div class="gbar gp0" style="grid-row:4;grid-column:2/5">Foundation → Public launch</div>
-  <div class="g-lbl" style="grid-row:5">1 · Validate</div>
-  <div class="gbar gp1" style="grid-row:5;grid-column:5/8">Solo parties + reviews</div>
-  <div class="g-lbl" style="grid-row:6">2 · Add-ons+Hire</div>
-  <div class="gbar gp2" style="grid-row:6;grid-column:8/13">Kit #2, first helper</div>
-  <div class="g-lbl" style="grid-row:7">3 · Crews</div>
-  <div class="gbar gp3" style="grid-row:7;grid-column:13/18">2 crews, corporate</div>
-  <div class="g-lbl" style="grid-row:8">4 · Scale</div>
-  <div class="gbar gp4" style="grid-row:8;grid-column:18/23">34+ parties/mo</div>
-
-  <div class="g-sec" style="grid-row:9">Product launches</div>
-  <div class="g-lbl" style="grid-row:10">🔫 Nerf + 🎬 Movie</div>
-  <div class="gbar gprod" style="grid-row:10;grid-column:2/23">Live now</div>
-  <div class="g-lbl" style="grid-row:11">🍿 Snack Bar</div>
-  <div class="gbar gprod" style="grid-row:11;grid-column:3/23">Popcorn</div>
-  <div class="g-lbl" style="grid-row:12">📸 Booth + 🌸 Backdrop</div>
-  <div class="gbar gprod" style="grid-row:12;grid-column:8/23">Photo booth + walls</div>
-  <div class="g-lbl" style="grid-row:13">🍭 Cotton candy</div>
-  <div class="gbar gprod" style="grid-row:13;grid-column:9/23"></div>
-  <div class="g-lbl" style="grid-row:14">🍧 Snow cone + 🧸 Soft play</div>
-  <div class="gbar gprod" style="grid-row:14;grid-column:13/23">Tiny Porch</div>
-  <div class="g-lbl" style="grid-row:15">🎪 360 booth</div>
-  <div class="gbar gprod" style="grid-row:15;grid-column:14/23">Adult/wedding</div>
-  <div class="g-lbl" style="grid-row:16">✨ Glow Zone</div>
-  <div class="gbar gprod" style="grid-row:16;grid-column:18/23"></div>
-
-  <div class="g-sec" style="grid-row:17">Team</div>
-  <div class="g-lbl" style="grid-row:18">👤 First helper</div>
-  <div class="gbar gteam" style="grid-row:18;grid-column:11/23">Part-time referee</div>
-  <div class="g-lbl" style="grid-row:19">👥 2nd crew</div>
-  <div class="gbar gteam" style="grid-row:19;grid-column:13/23">Parallel parties</div>
-  <div class="g-lbl" style="grid-row:20">👑 Crew chief</div>
-  <div class="gbar gteam" style="grid-row:20;grid-column:18/23">Runs w/o you</div>
-
-  <div class="g-sec" style="grid-row:21">Predicted net / month</div>
-  <div class="g-lbl" style="grid-row:22">Revenue ramp</div>
-  <div class="grev grev1" style="grid-row:22;grid-column:2/5">$0–1k</div>
-  <div class="grev grev2" style="grid-row:22;grid-column:5/8">$1–3k</div>
-  <div class="grev grev3" style="grid-row:22;grid-column:8/13">$3–6k</div>
-  <div class="grev grev4" style="grid-row:22;grid-column:13/18">$6–8k</div>
-  <div class="grev grev5" style="grid-row:22;grid-column:18/23">$10k+ 🎯</div>
+  <div class="g-sec" style="grid-row:3">★ Key milestones</div>
+  <div class="g-lbl" style="grid-row:4">🌐 Domain live</div>
+  <div class="gmile" style="grid-row:4;grid-column:3/4">◆</div>
+  <div class="g-lbl" style="grid-row:5">🚀 Public launch</div>
+  <div class="gmile" style="grid-row:5;grid-column:4/5">◆</div>
+  <div class="g-lbl" style="grid-row:6">💵 First full-price booking</div>
+  <div class="gmile" style="grid-row:6;grid-column:4/5">◆</div>
+  <div class="g-lbl" style="grid-row:7">🛡️ Insurance bound</div>
+  <div class="gmile" style="grid-row:7;grid-column:8/9">◆</div>
+  <div class="g-lbl" style="grid-row:8">👤 First hire</div>
+  <div class="gmile" style="grid-row:8;grid-column:11/12">◆</div>
+  <div class="g-lbl" style="grid-row:9">🏆 $10k/mo net</div>
+  <div class="gmile" style="grid-row:9;grid-column:22/23">◆</div>
+  <div class="g-sec" style="grid-row:10">Setup & legal</div>
+  <div class="g-lbl" style="grid-row:11">Gmail + password mgr</div>
+  <div class="gbar gset" style="grid-row:11;grid-column:2/3"></div>
+  <div class="g-lbl" style="grid-row:12">DBA (TX Form 503)</div>
+  <div class="gbar gset" style="grid-row:12;grid-column:2/3"></div>
+  <div class="g-lbl" style="grid-row:13">Bank + Stripe/Square</div>
+  <div class="gbar gset" style="grid-row:13;grid-column:2/4"></div>
+  <div class="g-lbl" style="grid-row:14">Waiver + safety rules</div>
+  <div class="gbar gset" style="grid-row:14;grid-column:2/3"></div>
+  <div class="g-lbl" style="grid-row:15">Google Business Profile</div>
+  <div class="gbar gset" style="grid-row:15;grid-column:3/5">verify</div>
+  <div class="g-lbl" style="grid-row:16">Liability insurance</div>
+  <div class="gbar gset" style="grid-row:16;grid-column:7/9">bind before crews</div>
+  <div class="g-sec" style="grid-row:17">Website & tech</div>
+  <div class="g-lbl" style="grid-row:18">Site + cart + booking</div>
+  <div class="gbar gweb gdone" style="grid-row:18;grid-column:2/3">✓ live</div>
+  <div class="g-lbl" style="grid-row:19">Confirmation email</div>
+  <div class="gbar gweb gdone" style="grid-row:19;grid-column:2/3">✓ built</div>
+  <div class="g-lbl" style="grid-row:20">🌐 Custom domain + HTTPS</div>
+  <div class="gbar gweb" style="grid-row:20;grid-column:2/4">yourpartyporch.com — TODO</div>
+  <div class="g-lbl" style="grid-row:21">Stripe $50 deposit link</div>
+  <div class="gbar gweb" style="grid-row:21;grid-column:2/4">TODO</div>
+  <div class="g-lbl" style="grid-row:22">SEO + reviews engine</div>
+  <div class="gbar gweb" style="grid-row:22;grid-column:3/23">ongoing</div>
+  <div class="g-sec" style="grid-row:23">Product launches</div>
+  <div class="g-lbl" style="grid-row:24">🔫 Nerf + 🎬 Movie</div>
+  <div class="gbar gprod" style="grid-row:24;grid-column:2/23">live now</div>
+  <div class="g-lbl" style="grid-row:25">🍿 Snack Bar (popcorn)</div>
+  <div class="gbar gprod" style="grid-row:25;grid-column:3/23"></div>
+  <div class="g-lbl" style="grid-row:26">📸 Photo Booth</div>
+  <div class="gbar gprod" style="grid-row:26;grid-column:8/23"></div>
+  <div class="g-lbl" style="grid-row:27">🌸 Backdrop (walls)</div>
+  <div class="gbar gprod" style="grid-row:27;grid-column:8/23"></div>
+  <div class="g-lbl" style="grid-row:28">🍭 Cotton candy</div>
+  <div class="gbar gprod" style="grid-row:28;grid-column:9/23"></div>
+  <div class="g-lbl" style="grid-row:29">🍧 Snow cone</div>
+  <div class="gbar gprod" style="grid-row:29;grid-column:13/23"></div>
+  <div class="g-lbl" style="grid-row:30">🧸 Tiny Porch soft play</div>
+  <div class="gbar gprod" style="grid-row:30;grid-column:13/23"></div>
+  <div class="g-lbl" style="grid-row:31">🎪 360 booth</div>
+  <div class="gbar gprod" style="grid-row:31;grid-column:14/23"></div>
+  <div class="g-lbl" style="grid-row:32">✨ Glow Zone</div>
+  <div class="gbar gprod" style="grid-row:32;grid-column:18/23"></div>
+  <div class="g-sec" style="grid-row:33">Marketing & content</div>
+  <div class="g-lbl" style="grid-row:34">Brand-launch content</div>
+  <div class="gbar gmkt" style="grid-row:34;grid-column:2/3"></div>
+  <div class="g-lbl" style="grid-row:35">4–5 videos/week</div>
+  <div class="gbar gmkt" style="grid-row:35;grid-column:2/23">always on</div>
+  <div class="g-lbl" style="grid-row:36">Local groups (FB/Nextdoor)</div>
+  <div class="gbar gmkt" style="grid-row:36;grid-column:3/23"></div>
+  <div class="g-lbl" style="grid-row:37">Founding Family offer</div>
+  <div class="gbar gmkt" style="grid-row:37;grid-column:3/5"></div>
+  <div class="g-lbl" style="grid-row:38">Launch giveaway</div>
+  <div class="gbar gmkt" style="grid-row:38;grid-column:4/5"></div>
+  <div class="g-lbl" style="grid-row:39">Boosted ads $5–10/day</div>
+  <div class="gbar gmkt" style="grid-row:39;grid-column:4/11"></div>
+  <div class="g-lbl" style="grid-row:40">Seasonal themes</div>
+  <div class="gbar gmkt" style="grid-row:40;grid-column:4/8">Halloween→Holiday</div>
+  <div class="g-lbl" style="grid-row:41">Influencer collabs</div>
+  <div class="gbar gmkt" style="grid-row:41;grid-column:3/8"></div>
+  <div class="g-lbl" style="grid-row:42">Venue/school partnerships</div>
+  <div class="gbar gmkt" style="grid-row:42;grid-column:9/23"></div>
+  <div class="g-lbl" style="grid-row:43">Scale paid ads</div>
+  <div class="gbar gmkt" style="grid-row:43;grid-column:11/23"></div>
+  <div class="g-sec" style="grid-row:44">Sales / bookings</div>
+  <div class="g-lbl" style="grid-row:45">Free pilot party</div>
+  <div class="gbar gsale" style="grid-row:45;grid-column:2/3"></div>
+  <div class="g-lbl" style="grid-row:46">Soft-launch 2–3 parties</div>
+  <div class="gbar gsale" style="grid-row:46;grid-column:3/4"></div>
+  <div class="g-lbl" style="grid-row:47">4–8 parties/mo</div>
+  <div class="gbar gsale" style="grid-row:47;grid-column:4/8"></div>
+  <div class="g-lbl" style="grid-row:48">6+ bookings/mo</div>
+  <div class="gbar gsale" style="grid-row:48;grid-column:7/13"></div>
+  <div class="g-lbl" style="grid-row:49">15+ parties/mo</div>
+  <div class="gbar gsale" style="grid-row:49;grid-column:12/18"></div>
+  <div class="g-lbl" style="grid-row:50">25+ parties/mo</div>
+  <div class="gbar gsale" style="grid-row:50;grid-column:17/19"></div>
+  <div class="g-lbl" style="grid-row:51">34+ parties/mo</div>
+  <div class="gbar gsale" style="grid-row:51;grid-column:18/23"></div>
+  <div class="g-sec" style="grid-row:52">Team / hiring</div>
+  <div class="g-lbl" style="grid-row:53">Write SOP + run-of-show</div>
+  <div class="gbar gteam" style="grid-row:53;grid-column:3/4"></div>
+  <div class="g-lbl" style="grid-row:54">👤 First part-time helper</div>
+  <div class="gbar gteam" style="grid-row:54;grid-column:11/23"></div>
+  <div class="g-lbl" style="grid-row:55">Train 2 crews</div>
+  <div class="gbar gteam" style="grid-row:55;grid-column:13/23"></div>
+  <div class="g-lbl" style="grid-row:56">👑 Crew chief</div>
+  <div class="gbar gteam" style="grid-row:56;grid-column:18/23">runs w/o you</div>
+  <div class="g-sec" style="grid-row:57">💰 Finance / reinvestment (buy when triggered)</div>
+  <div class="g-lbl" style="grid-row:58">Kit #1 ($600 seed)</div>
+  <div class="gbar gfin" style="grid-row:58;grid-column:2/3">start</div>
+  <div class="g-lbl" style="grid-row:59">Popcorn machine ($200)</div>
+  <div class="gbar gfin" style="grid-row:59;grid-column:3/4">after 2–3 parties banked</div>
+  <div class="g-lbl" style="grid-row:60">Save for Kit #2 ($500+)</div>
+  <div class="gbar gfin" style="grid-row:60;grid-column:5/8"></div>
+  <div class="g-lbl" style="grid-row:61">Kit #2 ($600)</div>
+  <div class="gbar gfin" style="grid-row:61;grid-column:8/9">when turning away bookings</div>
+  <div class="g-lbl" style="grid-row:62">Booth + Backdrop ($700)</div>
+  <div class="gbar gfin" style="grid-row:62;grid-column:8/10">add-on demand proven</div>
+  <div class="g-lbl" style="grid-row:63">Cotton candy ($150)</div>
+  <div class="gbar gfin" style="grid-row:63;grid-column:9/10">snack attach >50%</div>
+  <div class="g-lbl" style="grid-row:64">Ads + software ($300–500/mo)</div>
+  <div class="gbar gfin" style="grid-row:64;grid-column:11/23">once CAC proven</div>
+  <div class="g-lbl" style="grid-row:65">Kit #3 ($600) + crews</div>
+  <div class="gbar gfin" style="grid-row:65;grid-column:13/14">2 crews needed</div>
+  <div class="g-lbl" style="grid-row:66">Snow cone/soft play/360 ($1.2k)</div>
+  <div class="gbar gfin" style="grid-row:66;grid-column:13/15">lines validated</div>
+  <div class="g-lbl" style="grid-row:67">Glow Zone + premium bundles</div>
+  <div class="gbar gfin" style="grid-row:67;grid-column:18/19"></div>
+  <div class="g-sec" style="grid-row:68">Predicted net / month</div>
+  <div class="g-lbl" style="grid-row:69">Revenue ramp</div>
+  <div class="grev grev1" style="grid-row:69;grid-column:2/5">$0–1k</div>
+  <div class="grev grev2" style="grid-row:69;grid-column:5/8">$1–3k</div>
+  <div class="grev grev3" style="grid-row:69;grid-column:8/13">$3–6k</div>
+  <div class="grev grev4" style="grid-row:69;grid-column:13/18">$6–8k</div>
+  <div class="grev grev5" style="grid-row:69;grid-column:18/23">$10k+ 🎯</div>
 </div></div>
+
+<div class="card"><h3>💰 Reinvestment & kit-buying rules</h3>
+<div class="tip">Golden rule: <b>buy the next kit only when your current inventory is turning away bookings</b> — demand pulls capital, not the calendar. Keep a <b>1-month operating cushion</b> and reinvest ~<b>30–40% of net profit</b> into the next line until you have 3 kits + 2 crews.</div>
+<table>
+<tr><th>Buy</th><th>Cost</th><th>Trigger (all must be true)</th><th>Target</th></tr>
+<tr><td>Kit #1</td><td>$600</td><td>Starting capital (seed)</td><td>Jul '26</td></tr>
+<tr><td>Popcorn machine</td><td>~$200</td><td>2–3 paid parties banked + snack requests</td><td>Aug '26</td></tr>
+<tr><td>Kit #2</td><td>~$600</td><td>$500+ saved • 6+ bookings/mo • turning away same-day dates</td><td>~Jan '27</td></tr>
+<tr><td>Booth + Backdrop</td><td>~$700</td><td>Add-on demand proven • 1-mo cushion in bank</td><td>~Jan–Feb '27</td></tr>
+<tr><td>Cotton candy</td><td>~$150</td><td>Snack Bar attaches to >50% of bookings</td><td>~Feb '27</td></tr>
+<tr><td>Paid ads + software</td><td>$300–500/mo</td><td>Organic maxed • customer-acquisition cost proven profitable</td><td>~Apr '27</td></tr>
+<tr><td>Kit #3 + train crews</td><td>~$600</td><td>2 crews' worth of weekend demand • helper reliable</td><td>~Jun '27</td></tr>
+<tr><td>Snow cone / soft play / 360</td><td>~$1,200</td><td>Core lines validated • summer peak demand</td><td>~Jun–Jul '27</td></tr>
+<tr><td>Glow Zone + premium bundles</td><td>varies</td><td>2 crews stable • chasing $10k/mo</td><td>~Nov '27</td></tr>
+</table>
+<p class="muted" style="font-size:12px">Each kit repays itself in 3–4 parties (see ROI tab), so the risk of buying <i>too late</i> (turning away money) is bigger than buying too early — but only reinvest once the trigger is met and the cushion is intact.</p></div>
+
 <div class="card"><h3>🎯 Milestone dates</h3>
 <table>
 <tr><th>When</th><th>Milestone</th><th>Target net/mo</th></tr>
+<tr><td><b>Aug '26</b></td><td>🌐 Live on yourpartyporch.com • Snack Bar added</td><td>—</td></tr>
 <tr><td><b>Sep '26</b></td><td>🚀 Public launch — first full-price booking</td><td>~$0–1k</td></tr>
 <tr><td><b>Dec '26</b></td><td>Validated: 6+ bookings/mo, reviews flowing</td><td>~$1–3k</td></tr>
-<tr><td><b>Apr '27</b></td><td>First helper hired; Booth + Backdrop live</td><td>~$3–6k</td></tr>
-<tr><td><b>Oct '27</b></td><td>2 crews running in parallel</td><td>~$6–8k</td></tr>
+<tr><td><b>Apr '27</b></td><td>First helper hired; Booth + Backdrop live; Kit #2 running</td><td>~$3–6k</td></tr>
+<tr><td><b>Oct '27</b></td><td>2 crews running in parallel; Kit #3</td><td>~$6–8k</td></tr>
 <tr><td><b>Mar '28</b></td><td>🏆 +$10k/mo net — runs without you on-site</td><td><b>$10k+</b></td></tr>
-</table>
-<p class="muted" style="font-size:12px">18-month goal from July 2026 → the $10k/mo mark lands right at the plan's end (early 2028). Pull it forward by attaching add-ons to more bookings (see the ROI tab).</p></div>`;
-
-CONTENT.Marketing = `
-<h2 class="section">Marketing Engine</h2>
-<div class="card"><h3>📹 #1 channel: Content (free)</h3>
-<p class="muted">Film EVERY party. Post 4–5 short videos/week on TikTok + Reels + Shorts.</p>
-<ul class="clean">
-<li>Kid reactions seeing the battlefield</li>
-<li>Slow-mo dart hits + victory celebrations</li>
-<li>Setup timelapse: empty yard → arena in 60s</li>
-<li>"POV: The Party Porch just pulled up"</li>
-<li>Parent testimonials (10-sec clips)</li>
-<li>Themed teasers (Halloween/glow battles)</li>
-<li>Ride trending audio with party clips</li>
-</ul>
-<div class="tip">1 party = a Reel + TikTok + 3 Stories + a Short + a FB post. Hook in 1 second. Always end with "Booking Fall parties — link in bio."</div></div>
-<div class="card"><h3>📍 Local organic (high-intent, free)</h3>
-<ul class="clean">
-<li>15–20 local mom/parent/community FB groups</li>
-<li>Nextdoor + Facebook Marketplace (renew weekly)</li>
-<li><b>Google Business Profile</b> — aim 10 reviews in 60 days</li>
-<li>School/PTA + church bulletins; offer fundraiser nights</li>
-</ul></div>
-<div class="card"><h3>🔁 Referral & repeat</h3>
-<ul class="clean">
-<li>Refer-a-friend: <b>both get $30 off</b> (on every invoice)</li>
-<li>Returning families 10% off (birthdays repeat yearly!)</li>
-<li>Handle card in every goody bag</li>
-<li>Text review link day after every party</li>
-</ul></div>
-<div class="card"><h3>🤝 Partnerships</h3>
-<ul class="clean">
-<li>Venues/parks → be their recommended vendor</li>
-<li>Balloon artists, bakeries, bounce-house cos → cross-refer</li>
-<li>Micro-influencer moms → free party for posts</li>
-<li>Schools/camps/churches/corporate → weekday revenue</li>
-</ul></div>
-<div class="card"><h3>💸 Paid ads (start small, later)</h3>
-<p class="muted">Only after 3–4 videos perform organically. Boost the winners. $5–10/day, radius-targeted to parents of 5–14 yr olds. Keep cost-per-booking well under ~$300 net.</p></div>`;
-
-CONTENT.Clients = `
-<h2 class="section">First Clients Playbook</h2>
-<div class="card"><h3>🥇 First 3 (free/founding)</h3>
-<p class="muted">You need footage + reviews more than money. Trade parties for content.</p>
-<ul class="clean">
-<li>Family/friends w/ kids → FREE or $99 pilot, film it</li>
-<li>Personal network post: "Booking 3 founding families at 50% off for honest reviews"</li>
-<li>Each = 5+ clips, 3+ photos, 1 review, 1 testimonial</li>
-</ul></div>
-<div class="card"><h3>🔟 First 10 (paid, discounted)</h3>
-<p class="muted">First 5–10 paid parties get the <b>referee FREE</b> (rental + host at rental price) labeled "Founding Family — Fall 2026." Scarcity + deal + social proof.</p></div>
-<div class="card"><h3>⚡ Inquiry → booking flow</h3>
-<ul class="clean">
-<li>Respond in &lt; 1 hour (speed wins)</li>
-<li>Ask: date, child's age, # kids, location</li>
-<li>Quote the rental, upsell the referee + 1 add-on</li>
-<li>Send booking link + a photo/video</li>
-<li><b>Secure with $50 deposit</b> — no deposit = not booked</li>
-<li>Confirm details 3 days before</li>
-<li>Day-after: thank-you + review link + referral offer</li>
-</ul></div>
-<div class="card"><h3>💬 Scripts</h3>
-<div class="quote">🎉 The Party Porch launches this fall! We bring the ULTIMATE Nerf war birthday party to your backyard — blasters, obstacles, safety gear + a host who runs the show. Booking our first 5 FOUNDING FAMILIES at a special price. Comment "BATTLE" or DM to grab a fall date! @yourpartyporch</div>
-<div class="quote">Awesome, [date] is available! To lock it in I take a $50 deposit (goes toward your total). I'll send a secure link — once that's in, your date is reserved. 🎯</div>
-<div class="quote">Thank you for having us — [child] & the crew were awesome! 🙌 Mind leaving a quick Google review? [link]. Refer a friend who books & you BOTH get $30 off! 🎉</div></div>
-<div class="warn">⚠️ Get an attorney-reviewed waiver + event liability insurance before public/large events. Eye protection mandatory every battle.</div>`;
-
-CONTENT.Shopping = `
-<h2 class="section">$600 Starter Kit</h2>
-<div class="card"><h3>🛒 Phase 0 shopping list</h3>
-<table>
-<tr><th>Item</th><th>Qty</th><th>~Cost</th></tr>
-<tr><td>Budget blasters (bulk/used FB Marketplace)</td><td>14</td><td>$220</td></tr>
-<tr><td>Foam darts (bulk ~2,000)</td><td>—</td><td>$70</td></tr>
-<tr><td>Safety glasses</td><td>16</td><td>$45</td></tr>
-<tr><td>Pop-up bunkers/obstacles (or DIY)</td><td>6–8</td><td>$110</td></tr>
-<tr><td>Team vests/sashes (2 colors)</td><td>16</td><td>$35</td></tr>
-<tr><td>Storage bins + folding wagon</td><td>—</td><td>$55</td></tr>
-<tr><td>Flyers + Canva assets</td><td>—</td><td>$65</td></tr>
-<tr><td><b>TOTAL</b></td><td></td><td><b>~$600</b></td></tr>
-</table></div>
-<div class="tip">💡 First reinvestment (Phase 1): popcorn machine (~$200, ~90% margin) → +$100/party add-on. Best early ROI.</div>
-<div class="card"><h3>🧰 Sourcing tips</h3>
-<ul class="clean">
-<li>Buy used blasters in lots on FB Marketplace/OfferUp — half price</li>
-<li>Bulk darts online beat retail 3–4×</li>
-<li>DIY bunkers: foam board / inflatable pool tubes / cardboard first, upgrade later</li>
-<li>Label everything; count darts after each party</li>
-</ul></div>`;
-
-CONTENT.Pricing = `
-<h2 class="section">Pricing — Rental + Referee Matrix</h2>
-<div class="tip">💥 <b>How it works:</b> start with the <b>rental</b> (we deliver the gear, you set it up & run it) — <b>12 players included</b>. Want it hands-off? Add a <b>referee</b> to run the games + safety. Extra players are just <b>~$12 each</b> (market charges $15–16). Small party stays cheap; big parties pay their way.</div>
-<div class="card"><h3>🎯 Base (up to 12 players, ~2 hrs, all gear)</h3>
-<table>
-<tr><td><b>Rental</b> — we deliver, you set up & run</td><td><b>$180</b></td></tr>
-<tr><td><b>+ Referee</b> — our host runs every game + safety</td><td><b>+$100</b></td></tr>
-</table>
-<p class="muted" style="font-size:12px">Gear = blasters, darts, safety glasses, bunkers/obstacles. Free delivery + pickup within 12 mi of 77018 (setup is a +$40 add-on).</p></div>
-<div class="card"><h3>📊 Player-count matrix</h3>
-<table>
-<tr><th>Players</th><th>Rental</th><th>+ Referee(s)</th><th>Full (rental + refs)</th></tr>
-<tr><td>Up to 12</td><td>$180</td><td>+$100 (1)</td><td><b>$280</b></td></tr>
-<tr><td>Up to 18</td><td>$250</td><td>+$100 (1)</td><td><b>$350</b></td></tr>
-<tr><td>Up to 24</td><td>$320</td><td>+$200 (2)</td><td><b>$520</b></td></tr>
-<tr><td><b>25+ players</b></td><td colspan="3"><b>Custom quote</b> — DM us headcount + location</td></tr>
-</table>
-<p class="muted" style="font-size:12px">Rental ~$12/extra player (+$70 per 6). Referee $100 each — 1 host runs up to ~18 kids, 2 for ~24. Big parties (25+) get a tailored quote.</p></div>
-<div class="card"><h3>🥊 vs. Houston competitors</h3>
-<table>
-<tr><th>Company</th><th>Base rental</th><th>Players incl.</th><th>Hosted</th></tr>
-<tr><td>Epik Fun</td><td>~$180</td><td>~8–10</td><td>+ref</td></tr>
-<tr><td>Yard Wars</td><td>$245</td><td>~10</td><td>$395</td></tr>
-<tr><td>Texas Premier</td><td>$325</td><td>~10</td><td>$390</td></tr>
-<tr><td>Have Several Seats</td><td>$300+</td><td>~12</td><td>$500</td></tr>
-<tr><td>Battlefield Houston</td><td>—</td><td>—</td><td>$349</td></tr>
-<tr><td><b>The Party Porch</b> ⭐</td><td><b>$180</b></td><td><b>12</b></td><td><b>$280</b></td></tr>
-</table>
-<p class="muted" style="font-size:12px">Epik Fun also starts ~$180 — but we include <b>12 players</b> (vs ~8–10), cheaper extra players (~$12 vs $15–16), and free delivery to <b>12 mi of 77018</b> (they charge $3/mi past 10). Same entry price, more value.</p></div>
-<div class="card"><h3>➕ Add-ons</h3>
-<table>
-<tr><td>We set up + tear down (skip DIY)</td><td>+$40</td></tr>
-<tr><td>Extra hour</td><td>+$40</td></tr>
-<tr><td>Glow / Night battle</td><td>+$79</td></tr>
-<tr><td>The Snack Bar (per machine)</td><td>+$69</td></tr>
-<tr><td>The Booth (photo booth)</td><td>+$99</td></tr>
-<tr><td>The Backdrop</td><td>+$79</td></tr>
-<tr><td>Self-pickup (you grab & return gear)</td><td>−$25</td></tr>
-<tr><td>Delivery beyond 12 mi of 77018</td><td>$2/mi</td></tr>
-</table>
-<p class="muted" style="font-size:12px">Free delivery within 12 mi of 77018; otherwise a $2/mile fee applies. Setup is a +$40 add-on (base = you set up).</p></div>
-<div class="card"><h3>📦 Bundles (anchor on rental + referee)</h3>
-<table>
-<tr><td>Battle + Snack Bar (12 players, 1 ref)</td><td>$340</td></tr>
-<tr><td>Party Pack (+ Booth + snack + Backdrop)</td><td>$489</td></tr>
-<tr><td>Ultimate (+360 booth, flower wall, uplighting)</td><td>$699+</td></tr>
-</table></div>
-<div class="card"><h3>🎟️ Experience rentals — our live pricing</h3>
-<table>
-<tr><th>Experience</th><th>Price</th><th>Status</th></tr>
-<tr><td>Nerf Battles (up to 12, ~2 hr)</td><td>$180</td><td>live</td></tr>
-<tr><td>&nbsp;&nbsp;+ Referee</td><td>+$100</td><td>live</td></tr>
-<tr><td>Movie Night (projector + 15ft screen, evenings only)</td><td>$375</td><td>live</td></tr>
-<tr><td>Snack Bar — Popcorn</td><td>$69</td><td>live</td></tr>
-<tr><td>Snack Bar — Cotton Candy</td><td>$79</td><td>live</td></tr>
-<tr><td>Snack Bar — Shaved Ice (ice not incl.)</td><td>$79</td><td>live</td></tr>
-<tr><td>Photo Booth</td><td>$375</td><td>soon</td></tr>
-<tr><td>White Bounce House</td><td>$255</td><td>soon</td></tr>
-<tr><td>Soft Play</td><td>$295</td><td>soon</td></tr>
-<tr><td>Flower Backdrop (flower wall)</td><td>$225</td><td>soon</td></tr>
-<tr><td>Water Battles (up to 20)</td><td>$225</td><td>soon</td></tr>
-<tr><td>Yard Games bundle (Giant Connect Four, Jenga, cornhole)</td><td>$89</td><td>soon</td></tr>
-</table>
-<p class="muted" style="font-size:12px">Intro prices — positioned as the <b>most affordable in Houston</b>. "soon" items launch at these rates; reserve now to lock them in.</p></div>
-<div class="warn">🚀 <b>Founding Family launch offer:</b> first 5–10 parties get the referee FREE (rental + host at rental price) for reviews + footage.</div>
-<div class="tip">Deposit: $50 to reserve. Rent-only stays affordable; the referee upsell + player-count scaling + add-ons carry the margin. Step prices up ~$20–40/tier in 2027 as reviews build.</div>`;
-
-CONTENT.Money = `
-<h2 class="section">The $10k/Month Math</h2>
-<div class="kpi">
-<div class="box"><div class="n">~42</div><div class="l">parties/mo</div></div>
-<div class="box"><div class="n">$240</div><div class="l">net/party</div></div>
-<div class="box"><div class="n">$10k</div><div class="l">net/mo</div></div>
-</div>
-<div class="tip">The <b>rental</b> nets ~$150 with almost no labor. Extra players (~$12 each) cost you ~$1–2 in dart wear — nearly all profit. Every <b>referee</b> and add-on layers more margin. Goal: attach a referee (or add-ons) to most bookings to lift the blended ticket toward ~$300+.</div>
-<div class="card"><h3>🧮 Economics</h3>
-<table>
-<tr><th>Option</th><th>Price</th><th>Cost</th><th>Net</th><th>Labor</th></tr>
-<tr><td>Rental only (12)</td><td>$180</td><td>~$30</td><td>~$150</td><td>drop/pickup</td></tr>
-<tr><td>+ 1 Referee (12)</td><td>$280</td><td>~$70</td><td>~$210</td><td>~2.5 hr</td></tr>
-<tr><td>24-player + 2 refs</td><td>$520</td><td>~$110</td><td>~$410</td><td>~2.5 hr ×2</td></tr>
-</table>
-<p class="muted" style="font-size:12px">Cost = gas + dart wear (~$1–2/extra player) + referee labor (~$30–40/ref). Add-ons (Snack Bar ~90% margin) lift every ticket.</p></div>
-<div class="card"><h3>📈 Revenue ramp</h3>
-<table>
-<tr><th>Phase</th><th>When</th><th>Net/mo</th></tr>
-<tr><td>0 Launch</td><td>Sep '26</td><td>~$0–1k</td></tr>
-<tr><td>1 Validate</td><td>Oct–Dec '26</td><td>~$1–3k</td></tr>
-<tr><td>2 Add-ons+Hire</td><td>Jan–May '27</td><td>~$3–6k</td></tr>
-<tr><td>3 Crews</td><td>Jun–Oct '27</td><td>~$6–8k</td></tr>
-<tr><td>4 Scale</td><td>Nov '27–Mar '28</td><td><b>$10k+</b></td></tr>
-</table></div>
-<div class="tip">⚖️ ~42 parties/mo at ~$240 net = $10k. Referees are your paid crew — each hired ref lets you run more parties in parallel while you keep the rental margin.</div>
-<div class="card"><h3>🪜 Reinvestment order</h3>
-<ol class="clean" style="padding-left:20px">
-<li>Popcorn machine</li><li>Kit #2</li><li>Booth + Backdrop</li>
-<li>First helper</li><li>Kit #3 + crews</li><li>Snow cone/soft play/360 booth</li>
-<li>Paid ads + software</li><li>Crew chief + premium bundles</li>
-</ol></div>`;
+</table></div>`;
 
 CONTENT.ROI = `
 <h2 class="section">ROI Stress Test</h2>
