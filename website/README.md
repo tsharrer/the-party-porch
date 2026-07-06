@@ -88,3 +88,20 @@ Tips: use bright, landscape photos of real parties; keep them under ~400 KB each
 (compress at tinypng.com). A dark gradient is layered on top so white text stays readable.
 On the WordPress version the tiles load these from the GitHub-hosted `assets/` folder,
 so just add the files to the repo and push.
+
+## Experience pages & photo galleries
+
+Every offering now has its own page in `website/experiences/` (e.g. `nerf-battles.html`,
+`photo-booth.html`, `yard-games.html`). The homepage tiles link to these pages, and each
+page's "Book" button deep-links back to the form pre-selected for that rental
+(`index.html?exp=Nerf%20Battles#book`).
+
+Each page shows a 4-photo gallery. Replace the placeholders by dropping real photos into
+`website/assets/gallery/` using these names (4 per offering):
+`nerf-battles-1..4.jpg`, `snack-bar-1..4.jpg`, `water-battles-1..4.jpg`,
+`photo-booth-1..4.jpg`, `flower-backdrop-1..4.jpg`, `soft-play-1..4.jpg`,
+`white-bounce-houses-1..4.jpg`, `yard-games-1..4.jpg`, `custom-packages-1..4.jpg` (≈800×600).
+
+The booking form adapts to the selected rental: Nerf shows player count + referee,
+Snack Bar prices by machine, coming-soon items show a waitlist message, and Custom
+requests a quote.
