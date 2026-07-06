@@ -10,9 +10,9 @@
 - **Starting budget:** $600
 
 ## 📱 Live tracker (open on your phone)
-**https://tsharrer.github.io/the-party-porch/** — interactive app; tap tasks to check them
-off (saves on your device). Tabs: **Tracker · Leads · Timeline · Marketing · Clients ·
-Scripts · Shopping · Pricing · Money · Plan**. The **Leads** tab logs inquiries with source,
+**https://yourpartyporch.com/tracker/** (or the GitHub Pages URL `https://tsharrer.github.io/the-party-porch/tracker/`) — interactive app; tap tasks to check them
+off (saves on your device). Tabs: **Tracker · Leads · Expenses · Timeline · Gantt · Marketing ·
+Clients · Scripts · Shopping · Pricing · Money · ROI · Plan**. The **Leads** tab logs inquiries with source,
 status (Lead → Quoted → Booked → Done → Lost) and value so you learn which channel books best.
 
 ---
@@ -22,8 +22,10 @@ status (Lead → Quoted → Booked → Done → Lost) and value so you learn whi
 | Doc | Purpose |
 |-----|---------|
 | [TRACKER.md](TRACKER.md) | ✅ Master task tracker — check things off as you go |
-| [website/index.html](website/index.html) | 🌐 **Booking website** — SEO-optimized, self-contained, ready for WordPress.org |
-| [website/README.md](website/README.md) | How to publish the site + the SEO features built in |
+| [index.html](index.html) | 🌐 **Booking website** (served at the domain root) — SEO-optimized, self-contained |
+| [tracker/index.html](tracker/index.html) | 📊 Internal launch tracker/dashboard app (served at `/tracker/`) |
+| [google-calendar.gs](google-calendar.gs) | 📅 Apps Script backend: availability + booking + confirmation email |
+| [docs/website-setup.md](docs/website-setup.md) | How the site works: cart, availability, confirmation email, SEO |
 | [docs/business-plan.md](docs/business-plan.md) | Full business plan, unit economics, 18-month ramp |
 | [docs/launch-timeline.md](docs/launch-timeline.md) | Week-by-week plan: July → September 2026 launch |
 | [docs/marketing-plan.md](docs/marketing-plan.md) | Content engine, channels, referrals, paid ads, partnerships |
