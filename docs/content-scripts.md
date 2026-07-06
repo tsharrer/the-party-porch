@@ -41,7 +41,7 @@ captions, trending audio. Film once, cut into a Reel + TikTok + Short + 3 Storie
 
 ### 8 · Founding Family Offer
 > HOOK: "We're brand new — so our first 5 families get a deal."
-> VO: "Founding Family price: full Nerf war party for $199. All I ask is an honest review."
+> VO: "Founding Family price: full Nerf war party for $149. All I ask is an honest review."
 > CTA: "Only 5 spots. Comment 'BATTLE' to claim one."
 
 ### 9 · Halloween Zombie Battle Teaser

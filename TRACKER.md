@@ -32,7 +32,7 @@ Legend: 💰 spend · 📹 content · 📣 marketing · 🎯 milestone
 - [ ] 📣 Announce "Now booking Fall parties!"
 - [ ] 📣 Post in 10+ local Facebook groups
 - [ ] List on Nextdoor + Marketplace
-- [ ] 📣 Launch Founding Family offer: first 5 parties $199
+- [ ] 📣 Launch Founding Family offer: first 5 parties $149
 - [ ] 💰 Buy popcorn machine (~$200) → The Snack Bar
 - [ ] Create pricing one-pager + booking link
 - [ ] 📣 DM 3 local micro-influencer moms

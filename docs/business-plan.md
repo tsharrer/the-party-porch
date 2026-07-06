@@ -37,27 +37,33 @@ SEO/listing line: *"Nerf war parties, photo booths, snack bars & party rentals �
 ## Unit Economics
 
 **Core product:** 2-hour mobile Nerf war party — drop off, set up, run, pick up.
+**Houston strategy:** fully-hosted parties priced to UNDERCUT hosted competitors
+(Battlefield Houston $349, Yard Wars $395, Texas Premier $390, Have Several Seats $500).
+Penetration pricing now → step up toward market rate in 2027 as reviews build.
 
 | Package | Price |
 |---------|-------|
-| Basic Battle (up to 10 kids, 1.5 hr) | $249 |
-| Standard (up to 14, 2 hr, obstacles) | $349 |
-| Deluxe (up to 20, 2 hr, host runs games) | $499 |
-| Add-on: extra hour | $75 |
-| Add-on: The Booth | $150 |
-| Add-on: The Backdrop | $125 |
-| Add-on: The Snack Bar (per machine) | $100 |
-| Add-on: extra 5 blasters | $40 |
+| Basic Battle (up to 10 kids, 1.5 hr) | $199 |
+| Standard (up to 15, 2 hr, obstacles) | $279 |
+| Deluxe (up to 20, 2 hr, full games + prizes) | $379 |
+| Add-on: extra hour | $60 |
+| Add-on: Glow/Night battle | $99 |
+| Add-on: The Booth | $125 |
+| Add-on: The Backdrop | $99 |
+| Add-on: The Snack Bar (per machine) | $85 |
+| Add-on: extra 5 players | $35 |
 
-- **Average ticket target:** ~$400 → ~$600 with bundles
+- **Launch average ticket:** ~$330 → ~$500 with bundles
 - **Variable cost/party** (darts, wear, gas, ~2 hrs helper labor): ~$70–110
-- **Net profit/party:** ~$280–320
+- **Net profit/party:** ~$180–260 at launch, rising toward ~$300 as prices normalize
 
 ### Path to $10k/month NET
-- ~**34 parties/month** at ~$300 net = **$10.2k/month**
-- ~8 parties/weekend across **2–3 kits + crews** (not solo).
+- Two paths: ~**40 parties/month** at ~$250 net, OR fewer parties as you raise the average
+  ticket via bundles + a step-up toward market rate ($349–400). Reality is a mix.
+- ~8–10 parties/weekend across **2–3 kits + crews** (not solo).
 - Weekday revenue (schools, camps, church/community, corporate) fills the gap.
-- **Biggest lever:** raising avg ticket $349 → $600 via bundles nearly HALVES parties needed.
+- **Biggest lever:** undercut to win reviews early, then bundles + price normalization lift
+  net/party back toward $300 without losing volume.
 
 ---
 
@@ -100,7 +106,7 @@ Green light if: **payback ≤ 4 rentals, low labor, fits in the van, cross-sells
 
 | Product | Upfront | Charge/event | Payback | Verdict |
 |---------|---------|--------------|---------|---------|
-| Nerf war battle (core) | $600 | $249–499 | 2 | ✅ START |
+| Nerf war battle (core) | $600 | $199–379 | 2 | ✅ START |
 | Balloon/flower backdrop | $150–250 | +$125 | 2 | ✅ P2 |
 | Popcorn machine | ~$200 | +$100 | 2 | ✅ P1 |
 | Cotton candy | ~$250 | +$100 | 3 | ✅ P2 |
@@ -114,10 +120,10 @@ Green light if: **payback ≤ 4 rentals, low labor, fits in the van, cross-sells
 | Chairs & tables | — | — | — | ❌ EXCLUDED |
 
 ## Bundling Ladder (drives average order value)
-- **Battle** — $349
-- **Battle + Snack Bar** — $549
-- **Party Pack** = Battle + Booth + 1 snack + Backdrop — $699
-- **Ultimate** = Battle + 360 booth + Snack Bar + flower wall + uplighting — $999–1,299
+- **Battle** — $279
+- **Battle + Snack Bar** — $349
+- **Party Pack** = Battle + Booth + 1 snack + Backdrop — $549
+- **Ultimate** = Battle + 360 booth + Snack Bar + flower wall + uplighting — $849–999
 
 ## Risk / Watch-outs
 - **Trademark:** "Nerf" only in descriptive copy, never the brand.

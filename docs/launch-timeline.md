@@ -42,7 +42,7 @@ Legend: 🎯 milestone · 💰 spend · 📹 content · 📣 marketing
 - [ ] 📣 Announce "Now booking Fall parties!" across all channels.
 - [ ] Post in 10+ local Facebook groups (mom groups, community, buy-nothing, birthday).
 - [ ] List on Nextdoor + Facebook Marketplace as a service.
-- [ ] Offer a **Founding Family discount**: first 5 parties $199 (Basic) for reviews + footage.
+- [ ] Offer a **Founding Family discount**: first 5 parties $149 (Basic) for reviews + footage.
 
 ### Week 6 (Aug 10–16)
 - [ ] 💰 Buy the popcorn machine (~$200) once first deposits land — launch The Snack Bar.

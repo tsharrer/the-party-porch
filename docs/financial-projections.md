@@ -2,21 +2,25 @@
 
 > Directional model, not a guarantee. Update with real numbers monthly.
 
-## Per-party economics
-- Average ticket: **~$400** (base + 1 add-on); **~$600** with bundles
+## Per-party economics (Houston undercut pricing)
+- Launch average ticket: **~$330** (base + 1 add-on); **~$500** with bundles
 - Variable cost/party: **~$70–110** (darts, wear, gas, ~2 hr helper labor)
-- **Net profit/party: ~$280–320**
+- **Net profit/party: ~$180–260 at launch**, rising toward ~$300 as prices normalize to market
+
+> **Undercut strategy:** we price below Houston's hosted competitors ($349–$500) to win the
+> first wave of reviews/footage, then step base prices up toward market rate in 2027 and lean
+> on high-margin add-ons/bundles to protect margin.
 
 ## The $10k/month target
 | Metric | Value |
 |--------|-------|
-| Parties/month | ~34 |
-| Net profit/party | ~$300 |
-| **Net/month** | **~$10,200** |
-| Spread | ~8/weekend across 2–3 kits + crews + weekday events |
+| Parties/month | ~40 (launch pricing) → ~34 as avg ticket rises |
+| Net profit/party | ~$250 → ~$300 |
+| **Net/month** | **~$10,000** |
+| Spread | ~8–10/weekend across 2–3 kits + crews + weekday events |
 
-**Biggest lever:** raising average ticket $349 → $600 via bundles nearly HALVES the number
-of parties required. Sell bundles before chasing volume.
+**Biggest lever:** undercut to win reviews early; then bundles + a price step-up toward market
+lift net/party back up so you don't need to grind out 40+ parties forever.
 
 ## Month-by-month ramp (directional)
 | Phase | Window | Parties/mo | Avg ticket | Net/mo |

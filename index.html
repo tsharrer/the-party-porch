@@ -132,7 +132,7 @@ const TRACKER = [
     {id:"a1", t:'Announce "Now booking Fall parties!" everywhere', tags:["mkt"]},
     {id:"a2", t:"Post in 10+ local Facebook parent/community groups", tags:["mkt"]},
     {id:"a3", t:"List on Nextdoor + Facebook Marketplace"},
-    {id:"a4", t:"Launch Founding Family offer: first 5 parties $199", tags:["mkt"]},
+    {id:"a4", t:"Launch Founding Family offer: first 5 parties $149", tags:["mkt"]},
     {id:"a5", t:"Buy popcorn machine (~$200) → launch The Snack Bar", tags:["spend"]},
     {id:"a6", t:"Create pricing one-pager + shareable booking link"},
     {id:"a7", t:"DM 3 local micro-influencer moms (free party for a post)", tags:["mkt"]},
@@ -258,20 +258,20 @@ CONTENT.Clients = `
 <li>Each = 5+ clips, 3+ photos, 1 review, 1 testimonial</li>
 </ul></div>
 <div class="card"><h3>🔟 First 10 (paid, discounted)</h3>
-<p class="muted">First 5–10 paid parties at <b>$199</b> labeled "Founding Family — Fall 2026." Scarcity + deal + social proof.</p></div>
+<p class="muted">First 5–10 paid parties at <b>$149</b> labeled "Founding Family — Fall 2026." Scarcity + deal + social proof.</p></div>
 <div class="card"><h3>⚡ Inquiry → booking flow</h3>
 <ul class="clean">
 <li>Respond in &lt; 1 hour (speed wins)</li>
 <li>Ask: date, child's age, # kids, location</li>
 <li>Recommend Standard + 1 add-on (anchor high)</li>
 <li>Send booking link + a photo/video</li>
-<li><b>Secure with $75 deposit</b> — no deposit = not booked</li>
+<li><b>Secure with $50 deposit</b> — no deposit = not booked</li>
 <li>Confirm details 3 days before</li>
 <li>Day-after: thank-you + review link + referral offer</li>
 </ul></div>
 <div class="card"><h3>💬 Scripts</h3>
 <div class="quote">🎉 The Party Porch launches this fall! We bring the ULTIMATE Nerf war birthday party to your backyard — blasters, obstacles, safety gear + a host who runs the show. Booking our first 5 FOUNDING FAMILIES at a special price. Comment "BATTLE" or DM to grab a fall date! @yourpartyporch</div>
-<div class="quote">Awesome, [date] is available! To lock it in I take a $75 deposit (goes toward your total). I'll send a secure link — once that's in, your date is reserved. 🎯</div>
+<div class="quote">Awesome, [date] is available! To lock it in I take a $50 deposit (goes toward your total). I'll send a secure link — once that's in, your date is reserved. 🎯</div>
 <div class="quote">Thank you for having us — [child] & the crew were awesome! 🙌 Mind leaving a quick Google review? [link]. Refer a friend who books & you BOTH get $30 off! 🎉</div></div>
 <div class="warn">⚠️ Get an attorney-reviewed waiver + event liability insurance before public/large events. Eye protection mandatory every battle.</div>`;
 
@@ -300,37 +300,51 @@ CONTENT.Shopping = `
 
 CONTENT.Pricing = `
 <h2 class="section">Packages & Pricing</h2>
-<div class="card"><h3>🎯 Nerf war packages</h3>
+<div class="tip">💥 <b>Houston strategy: fully-hosted parties that undercut the competition.</b> We set up, run every game, and clean up — cheaper than rivals who charge more (or make you DIY).</div>
+<div class="card"><h3>🥊 vs. Houston competitors (hosted)</h3>
+<table>
+<tr><th>Company</th><th>Hosted party</th><th>Price</th></tr>
+<tr><td>Have Several Seats</td><td>Locked & Loaded</td><td>$500</td></tr>
+<tr><td>Yard Wars</td><td>Hosted skirmish</td><td>$395</td></tr>
+<tr><td>Texas Premier</td><td>Drop-off 1–4 hr</td><td>$390</td></tr>
+<tr><td>Battlefield Houston</td><td>16 blasters, setup</td><td>$349</td></tr>
+<tr><td><b>The Party Porch</b> ⭐</td><td><b>Standard, hosted</b></td><td><b>$279</b></td></tr>
+</table>
+<p class="muted" style="font-size:12px">We undercut the hosted market by ~$70–220 while still netting ~$180–220/party.</p></div>
+<div class="card"><h3>🎯 Nerf war packages (all fully hosted)</h3>
 <table>
 <tr><th>Package</th><th>Price</th></tr>
-<tr><td>Basic Battle (≤10 kids, 1.5 hr)</td><td>$249</td></tr>
-<tr><td><b>Standard (≤14, 2 hr, obstacles)</b> ⭐</td><td><b>$349</b></td></tr>
-<tr><td>Deluxe (≤20, 2 hr, host runs games)</td><td>$499</td></tr>
+<tr><td>Basic Battle (≤10 kids, 1.5 hr)</td><td>$199</td></tr>
+<tr><td><b>Standard (≤15, 2 hr, obstacles)</b> ⭐</td><td><b>$279</b></td></tr>
+<tr><td>Deluxe (≤20, 2 hr, full games + prizes)</td><td>$379</td></tr>
 </table></div>
 <div class="card"><h3>➕ Add-ons</h3>
 <table>
-<tr><td>Extra hour</td><td>+$75</td></tr>
-<tr><td>The Booth (photo booth)</td><td>+$150</td></tr>
-<tr><td>The Backdrop</td><td>+$125</td></tr>
-<tr><td>The Snack Bar (per machine)</td><td>+$100</td></tr>
-<tr><td>Extra 5 blasters</td><td>+$40</td></tr>
+<tr><td>Extra hour</td><td>+$60</td></tr>
+<tr><td>Glow / Night battle (rivals charge +$150)</td><td>+$99</td></tr>
+<tr><td>The Booth (photo booth)</td><td>+$125</td></tr>
+<tr><td>The Backdrop</td><td>+$99</td></tr>
+<tr><td>The Snack Bar (per machine)</td><td>+$85</td></tr>
+<tr><td>Extra 5 players</td><td>+$35</td></tr>
 </table></div>
 <div class="card"><h3>📦 Bundles (push every booking up a tier)</h3>
 <table>
-<tr><td>Battle</td><td>$349</td></tr>
-<tr><td>Battle + Snack Bar</td><td>$549</td></tr>
-<tr><td>Party Pack (Battle+Booth+Snack+Backdrop)</td><td>$699</td></tr>
-<tr><td>Ultimate (+360 booth, flower wall, uplighting)</td><td>$999–1,299</td></tr>
+<tr><td>Battle</td><td>$279</td></tr>
+<tr><td>Battle + Snack Bar</td><td>$349</td></tr>
+<tr><td>Party Pack (Battle+Booth+Snack+Backdrop)</td><td>$549</td></tr>
+<tr><td>Ultimate (+360 booth, flower wall, uplighting)</td><td>$849–999</td></tr>
 </table></div>
-<div class="tip">Deposit: $75 non-refundable to reserve. Avg ticket target $400 → $600 with bundles.</div>`;
+<div class="warn">🚀 <b>Founding Family launch offer:</b> first 5–10 parties at <b>$149</b> for reviews + footage.</div>
+<div class="tip">Deposit: $50 to reserve. <b>Penetration pricing:</b> undercut now to win reviews & market share, then step prices up toward the $349–$400 market rate in 2027 as your brand builds. Avg ticket target ~$330 → ~$500 with bundles.</div>`;
 
 CONTENT.Money = `
 <h2 class="section">The $10k/Month Math</h2>
 <div class="kpi">
-<div class="box"><div class="n">34</div><div class="l">parties/mo</div></div>
-<div class="box"><div class="n">$300</div><div class="l">net/party</div></div>
-<div class="box"><div class="n">$10.2k</div><div class="l">net/mo</div></div>
+<div class="box"><div class="n">40</div><div class="l">parties/mo</div></div>
+<div class="box"><div class="n">$250</div><div class="l">net/party</div></div>
+<div class="box"><div class="n">$10k</div><div class="l">net/mo</div></div>
 </div>
+<div class="tip">Two ways to $10k: (a) ~40 parties/mo at ~$250 net, OR (b) fewer parties as you <b>raise the average ticket</b> with bundles + a price step-up toward market rate once reviews are stacked. Reality = a mix of both.</div>
 <div class="card"><h3>📈 Revenue ramp</h3>
 <table>
 <tr><th>Phase</th><th>When</th><th>Net/mo</th></tr>
@@ -342,11 +356,11 @@ CONTENT.Money = `
 </table></div>
 <div class="card"><h3>🧮 Per-party economics</h3>
 <ul class="clean">
-<li>Avg ticket: ~$400 (→ $600 w/ bundles)</li>
+<li>Launch avg ticket: ~$330 (→ ~$500 w/ bundles)</li>
 <li>Variable cost: ~$70–110 (darts, gas, ~2 hr helper)</li>
-<li>Net profit/party: ~$280–320</li>
+<li>Net profit/party: ~$180–260 (rises as prices normalize)</li>
 </ul>
-<div class="tip">Biggest lever: raising avg ticket $349→$600 via bundles nearly HALVES the parties needed. Sell bundles before chasing volume.</div></div>
+<div class="tip">Undercut pricing wins the first 6–12 months of reviews. Then bundles + a step-up to market rate ($349–400) lift net/party back toward $300.</div></div>
 <div class="card"><h3>🪜 Reinvestment order</h3>
 <ol class="clean" style="padding-left:20px">
 <li>Popcorn machine</li><li>Kit #2</li><li>Booth + Backdrop</li>
@@ -420,7 +434,7 @@ CTA: "Standard party, up to 14 kids. DM 'BATTLE'."</div></div>
 
 <div class="card"><h3>8 · Founding Family Offer</h3>
 <div class="quote">HOOK: "We're brand new — so our first 5 families get a deal."
-VO: "Founding Family price: full Nerf war party for $199. All I ask is an honest review."
+VO: "Founding Family price: full Nerf war party for $149. All I ask is an honest review."
 CTA: "Only 5 spots. Comment 'BATTLE' to claim one."</div></div>
 
 <div class="card"><h3>9 · Halloween Zombie Battle Teaser</h3>

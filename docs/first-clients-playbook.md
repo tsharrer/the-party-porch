@@ -18,7 +18,7 @@ You need footage and reviews more than money right now. Trade parties for conten
 ---
 
 ## Stage 2: The First 10 (paid, discounted) — Founding Family offer
-- Offer the **first 5–10 paid parties at $199** (Basic, normally $249) labeled
+- Offer the **first 5–10 paid parties at $149** (Basic, normally $199) labeled
   "Founding Family — Fall 2026." Scarcity + a deal + social proof from Stage 1.
 - Promote in: local FB parent groups, Nextdoor, Marketplace, your Stories with a countdown.
 - Every one of these = more reviews and footage → makes full-price sales easy.
@@ -55,10 +55,10 @@ Once you have ~10 reviews + a content bank, the flywheel spins: content → inqu
 > Hi [name]! So excited to help make [child]'s birthday awesome! 🎉 A few quick questions so
 > I can get you the perfect setup: 1) What date are you thinking? 2) How old is the birthday
 > star? 3) About how many kids? 4) What area are you in? Our most popular is the Standard
-> Battle (up to 14 kids, 2 hrs, obstacle course) at $349 — want me to hold your date?
+> Battle (up to 15 kids, 2 hrs, obstacle course) at $279 — want me to hold your date?
 
 **Deposit ask:**
-> Awesome, [date] is available! To lock it in I take a $75 deposit (goes toward your total).
+> Awesome, [date] is available! To lock it in I take a $50 deposit (goes toward your total).
 > I'll send a secure link — once that's in, your date is officially reserved. 🎯
 
 **Day-after review ask:**
