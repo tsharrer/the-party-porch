@@ -3,6 +3,19 @@
 All notable changes to the website, tracker, and booking backend are logged here.
 Newest entries first. Dates in America/Chicago.
 
+## 2026-07-07
+
+### Added — Text (SMS) the deposit link to the customer
+- On each booking, the backend now also **texts** the customer their Stripe deposit
+  link using the free carrier email-to-SMS gateways (Verizon, AT&T, T-Mobile, US
+  Cellular). We don't collect the carrier, so the text is sent to all four gateways
+  at once — only the customer's real carrier delivers it. MMS gateways are used so
+  the long Stripe checkout link isn't truncated.
+- New `google-calendar.gs` config: `SEND_SMS` (on/off) + `SMS_GATEWAYS` list; new
+  helpers `sendDepositText()` and `tenDigits()` (phone normalization). Wired into
+  `doPost` alongside the confirmation email. Best-effort: SMS failures never block a
+  booking. Non-matching carriers may bounce a harmless "delivery failed" to the inbox.
+
 ## 2026-07-06
 
 ### Added — "Payment received" thank-you banner

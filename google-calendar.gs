@@ -32,6 +32,22 @@ var BUSINESS_EMAIL = "yourpartyporch@gmail.com";   // shown as reply-to / signat
 var BUSINESS_PHONE = "";                            // optional, e.g. "(713) 555-0142" — shows in the email if set
 var SEND_CONFIRM_EMAIL = true;                      // master switch for the auto confirmation email
 
+// --- Text the customer their deposit link (free carrier email-to-SMS) --------
+// Apps Script can't send SMS directly, but every US carrier has a free
+// email-to-text gateway (number@gateway). We don't collect the customer's
+// carrier, so we send the text to the major carriers' gateways at once — only
+// the customer's real carrier delivers it; the others silently drop it. We use
+// each carrier's MMS gateway so the (long) Stripe link isn't truncated.
+// NOTE: the non-matching gateways may bounce a "delivery failed" back to your
+// inbox — that's normal for this free approach. Set SEND_SMS=false to disable.
+var SEND_SMS = true;
+var SMS_GATEWAYS = [
+  "vzwpix.com",        // Verizon (MMS)
+  "mms.att.net",       // AT&T (MMS)
+  "tmomail.net",       // T-Mobile (SMS/MMS)
+  "mms.uscc.net"       // US Cellular (MMS)
+];
+
 // --- Stripe deposit (percentage of the booking estimate) ---------------------
 // The deposit is created dynamically on Stripe for each booking, so it scales
 // with the order. Your Stripe SECRET key is read from Script Properties and is
@@ -151,6 +167,10 @@ function doPost(e) {
 
     if (SEND_CONFIRM_EMAIL && d.email && /@/.test(d.email)) {
       try { sendConfirmationEmail(d, depUrl, depDollars); } catch (mailErr) { /* don't fail the booking on email trouble */ }
+    }
+
+    if (SEND_SMS && depUrl) {
+      try { sendDepositText(d, depUrl, depDollars); } catch (smsErr) { /* don't fail the booking on SMS trouble */ }
     }
 
     return json({ ok: true, depositUrl: depUrl, deposit: depDollars });
@@ -302,6 +322,32 @@ function sendConfirmationEmail(d, depUrl, depDollars) {
           (link && amt ? ("Place your " + amt + " (" + DEPOSIT_PERCENT + "%) deposit here: " + link)
                        : ("We'll send a secure link for your " + DEPOSIT_PERCENT + "% deposit shortly."))
   });
+}
+
+/**
+ * Texts the customer their deposit link via the free carrier email-to-SMS
+ * gateways. We don't know the carrier, so we send to the majors at once; only
+ * the matching carrier delivers. MMS gateways keep the long Stripe link intact.
+ */
+function sendDepositText(d, depUrl, depDollars) {
+  var num = tenDigits(d.phone);
+  if (!num || !depUrl) return;
+  var when = prettyDate(d.date) || d.date || "your date";
+  var body = BUSINESS_NAME + ": pay your $" + depDollars + " deposit to lock in " +
+             when + ":\n" + depUrl;
+  var subject = BUSINESS_NAME + " deposit";
+  for (var i = 0; i < SMS_GATEWAYS.length; i++) {
+    try {
+      MailApp.sendEmail({ to: num + "@" + SMS_GATEWAYS[i], subject: subject, body: body });
+    } catch (e) { /* ignore a single gateway failure */ }
+  }
+}
+
+/** Normalizes a phone number to 10 digits ("" if it isn't a valid US number). */
+function tenDigits(phone) {
+  var s = String(phone == null ? "" : phone).replace(/[^0-9]/g, "");
+  if (s.length === 11 && s.charAt(0) === "1") s = s.slice(1);
+  return s.length === 10 ? s : "";
 }
 
 function row(label, val) {
