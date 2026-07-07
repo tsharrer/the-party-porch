@@ -32,21 +32,15 @@ var BUSINESS_EMAIL = "yourpartyporch@gmail.com";   // shown as reply-to / signat
 var BUSINESS_PHONE = "";                            // optional, e.g. "(713) 555-0142" — shows in the email if set
 var SEND_CONFIRM_EMAIL = true;                      // master switch for the auto confirmation email
 
-// --- Text the customer their deposit link (free carrier email-to-SMS) --------
-// Apps Script can't send SMS directly, but every US carrier has a free
-// email-to-text gateway (number@gateway). We don't collect the customer's
-// carrier, so we send the text to the major carriers' gateways at once — only
-// the customer's real carrier delivers it; the others silently drop it. We use
-// each carrier's MMS gateway so the (long) Stripe link isn't truncated.
-// NOTE: the non-matching gateways may bounce a "delivery failed" back to your
-// inbox — that's normal for this free approach. Set SEND_SMS=false to disable.
+// --- Text the customer their deposit link (Twilio SMS) -----------------------
+// Sends the deposit link by SMS through Twilio. Your Twilio credentials are read
+// from Script Properties (never stored in this file / the public repo):
+//   Apps Script → Project Settings (gear) → Script Properties → add:
+//     TWILIO_ACCOUNT_SID = ACxxxxxxxx...
+//     TWILIO_AUTH_TOKEN  = your auth token
+//     TWILIO_FROM        = +18325551234   (your Twilio number, E.164 format)
+// Set SEND_SMS = false to disable texting.
 var SEND_SMS = true;
-var SMS_GATEWAYS = [
-  "vzwpix.com",        // Verizon (MMS)
-  "mms.att.net",       // AT&T (MMS)
-  "tmomail.net",       // T-Mobile (SMS/MMS)
-  "mms.uscc.net"       // US Cellular (MMS)
-];
 
 // --- Stripe deposit (percentage of the booking estimate) ---------------------
 // The deposit is created dynamically on Stripe for each booking, so it scales
@@ -325,22 +319,28 @@ function sendConfirmationEmail(d, depUrl, depDollars) {
 }
 
 /**
- * Texts the customer their deposit link via the free carrier email-to-SMS
- * gateways. We don't know the carrier, so we send to the majors at once; only
- * the matching carrier delivers. MMS gateways keep the long Stripe link intact.
+ * Texts the customer their deposit link via Twilio. Credentials come from Script
+ * Properties (TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN / TWILIO_FROM). No-ops if
+ * anything is missing so a booking never fails on SMS trouble.
  */
 function sendDepositText(d, depUrl, depDollars) {
   var num = tenDigits(d.phone);
-  if (!num || !depUrl) return;
+  var props = PropertiesService.getScriptProperties();
+  var sid   = props.getProperty("TWILIO_ACCOUNT_SID") || "";
+  var token = props.getProperty("TWILIO_AUTH_TOKEN")  || "";
+  var from  = props.getProperty("TWILIO_FROM")         || "";
+  if (!num || !depUrl || !sid || !token || !from) return;
+
   var when = prettyDate(d.date) || d.date || "your date";
-  var body = BUSINESS_NAME + ": pay your $" + depDollars + " deposit to lock in " +
-             when + ":\n" + depUrl;
-  var subject = BUSINESS_NAME + " deposit";
-  for (var i = 0; i < SMS_GATEWAYS.length; i++) {
-    try {
-      MailApp.sendEmail({ to: num + "@" + SMS_GATEWAYS[i], subject: subject, body: body });
-    } catch (e) { /* ignore a single gateway failure */ }
-  }
+  var body = BUSINESS_NAME + ": pay your $" + depDollars +
+             " deposit to lock in " + when + ": " + depUrl;
+
+  UrlFetchApp.fetch("https://api.twilio.com/2010-04-01/Accounts/" + sid + "/Messages.json", {
+    method: "post",
+    headers: { "Authorization": "Basic " + Utilities.base64Encode(sid + ":" + token) },
+    payload: { To: "+1" + num, From: from, Body: body },
+    muteHttpExceptions: true
+  });
 }
 
 /** Normalizes a phone number to 10 digits ("" if it isn't a valid US number). */

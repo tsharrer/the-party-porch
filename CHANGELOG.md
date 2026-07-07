@@ -5,6 +5,14 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-07-07
 
+### Changed — Texting now uses Twilio (was free carrier gateways)
+- Carriers have been shutting down free email-to-SMS gateways (Verizon disabled
+  inbound email-to-text in 2024; AT&T/T-Mobile filter it as spam), so delivery was
+  unreliable/nil. Switched the deposit-link text to **Twilio's SMS API** via
+  `UrlFetchApp`. Credentials (`TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`,
+  `TWILIO_FROM`) are read from Script Properties — never stored in the repo.
+- `sendDepositText()` rewritten for Twilio; removed the `SMS_GATEWAYS` list.
+
 ### Added — Text (SMS) the deposit link to the customer
 - On each booking, the backend now also **texts** the customer their Stripe deposit
   link using the free carrier email-to-SMS gateways (Verizon, AT&T, T-Mobile, US
