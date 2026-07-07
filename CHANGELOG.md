@@ -5,6 +5,15 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-07-06
 
+### Added — address autocomplete (free, no API key)
+- The **Party address** field now has Google-Maps-style **type-ahead autocomplete**,
+  powered by **Photon (OpenStreetMap)** — completely free, no API key or billing.
+- Results are biased to the **Houston area**, filtered to **US** addresses, and debounced
+  (fires after 4+ chars, 300ms). Keyboard nav (↑/↓/Enter/Esc) + click select supported.
+- Selecting a suggestion fills the full address **and auto-populates the ZIP** field.
+- Progressive enhancement: if the service is unreachable, the field still works as plain
+  text entry. Attribution ("Powered by OpenStreetMap") shown per usage policy.
+
 ### Added — party address field
 - Added a required **Party address** field to the booking form (street, city, ZIP) so we
   know exactly where to deliver. Previously only a ZIP/area was collected.

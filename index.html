@@ -266,6 +266,15 @@
   .avail-bar .fld{display:flex;flex-direction:column;gap:4px;text-align:left}
   .avail-bar label{font-size:12px;font-weight:700;color:var(--muted)}
   .avail-bar input{padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:#fdfbf8;color:#2a2036;color-scheme:light;font-size:15px}
+  .addr-wrap{position:relative;margin-bottom:14px}
+  .addr-list{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:50;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.18);display:none}
+  .addr-list.open{display:block}
+  .addr-item{padding:10px 12px;cursor:pointer;font-size:14px;color:#2a2036;border-bottom:1px solid #efeaf6;line-height:1.35}
+  .addr-item:last-child{border-bottom:0}
+  .addr-item .ai-main{font-weight:700}
+  .addr-item .ai-sub{color:#8a8199;font-size:12px}
+  .addr-item:hover,.addr-item.active{background:#f3eefe}
+  .addr-attr{padding:6px 12px;font-size:11px;color:#8a8199;background:#faf7ff;text-align:right}
   .avail-status{width:100%;text-align:center;font-weight:700;font-size:14px;min-height:20px}
   .avail-status.ok{color:#37d67a}.avail-status.bad{color:#ff6b6b}.avail-status.wait{color:var(--gold)}
   .shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -578,7 +587,10 @@
           <div><label class="f">Party ZIP / area <span class="req">*</span></label><input required name="zip" id="f_zip" placeholder="77002"></div>
         </div>
         <label class="f">Party address <span class="req">*</span></label>
-        <input required name="address" id="f_address" placeholder="123 Main St, Houston, TX 77002" style="margin-bottom:14px">
+        <div class="addr-wrap">
+          <input required name="address" id="f_address" placeholder="Start typing your address…" autocomplete="off" spellcheck="false">
+          <div class="addr-list" id="addrList" role="listbox"></div>
+        </div>
         <div class="grid2">
           <div><label class="f">Event date <span class="req">*</span></label><input required name="date" id="f_date" type="date"></div>
           <div><label class="f">Start time</label><input name="time" id="f_time" type="time"></div>
@@ -1085,6 +1097,97 @@ function openEmail(s){
   window.location.href = "mailto:" + BUSINESS_EMAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + body;
 }
 function enc(t){ return encodeURIComponent(t || "—"); }
+
+/* ---- Free address autocomplete (Photon / OpenStreetMap — no API key) ----
+   Type-ahead suggestions biased to the Houston area; on select we fill the
+   address and auto-populate the ZIP field. Purely progressive: if the network
+   or service is down, the field still works as a normal text input. */
+(function(){
+  var HOUSTON = { lat: 29.7604, lon: -95.3698 };  // bias results near Houston
+  var input = document.getElementById('f_address');
+  var list  = document.getElementById('addrList');
+  if(!input || !list) return;
+  var items = [], active = -1, timer = null, ctrl = null, lastQ = "";
+
+  function fmt(p){
+    var line1 = [p.housenumber, p.street].filter(Boolean).join(' ');
+    if(!line1) line1 = p.name || "";
+    var city = p.city || p.town || p.village || p.municipality || p.county || "";
+    var sub  = [city, p.state, p.postcode].filter(Boolean).join(', ');
+    var full = [line1, sub].filter(Boolean).join(', ');
+    return { main: line1 || sub, sub: line1 ? sub : "", full: full || (p.name||""), zip: p.postcode || "" };
+  }
+
+  function close(){ list.classList.remove('open'); list.innerHTML = ""; items = []; active = -1; }
+
+  function choose(i){
+    var it = items[i]; if(!it) return;
+    input.value = it.full;
+    var zip = document.getElementById('f_zip');
+    if(zip && it.zip && !zip.value.trim()){ zip.value = it.zip; }
+    close(); input.focus();
+    try{ if(typeof calcEstimate === 'function') calcEstimate(); }catch(e){}
+  }
+
+  function render(){
+    if(!items.length){ close(); return; }
+    var html = "";
+    for(var i=0;i<items.length;i++){
+      html += '<div class="addr-item'+(i===active?' active':'')+'" role="option" data-i="'+i+'">' +
+              '<div class="ai-main">'+esc(items[i].main)+'</div>' +
+              (items[i].sub ? '<div class="ai-sub">'+esc(items[i].sub)+'</div>' : '') +
+              '</div>';
+    }
+    html += '<div class="addr-attr">Powered by OpenStreetMap</div>';
+    list.innerHTML = html; list.classList.add('open');
+  }
+  function esc(t){ return String(t||"").replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  function search(q){
+    if(ctrl){ try{ ctrl.abort(); }catch(e){} }
+    ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var url = "https://photon.komoot.io/api/?q=" + encodeURIComponent(q) +
+              "&limit=8&lang=en&lat=" + HOUSTON.lat + "&lon=" + HOUSTON.lon;
+    fetch(url, ctrl ? { signal: ctrl.signal } : undefined)
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        var feats = (data && data.features) || [];
+        var out = [];
+        for(var i=0;i<feats.length && out.length<5;i++){
+          var p = feats[i].properties || {};
+          if(p.countrycode && p.countrycode !== 'US') continue;  // keep it US-only
+          out.push(fmt(p));
+        }
+        items = out; active = -1; render();
+      })
+      .catch(function(){ /* offline or blocked — silently keep manual entry */ });
+  }
+
+  input.addEventListener('input', function(){
+    var q = input.value.trim();
+    if(timer) clearTimeout(timer);
+    if(q.length < 4 || q === lastQ){ if(q.length < 4) close(); return; }
+    lastQ = q;
+    timer = setTimeout(function(){ search(q); }, 300);
+  });
+
+  input.addEventListener('keydown', function(e){
+    if(!list.classList.contains('open')) return;
+    if(e.key === 'ArrowDown'){ e.preventDefault(); active = Math.min(active+1, items.length-1); render(); }
+    else if(e.key === 'ArrowUp'){ e.preventDefault(); active = Math.max(active-1, 0); render(); }
+    else if(e.key === 'Enter'){ if(active >= 0){ e.preventDefault(); choose(active); } }
+    else if(e.key === 'Escape'){ close(); }
+  });
+
+  list.addEventListener('mousedown', function(e){
+    var el = e.target.closest ? e.target.closest('.addr-item') : null;
+    if(el){ e.preventDefault(); choose(parseInt(el.getAttribute('data-i'),10)); }
+  });
+
+  document.addEventListener('click', function(e){
+    if(!list.contains(e.target) && e.target !== input) close();
+  });
+})();
 
 /* Preselect the rental type from a ?exp= link (from the experience pages), then adapt the form. */
 (function(){
