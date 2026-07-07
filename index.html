@@ -577,6 +577,8 @@
           <div><label class="f">Email <span class="req">*</span></label><input required name="email" id="f_email" type="email" placeholder="jane@email.com"></div>
           <div><label class="f">Party ZIP / area <span class="req">*</span></label><input required name="zip" id="f_zip" placeholder="77002"></div>
         </div>
+        <label class="f">Party address <span class="req">*</span></label>
+        <input required name="address" id="f_address" placeholder="123 Main St, Houston, TX 77002" style="margin-bottom:14px">
         <div class="grid2">
           <div><label class="f">Event date <span class="req">*</span></label><input required name="date" id="f_date" type="date"></div>
           <div><label class="f">Start time</label><input name="time" id="f_time" type="time"></div>
@@ -998,6 +1000,7 @@ function bookingSummary(){
     cartTotal: "$" + cartTotal(),
     items: orderItemKeys().join(","),
     name: val('f_name'), phone: val('f_phone'), email: val('f_email'), zip: val('f_zip'),
+    address: val('f_address'),
     date: val('f_date'), time: val('f_time'),
     players: isNerf ? playersMap[players] : "—",
     service: isNerf ? service : "—",
@@ -1071,6 +1074,7 @@ function openEmail(s){
     "Phone: " + enc(s.phone) + "%0D%0A" +
     "Email: " + enc(s.email) + "%0D%0A" +
     "Party area/ZIP: " + enc(s.zip) + "%0D%0A" +
+    "Party address: " + enc(s.address) + "%0D%0A" +
     "Date: " + enc(s.date) + "%0D%0A" +
     "Start time: " + enc(s.time) + "%0D%0A" +
     "Players: " + enc(s.players) + "%0D%0A" +

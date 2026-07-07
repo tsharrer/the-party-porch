@@ -5,6 +5,14 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-07-06
 
+### Added — party address field
+- Added a required **Party address** field to the booking form (street, city, ZIP) so we
+  know exactly where to deliver. Previously only a ZIP/area was collected.
+- The address flows through everywhere: Formspree/mailto request, the Google Calendar
+  event (now used as the event **Location** for navigation), and the confirmation email
+  (shown as **Location** in the party summary). Backend `google-calendar.gs` updated
+  (redeploy needed to activate on the live Apps Script).
+
 ### Changed — cart hidden behind a feature flag
 - **Removed the shopping cart from the live site** (kept all code intact) until Stripe is
   set up for direct booking. Added a single `CART_ENABLED = false` flag in `index.html`;

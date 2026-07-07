@@ -104,10 +104,11 @@ function doPost(e) {
       "Phone: "    + (d.phone || ""),
       "Email: "    + (d.email || ""),
       "Area/ZIP: " + (d.zip   || ""),
+      "Address: "  + (d.address || ""),
       "Notes: "    + (d.notes || "")
     ].join("\n");
 
-    var opts = { description: desc, location: (d.zip || "") };
+    var opts = { description: desc, location: (d.address || d.zip || "") };
     if (INVITE_CUSTOMER && d.email && /@/.test(d.email)) {
       opts.guests = d.email;
       opts.sendInvites = true;
@@ -181,6 +182,7 @@ function sendConfirmationEmail(d) {
         row("Party", esc(cart)) +
         (when ? row("Date", esc(when)) : "") +
         (d.time ? row("Time", esc(d.time)) : "") +
+        (d.address ? row("Location", esc(d.address)) : "") +
         (d.players ? row("Guests", esc(d.players)) : "") +
         (d.addons && d.addons !== "None" ? row("Add-ons", esc(d.addons)) : "") +
         (est ? row("Estimate", esc(est)) : "") +
