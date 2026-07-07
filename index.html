@@ -309,9 +309,18 @@
   .order-box h4{margin:0 0 8px;font-size:14px}
   .order-box .ob-line{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}
   .order-box .ob-total{border-top:1px solid var(--line);margin-top:6px;padding-top:6px;font-weight:800}
+  .paid-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:200;background:linear-gradient(90deg,#1f7a4d,#2ecc71);color:#fff;text-align:center;padding:14px 44px 14px 16px;font-weight:700;font-size:15px;box-shadow:0 4px 20px rgba(0,0,0,.25)}
+  .paid-banner.show{display:block}
+  .paid-banner .pb-x{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:0;border:0;color:#fff;font-size:22px;line-height:1;cursor:pointer;opacity:.9}
+  .paid-banner .pb-x:hover{opacity:1}
 </style>
 </head>
 <body>
+
+<div class="paid-banner" id="paidBanner" role="status">
+  🎉 Payment received — your deposit is in and your date is reserved! We'll be in touch shortly to finalize the details.
+  <button class="pb-x" type="button" aria-label="Dismiss" onclick="document.getElementById('paidBanner').classList.remove('show')">&times;</button>
+</div>
 
 <header>
   <div class="nav">
@@ -1227,6 +1236,15 @@ function enc(t){ return encodeURIComponent(t || "—"); }
 (function(){
   try{
     var params = new URLSearchParams(location.search);
+    /* Show the thank-you banner when a customer returns from a successful Stripe payment (?paid=1). */
+    if(params.get('paid') === '1'){
+      var pb = document.getElementById('paidBanner');
+      if(pb){
+        pb.classList.add('show');
+        try{ document.body.style.paddingTop = pb.offsetHeight + 'px'; }catch(e){}
+        setTimeout(function(){ pb.classList.remove('show'); document.body.style.paddingTop = ''; }, 12000);
+      }
+    }
     var exp = params.get('exp');
     if(exp){
       var sel = document.getElementById('f_rental');

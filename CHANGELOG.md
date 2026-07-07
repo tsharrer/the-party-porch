@@ -5,6 +5,12 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-07-06
 
+### Added — "Payment received" thank-you banner
+- After a successful Stripe deposit, customers land on `yourpartyporch.com/?paid=1` and
+  now see a green **"🎉 Payment received — your deposit is in and your date is reserved!"**
+  banner at the top of the page (auto-dismisses after 12s, or via the ✕). Matches the
+  Stripe `SUCCESS_URL`. No banner shows on normal visits.
+
 ### Added — Stripe deposit (50% of estimate, dynamic)
 - Bookings now collect a **50% deposit** via Stripe. Because the amount varies per
   order, the **Apps Script backend creates a Stripe Checkout link on the fly** for each
