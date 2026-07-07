@@ -308,7 +308,7 @@
   <div class="nav">
     <a class="brand" href="#top"><img src="assets/logo.png" alt="The Party Porch — Events Rental Company"></a>
     <div style="display:flex;gap:10px;align-items:center">
-      <button class="btn" type="button" onclick="openCart()" style="cursor:pointer">🛒 Cart <span id="navCount">(0)</span></button>
+      <button class="btn" id="navCartBtn" type="button" onclick="openCart()" style="cursor:pointer">🛒 Cart <span id="navCount">(0)</span></button>
       <a class="btn" href="#book">Book Now</a>
     </div>
   </div>
@@ -524,9 +524,9 @@
 <section class="alt-bg" id="shop">
   <div class="wrap">
     <div class="section-head">
-      <div class="kicker" style="color:var(--gold)">Build your party</div>
-      <h2>Add what you want &amp; check your date</h2>
-      <p>Pick your date to see if we're available, then add experiences to your cart. We'll confirm everything and send your $50 deposit link.</p>
+      <div class="kicker" style="color:var(--gold)">Check availability</div>
+      <h2>See if your date is open</h2>
+      <p>Pick your event date to instantly see if we're available, then request it below. We'll confirm everything and follow up with your deposit details.</p>
     </div>
     <div class="avail-bar">
       <div class="fld">
@@ -706,6 +706,10 @@ var BUSINESS_EMAIL = "yourpartyporch@gmail.com";   // <-- CHANGE to your email
 var BUSINESS_PHONE = "";                            // optional digits-only, e.g. "17135550123"
 var FORMSPREE_ID   = "xdarjgjk";                            // optional, e.g. "xyzabcd"
 var STRIPE_DEPOSIT_URL = "";   // Stripe Payment Link for the $50 deposit, e.g. "https://buy.stripe.com/xxxxxxxx"
+/* CART: the add-to-cart shopping experience is built and ready, but hidden until
+   Stripe is set up for direct booking. Flip to true to re-enable the cart, shop
+   catalog, drawer, FAB, header cart button, order box, and experience-page buttons. */
+var CART_ENABLED = false;
 var GCAL_WEBHOOK_URL   = "https://script.google.com/macros/s/AKfycbz0ReUHRf_V5AqCiDBvvOmefzTQEwkpouEj-9A5HuqTZ0ZMEbCsz1rnhUDIy2pmtbFluw/exec";   // Google Apps Script web-app /exec URL that adds each booking to your calendar
 
 document.getElementById('yr').textContent = new Date().getFullYear();
@@ -795,6 +799,7 @@ function cartNames(){ return cartGet().map(function(k){ return CATALOG[k] ? CATA
 
 function renderShop(){
   var g = document.getElementById('shopGrid'); if(!g) return;
+  if(!CART_ENABLED){ g.innerHTML = ""; return; }
   var html = "";
   Object.keys(CATALOG).forEach(function(k){
     var c = CATALOG[k];
@@ -825,7 +830,7 @@ function renderCart(){
   // header + fab counters
   var nc = document.getElementById('navCount'); if(nc) nc.textContent = "("+n+")";
   var fc = document.getElementById('fabCount'); if(fc) fc.textContent = n;
-  var fab = document.getElementById('cartFab'); if(fab) fab.style.display = n ? "" : "none";
+  var fab = document.getElementById('cartFab'); if(fab) fab.style.display = (CART_ENABLED && n) ? "" : "none";
   // drawer body
   var body = document.getElementById('cartBody');
   if(body){
@@ -856,7 +861,7 @@ function renderCart(){
   if(typeof calcEstimate === "function") calcEstimate();
 }
 
-function openCart(){ document.getElementById('cartScrim').classList.add('open'); document.getElementById('cartDrawer').classList.add('open'); }
+function openCart(){ if(!CART_ENABLED) return; document.getElementById('cartScrim').classList.add('open'); document.getElementById('cartDrawer').classList.add('open'); }
 function closeCart(){ document.getElementById('cartScrim').classList.remove('open'); document.getElementById('cartDrawer').classList.remove('open'); }
 function cartCheckout(){
   closeCart();
@@ -892,7 +897,7 @@ function runAvailability(){
     }
     if(!res || !res.ok){
       AVAIL = {date:d, closed:false, booked:[]}; syncBookingDate(d); renderCart();
-      st.className="avail-status wait"; st.textContent="Couldn't check live right now — add to cart and we'll confirm your date."; return;
+      st.className="avail-status wait"; st.textContent="Couldn't check live right now — request your date below and we'll confirm."; return;
     }
     AVAIL = {date:d, closed:!!res.closed, booked:res.booked||[]};
     syncBookingDate(d); renderCart();
@@ -1089,10 +1094,19 @@ function enc(t){ return encodeURIComponent(t || "—"); }
       }
     }
     renderShop();
-    var add = params.get('add');
-    if(add && CATALOG[add] && !cartHas(add)){ var a=cartGet(); a.push(add); cartSet(a); }
-    renderCart();
-    if(add){ setTimeout(openCart, 300); }
+    if(CART_ENABLED){
+      var add = params.get('add');
+      if(add && CATALOG[add] && !cartHas(add)){ var a=cartGet(); a.push(add); cartSet(a); }
+      renderCart();
+      if(add){ setTimeout(openCart, 300); }
+    } else {
+      /* Cart is off: clear any stale cart and hide all cart chrome (kept in DOM for re-enabling). */
+      try{ localStorage.removeItem('pp_cart'); }catch(e){}
+      renderCart();
+      ['navCartBtn','cartFab','cartDrawer','cartScrim','orderBox'].forEach(function(id){
+        var el = document.getElementById(id); if(el) el.style.display = 'none';
+      });
+    }
   }catch(err){}
   onRentalChange();
 })();

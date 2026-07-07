@@ -5,6 +5,18 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-07-06
 
+### Changed — cart hidden behind a feature flag
+- **Removed the shopping cart from the live site** (kept all code intact) until Stripe is
+  set up for direct booking. Added a single `CART_ENABLED = false` flag in `index.html`;
+  flip to `true` to bring everything back.
+- Hidden while off: header **🛒 Cart** button, cart **drawer/scrim**, floating **cart FAB**,
+  the "Build your party" **shop catalog grid**, and the booking-form **order box**.
+- **Kept the "Check availability" date checker** (independent of the cart) — reworded that
+  section from "add experiences to your cart" to "see if your date is open."
+- Removed the **🛒 Add to cart** buttons from all 9 experience pages; the **Book/Request**
+  CTAs remain and deep-link the booking form via `?exp=`.
+- `?add=` deep-links are ignored while the cart is off; a stale `pp_cart` is cleared on load.
+
 ### Changed — hosting / custom domain
 - **Restructured for the custom domain.** Moved the public booking site from `website/` to
   the repo **root** so `yourpartyporch.com/` serves the site (its canonical/OG tags already
