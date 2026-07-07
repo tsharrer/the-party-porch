@@ -71,9 +71,12 @@ function doGet(e) {
     // Creates a Stripe Checkout link for this booking's deposit and returns it
     // to the site (JSONP) so we can send the customer straight to payment.
     var dep = depositDollars(p.estimate);
-    var url = "";
-    try { url = createCheckoutSession(dep, p.email, makeRef(p.name, p.date), (p.rental || "Party") + " deposit"); } catch (err) {}
-    return reply({ ok: !!url, url: url, amount: dep }, p.callback);
+    var r = { url: "", status: 0, error: "exception" };
+    try { r = stripeCheckout(dep, p.email, makeRef(p.name, p.date), (p.rental || "Party") + " deposit"); }
+    catch (err) { r = { url: "", status: 0, error: String(err) }; }
+    var out = { ok: !!r.url, url: r.url, amount: dep };
+    if (p.debug === "1") { out.status = r.status; out.stripeError = r.error; }
+    return reply(out, p.callback);
   }
   return reply({ ok: true, service: "Party Porch availability" }, p.callback);
 }
@@ -177,8 +180,14 @@ function makeRef(name, date) {
  * gracefully to a manual link / "we'll send it shortly").
  */
 function createCheckoutSession(dollars, email, ref, desc) {
+  return stripeCheckout(dollars, email, ref, desc).url;
+}
+
+/** Calls Stripe and returns { url, status, error } for diagnostics. */
+function stripeCheckout(dollars, email, ref, desc) {
   var key = stripeKey();
-  if (!key || !dollars) return "";
+  if (!key)     return { url: "", status: 0, error: "no STRIPE_SECRET_KEY property set" };
+  if (!dollars) return { url: "", status: 0, error: "no deposit amount (estimate not numeric)" };
   var cents = Math.round(dollars * 100);
   var payload = {
     "mode": "payment",
@@ -199,9 +208,11 @@ function createCheckoutSession(dollars, email, ref, desc) {
     payload: payload,
     muteHttpExceptions: true
   });
+  var status = res.getResponseCode();
   var body = {};
   try { body = JSON.parse(res.getContentText() || "{}"); } catch (e) {}
-  return body.url || "";
+  var errMsg = body.error ? (body.error.message || body.error.type || "stripe error") : "";
+  return { url: body.url || "", status: status, error: errMsg };
 }
 
 /** Builds a Date from an <input type="date"> value + optional <input type="time">. */
