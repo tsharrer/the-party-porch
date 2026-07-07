@@ -143,6 +143,7 @@ function doPost(e) {
       "Email: "    + (d.email || ""),
       "Area/ZIP: " + (d.zip   || ""),
       "Address: "  + (d.address || ""),
+      "SMS/Email consent: " + (d.consent || "No"),
       "Notes: "    + (d.notes || "")
     ].join("\n");
 

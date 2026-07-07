@@ -648,7 +648,12 @@
           <small id="est_note">Estimated total · a 50% deposit reserves your date</small>
         </div>
 
-        <button class="btn big" type="submit" style="width:100%">📩 Send My Booking Request</button>
+        <label class="consent" style="display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:13.5px;line-height:1.5;color:#4a4356;text-align:left;cursor:pointer">
+          <input type="checkbox" id="f_consent" name="consent" required style="width:18px;height:18px;margin-top:2px;flex:0 0 auto;accent-color:#ff5a5f">
+          <span>I agree to receive booking-related <strong>text messages</strong> and <strong>emails</strong> from The Party Porch (confirmations, deposit/payment links, and reminders). Message &amp; data rates may apply; reply STOP to opt out. I have read the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a> and <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>.</span>
+        </label>
+
+        <button class="btn big" type="submit" style="width:100%;margin-top:14px">📩 Send My Booking Request</button>
         <div class="form-note">We'll reply within a few hours to confirm your date. No payment is taken here.</div>
       </form>
     </div>
@@ -713,7 +718,7 @@
   <div class="brand"><span class="dot">🎉</span> The Party Porch</div>
   <p>Mobile Nerf battle parties &amp; event rentals — Houston, TX and surrounding areas</p>
   <div class="socials">📸 <a href="https://instagram.com/yourpartyporch" target="_blank" rel="noopener">@yourpartyporch</a> &nbsp;·&nbsp; 🎵 <a href="https://tiktok.com/@yourpartyporch" target="_blank" rel="noopener">@yourpartyporch</a></div>
-  <p><a href="#book">Book a party</a> &nbsp;·&nbsp; <a id="footEmail" href="#">Email us</a></p>
+  <p><a href="#book">Book a party</a> &nbsp;·&nbsp; <a id="footEmail" href="#">Email us</a> &nbsp;·&nbsp; <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms &amp; Conditions</a></p>
   <small>yourpartyporch.com · © <span id="yr"></span> The Party Porch. All rights reserved. · Serving Houston, Katy, Sugar Land, The Woodlands, Pearland &amp; beyond.</small>
 </footer>
 
@@ -1031,6 +1036,7 @@ function bookingSummary(){
     players: isNerf ? playersMap[players] : "—",
     service: isNerf ? service : "—",
     addons: addons.length ? addons.join(", ") : "None", notes: val('f_notes'),
+    consent: (document.getElementById('f_consent') && document.getElementById('f_consent').checked) ? "Yes" : "No",
     estimate: document.getElementById('est_amt').textContent
   };
 }

@@ -5,6 +5,20 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-07-07
 
+## 2026-07-07
+
+### Added — Privacy Policy, Terms & Conditions, and SMS/email consent (Twilio compliance)
+- New **`privacy.html`** and **`terms.html`** pages, linked in the site footer. The
+  Privacy Policy includes the carrier-required messaging language: transactional SMS
+  consent, message frequency, "message & data rates may apply," STOP/HELP opt-out, and
+  the explicit **"No mobile information will be shared with third parties or affiliates
+  for marketing/promotional purposes"** clause that A2P 10DLC vetting looks for.
+- Added a **required consent checkbox** to the booking form: the customer must agree to
+  receive booking-related **texts and emails** (with STOP opt-out) and acknowledge the
+  Privacy Policy + Terms before submitting. Consent is captured in `bookingSummary()`
+  (`consent: Yes/No`) and recorded on the Google Calendar event as an opt-in record.
+- Privacy Policy URL for Twilio: `https://yourpartyporch.com/privacy.html`
+
 ### Changed — Texting now uses Twilio (was free carrier gateways)
 - Carriers have been shutting down free email-to-SMS gateways (Verizon disabled
   inbound email-to-text in 2024; AT&T/T-Mobile filter it as spam), so delivery was
