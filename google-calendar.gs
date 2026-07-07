@@ -30,9 +30,26 @@ var INVITE_CUSTOMER = true;     // email the customer a calendar invite too
 var BUSINESS_NAME  = "The Party Porch";
 var BUSINESS_EMAIL = "yourpartyporch@gmail.com";   // shown as reply-to / signature
 var BUSINESS_PHONE = "";                            // optional, e.g. "(713) 555-0142" — shows in the email if set
-var DEPOSIT_AMOUNT = 50;                            // deposit dollars to reserve the date
-var DEPOSIT_LINK   = "";                            // PASTE your Stripe/PayPal/Venmo/Cash App link here; blank = email says we'll text a link
 var SEND_CONFIRM_EMAIL = true;                      // master switch for the auto confirmation email
+
+// --- Stripe deposit (percentage of the booking estimate) ---------------------
+// The deposit is created dynamically on Stripe for each booking, so it scales
+// with the order. Your Stripe SECRET key is read from Script Properties and is
+// NEVER stored in this file / the public repo.
+//   Set it once:  Apps Script → Project Settings (gear) → Script Properties →
+//   Add property   STRIPE_SECRET_KEY = sk_live_...  (use a restricted key that
+//   can create Checkout Sessions). Use sk_test_... while testing.
+var DEPOSIT_PERCENT = 50;      // % of the estimate collected as the deposit
+var DEPOSIT_MIN     = 25;      // never charge less than this ($)
+var DEPOSIT_MAX     = 2000;    // safety cap ($)
+var CURRENCY        = "usd";
+var SUCCESS_URL     = "https://yourpartyporch.com/?paid=1";
+var CANCEL_URL      = "https://yourpartyporch.com/#book";
+var DEPOSIT_LINK    = "";      // optional manual fallback link (Venmo/CashApp) if Stripe isn't set up yet
+
+function stripeKey() {
+  return PropertiesService.getScriptProperties().getProperty("STRIPE_SECRET_KEY") || "";
+}
 
 /**
  * Availability check (used by the website's date picker + cart).
@@ -49,6 +66,14 @@ function doGet(e) {
   var p = (e && e.parameter) || {};
   if (p.action === "availability") {
     return reply(availability(p.date), p.callback);
+  }
+  if (p.action === "checkout") {
+    // Creates a Stripe Checkout link for this booking's deposit and returns it
+    // to the site (JSONP) so we can send the customer straight to payment.
+    var dep = depositDollars(p.estimate);
+    var url = "";
+    try { url = createCheckoutSession(dep, p.email, makeRef(p.name, p.date), (p.rental || "Party") + " deposit"); } catch (err) {}
+    return reply({ ok: !!url, url: url, amount: dep }, p.callback);
   }
   return reply({ ok: true, service: "Party Porch availability" }, p.callback);
 }
@@ -116,14 +141,67 @@ function doPost(e) {
 
     cal.createEvent(title, start, end, opts);
 
+    // Create the Stripe deposit link for this booking (50% of the estimate).
+    var depDollars = depositDollars(d.estimate);
+    var depUrl = "";
+    try { depUrl = createCheckoutSession(depDollars, d.email, makeRef(d.name, d.date), (d.rental || d.cart || "Party") + " deposit"); } catch (payErr) {}
+
     if (SEND_CONFIRM_EMAIL && d.email && /@/.test(d.email)) {
-      try { sendConfirmationEmail(d); } catch (mailErr) { /* don't fail the booking on email trouble */ }
+      try { sendConfirmationEmail(d, depUrl, depDollars); } catch (mailErr) { /* don't fail the booking on email trouble */ }
     }
 
-    return json({ ok: true });
+    return json({ ok: true, depositUrl: depUrl, deposit: depDollars });
   } catch (err) {
     return json({ ok: false, error: String(err) });
   }
+}
+
+/** Parses the estimate (e.g. "$280") and returns the deposit in whole dollars. */
+function depositDollars(estimateStr) {
+  var n = parseFloat(String(estimateStr || "").replace(/[^0-9.]/g, ""));
+  if (!n || isNaN(n)) return 0;                 // no usable estimate (e.g. "custom quote")
+  var dep = Math.round(n * DEPOSIT_PERCENT / 100);
+  if (dep < DEPOSIT_MIN) dep = DEPOSIT_MIN;
+  if (dep > DEPOSIT_MAX) dep = DEPOSIT_MAX;
+  return dep;
+}
+
+/** A stable reference so a Stripe payment can be matched back to the booking. */
+function makeRef(name, date) {
+  return String((name || "") + "_" + (date || "")).replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 180);
+}
+
+/**
+ * Creates a Stripe Checkout Session for the deposit and returns its hosted URL.
+ * Returns "" if no secret key is set or the amount is 0 (caller falls back
+ * gracefully to a manual link / "we'll send it shortly").
+ */
+function createCheckoutSession(dollars, email, ref, desc) {
+  var key = stripeKey();
+  if (!key || !dollars) return "";
+  var cents = Math.round(dollars * 100);
+  var payload = {
+    "mode": "payment",
+    "success_url": SUCCESS_URL,
+    "cancel_url": CANCEL_URL,
+    "client_reference_id": ref || "",
+    "line_items[0][quantity]": "1",
+    "line_items[0][price_data][currency]": CURRENCY,
+    "line_items[0][price_data][unit_amount]": String(cents),
+    "line_items[0][price_data][product_data][name]": ("Deposit — " + (desc || BUSINESS_NAME)),
+    "metadata[ref]": ref || "",
+    "metadata[deposit_percent]": String(DEPOSIT_PERCENT)
+  };
+  if (email && /@/.test(email)) payload["customer_email"] = email;
+  var res = UrlFetchApp.fetch("https://api.stripe.com/v1/checkout/sessions", {
+    method: "post",
+    headers: { "Authorization": "Bearer " + key },
+    payload: payload,
+    muteHttpExceptions: true
+  });
+  var body = {};
+  try { body = JSON.parse(res.getContentText() || "{}"); } catch (e) {}
+  return body.url || "";
 }
 
 /** Builds a Date from an <input type="date"> value + optional <input type="time">. */
@@ -150,27 +228,31 @@ function json(obj) {
 }
 
 /** Sends the customer an automated booking-received email with a deposit link. */
-function sendConfirmationEmail(d) {
+function sendConfirmationEmail(d, depUrl, depDollars) {
   var first = String(d.name || "there").split(" ")[0];
   var when  = prettyDate(d.date);
   var cart  = d.cart || d.service || "your party";
   var est   = d.estimate ? String(d.estimate) : "";
   var phoneLine = BUSINESS_PHONE ? ("<br>Call/text: <strong>" + BUSINESS_PHONE + "</strong>") : "";
 
+  var amt  = depDollars ? ("$" + depDollars) : "";
+  var link = depUrl || DEPOSIT_LINK;
+  var pctLabel = amt ? (amt + " (" + DEPOSIT_PERCENT + "% deposit)") : (DEPOSIT_PERCENT + "% deposit");
+
   var depositBlock;
-  if (DEPOSIT_LINK) {
+  if (link && amt) {
     depositBlock =
-      '<p style="margin:22px 0 10px">To lock in your date, please place your <strong>$' + DEPOSIT_AMOUNT +
-      ' refundable deposit</strong> (applied to your total):</p>' +
+      '<p style="margin:22px 0 10px">To lock in your date, please place your <strong>' + pctLabel +
+      '</strong> (applied to your total):</p>' +
       '<p style="text-align:center;margin:0 0 26px">' +
-        '<a href="' + DEPOSIT_LINK + '" style="background:#ff5a5f;color:#fff;text-decoration:none;' +
+        '<a href="' + link + '" style="background:#ff5a5f;color:#fff;text-decoration:none;' +
         'font-weight:700;padding:14px 30px;border-radius:999px;display:inline-block;font-size:16px">' +
-        'Pay $' + DEPOSIT_AMOUNT + ' deposit &rarr;</a></p>' +
+        'Pay ' + amt + ' deposit &rarr;</a></p>' +
       '<p style="font-size:13px;color:#667">Your date isn\u2019t reserved until the deposit is received.</p>';
   } else {
     depositBlock =
-      '<p style="margin:22px 0 10px">To lock in your date, we\u2019ll send you a secure link for the ' +
-      '<strong>$' + DEPOSIT_AMOUNT + ' refundable deposit</strong> (applied to your total) shortly.</p>';
+      '<p style="margin:22px 0 10px">To lock in your date, we\u2019ll send you a secure link for your ' +
+      '<strong>' + pctLabel + '</strong> (applied to your total) shortly.</p>';
   }
 
   var html =
@@ -206,8 +288,8 @@ function sendConfirmationEmail(d) {
     htmlBody: html,
     body: "Thanks for booking with " + BUSINESS_NAME + "! We received your request for " + cart +
           (when ? " on " + when : "") + ". " +
-          (DEPOSIT_LINK ? ("Place your $" + DEPOSIT_AMOUNT + " deposit here: " + DEPOSIT_LINK)
-                        : ("We'll send a secure link for your $" + DEPOSIT_AMOUNT + " deposit shortly."))
+          (link && amt ? ("Place your " + amt + " (" + DEPOSIT_PERCENT + "%) deposit here: " + link)
+                       : ("We'll send a secure link for your " + DEPOSIT_PERCENT + "% deposit shortly."))
   });
 }
 

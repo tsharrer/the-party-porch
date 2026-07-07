@@ -91,7 +91,7 @@
     {"@type":"Question","name":"Can I bundle several experiences together?","acceptedAnswer":{"@type":"Answer","text":"Yes. Pick a main rental and add any others, including coming-soon items, right in the booking form, or choose a Custom Package and we will build one quote for the whole event."}},
     {"@type":"Question","name":"What ages are your parties for?","acceptedAnswer":{"@type":"Answer","text":"Something for every age: Soft Play for toddlers, bounce houses and yard games for all ages, and Nerf battles for ages 5 and up — birthdays, school events, church and community groups, even adults."}},
     {"@type":"Question","name":"What areas do you serve?","acceptedAnswer":{"@type":"Answer","text":"We serve the Greater Houston area including Katy, Sugar Land, The Woodlands, Pearland, Cypress, Spring, Humble, Kingwood, Tomball, Friendswood and League City. Delivery and pickup are free within 12 miles of ZIP 77018; otherwise a delivery fee is charged ($2/mile beyond that)."}},
-    {"@type":"Question","name":"How do I book and reserve my date?","acceptedAnswer":{"@type":"Answer","text":"Submit the online booking form and we will confirm availability. A $50 deposit reserves your date, with the balance due the day of the party."}}
+    {"@type":"Question","name":"How do I book and reserve my date?","acceptedAnswer":{"@type":"Answer","text":"Submit the online booking form and we will confirm availability. A 50% deposit reserves your date, with the balance due the day of the party."}}
   ]
 }
 </script>
@@ -333,7 +333,7 @@
   <div class="cart-body" id="cartBody"></div>
   <div class="cart-foot">
     <div class="row"><span>Subtotal</span><span id="cartTotal">$0</span></div>
-    <div class="form-note" style="margin:0 0 10px">Delivery, taxes &amp; options confirmed at booking. A $50 deposit reserves your date.</div>
+    <div class="form-note" style="margin:0 0 10px">Delivery, taxes &amp; options confirmed at booking. A 50% deposit reserves your date.</div>
     <button class="btn big" type="button" onclick="cartCheckout()">Reserve my date →</button>
   </div>
 </aside>
@@ -438,7 +438,7 @@
       <div class="benefit"><span class="bi">🚚</span><h3>We come to you</h3><p>Delivery and pickup are included — right to your backyard, park or venue. Setup is not included, but you can add setup + tear down for +$40.</p></div>
       <div class="benefit"><span class="bi">🛡️</span><h3>Safety first</h3><p>Every rental is cleaned, sanitized and set up safely — whatever you book.</p></div>
       <div class="benefit"><span class="bi">⭐</span><h3>All-inclusive</h3><p>One simple price covers everything for your experience. No surprises.</p></div>
-      <div class="benefit"><span class="bi">📆</span><h3>Book in minutes</h3><p>Reserve online, pay a $50 deposit, and your date is locked in. Easy.</p></div>
+      <div class="benefit"><span class="bi">📆</span><h3>Book in minutes</h3><p>Reserve online, pay a 50% deposit, and your date is locked in. Easy.</p></div>
     </div>
   </div>
 </section>
@@ -507,7 +507,7 @@
       <tr><td>Up to 24</td><td>$320</td><td>+$200 (2)</td><td class="full">$520</td></tr>
       <tr><td>25+ players</td><td colspan="2">Big party? We'll build a custom quote</td><td class="full">Custom</td></tr>
     </table>
-    <p class="note">Extra players are just ~$12 each. A referee runs every game &amp; handles safety. A $50 deposit reserves your date.</p>
+    <p class="note">Extra players are just ~$12 each. A referee runs every game &amp; handles safety. A 50% deposit reserves your date.</p>
 
     <div class="section-head" style="margin-top:40px;margin-bottom:16px">
       <h2 style="font-size:1.3rem">Add-ons &amp; experiences — one simple price</h2>
@@ -554,7 +554,7 @@
     <div class="section-head">
       <div class="kicker" style="color:var(--gold)">Book your party</div>
       <h2>Request your Houston party date</h2>
-      <p>Tell us what you'd like to rent and we'll confirm availability &amp; lock in your date. A $50 deposit reserves it.</p>
+      <p>Tell us what you'd like to rent and we'll confirm availability &amp; lock in your date. A 50% deposit reserves it.</p>
     </div>
     <div class="form-card">
       <form id="bookForm" onsubmit="return submitBooking(event)">
@@ -636,7 +636,7 @@
 
         <div class="estimate">
           <div class="amt" id="est_amt">$280</div>
-          <small id="est_note">Estimated total · a $50 deposit reserves your date</small>
+          <small id="est_note">Estimated total · a 50% deposit reserves your date</small>
         </div>
 
         <button class="btn big" type="submit" style="width:100%">📩 Send My Booking Request</button>
@@ -684,7 +684,7 @@
     <details><summary>Do you provide safety gear?</summary><p>Yes — for Nerf battles, safety glasses are included and required for every player. All equipment is cleaned and sanitized between events.</p></details>
     <details><summary>What if it rains?</summary><p>No problem — reschedule with 48 hours' notice and your deposit transfers to your new date.</p></details>
     <details><summary>How far in advance should I book?</summary><p>We recommend 3–4 weeks ahead to secure your date, especially weekends in spring and fall. Need something sooner? Ask us — we'll do our best.</p></details>
-    <details><summary>How do I reserve my date?</summary><p>Submit the booking form above. We'll confirm availability and send a simple invoice — a $50 deposit locks in your date, with the balance due the day of the party.</p></details>
+    <details><summary>How do I reserve my date?</summary><p>Submit the booking form above. We'll confirm availability and send a simple invoice — a 50% deposit locks in your date, with the balance due the day of the party.</p></details>
   </div>
 </section>
 
@@ -719,7 +719,12 @@
 var BUSINESS_EMAIL = "yourpartyporch@gmail.com";   // <-- CHANGE to your email
 var BUSINESS_PHONE = "";                            // optional digits-only, e.g. "17135550123"
 var FORMSPREE_ID   = "xdarjgjk";                            // optional, e.g. "xyzabcd"
-var STRIPE_DEPOSIT_URL = "";   // Stripe Payment Link for the $50 deposit, e.g. "https://buy.stripe.com/xxxxxxxx"
+var STRIPE_DEPOSIT_URL = "";   // Optional static Stripe Payment Link fallback (percentage deposits use the backend)
+var DEPOSIT_PCT = 50;          // deposit shown to customers = this % of the estimate (backend charges the same)
+function depositNote(total){
+  var d = Math.max(25, Math.round((total||0) * DEPOSIT_PCT / 100));
+  return (total ? ("a " + DEPOSIT_PCT + "% deposit ($" + d + ")") : ("a " + DEPOSIT_PCT + "% deposit")) + " reserves your date";
+}
 /* CART: the add-to-cart shopping experience is built and ready, but hidden until
    Stripe is set up for direct booking. Flip to true to re-enable the cart, shop
    catalog, drawer, FAB, header cart button, order box, and experience-page buttons. */
@@ -958,7 +963,7 @@ function calcEstimate(){
   var ct = (typeof cartTotal === "function") ? cartTotal() : 0;
 
   if(cfg.soon){
-    if(ct){ amtEl.textContent = "$"+ct; noteEl.textContent = "Cart subtotal · a $50 deposit reserves your date"; return; }
+    if(ct){ amtEl.textContent = "$"+ct; noteEl.textContent = "Cart subtotal · " + depositNote(ct); return; }
     amtEl.textContent = "Coming soon";
     noteEl.textContent = "Join the waitlist — we'll send pricing when it launches";
     return;
@@ -970,7 +975,7 @@ function calcEstimate(){
   }
   if(cfg.base !== undefined){
     amtEl.textContent = "$" + (cfg.base + addonTotal + ct);
-    noteEl.textContent = "Estimated total · a $50 deposit reserves your date";
+    noteEl.textContent = "Estimated total · " + depositNote(cfg.base + addonTotal + ct);
     return;
   }
   if(r === "Snack Bar"){
@@ -979,7 +984,7 @@ function calcEstimate(){
       noteEl.textContent = "Select popcorn, cotton candy or shaved ice below";
     } else {
       amtEl.textContent = "$" + (addonTotal + ct);
-      noteEl.textContent = "Estimated total · a $50 deposit reserves your date";
+      noteEl.textContent = "Estimated total · " + depositNote(addonTotal + ct);
     }
     return;
   }
@@ -994,7 +999,7 @@ function calcEstimate(){
   if(document.getElementById('f_service').value === "referee") total += REF[players] || 0;
   total += addonTotal + ct;
   amtEl.textContent = "$" + total;
-  noteEl.textContent = "Estimated total · a $50 deposit reserves your date";
+  noteEl.textContent = "Estimated total · " + depositNote(total);
 }
 
 function val(id){ return document.getElementById(id).value.trim(); }
@@ -1057,23 +1062,52 @@ function sendToCalendar(s){
   }catch(err){}
 }
 
-/* After a booking is captured: send them to pay the $50 Stripe deposit
+/* After a booking is captured: send them to pay the Stripe deposit
    (if a Payment Link is set), otherwise just confirm. */
 function afterBooked(s){
   document.getElementById('bookForm').reset();
   try{ localStorage.removeItem('pp_cart'); }catch(e){}
   renderCart(); calcEstimate();
-  if(STRIPE_DEPOSIT_URL){
-    var ref = (s.name + "_" + s.date).replace(/[^a-zA-Z0-9_-]/g,"").slice(0,180);
-    var sep = STRIPE_DEPOSIT_URL.indexOf("?") > -1 ? "&" : "?";
-    var url = STRIPE_DEPOSIT_URL + sep +
-      "prefilled_email=" + encodeURIComponent(s.email) +
-      "&client_reference_id=" + encodeURIComponent(ref);
-    alert("🎉 Booking received! Next: pay your $50 deposit to lock in " + s.date + " — taking you to secure checkout now.");
-    window.location.href = url;
-  } else {
-    alert("🎉 Booking request sent! We'll reply soon to confirm your date and send your $50 deposit link.");
-  }
+  // Ask the backend to create this booking's Stripe deposit link (50% of the
+  // estimate), then send them straight to secure checkout. Falls back cleanly.
+  requestDeposit(s, function(url){
+    if(url){
+      alert("🎉 Booking received! Next: pay your 50% deposit to lock in " + s.date + " — taking you to secure checkout now. (A copy of this link is also in your email.)");
+      window.location.href = url;
+    } else if(STRIPE_DEPOSIT_URL){
+      var ref = (s.name + "_" + s.date).replace(/[^a-zA-Z0-9_-]/g,"").slice(0,180);
+      var sep = STRIPE_DEPOSIT_URL.indexOf("?") > -1 ? "&" : "?";
+      alert("🎉 Booking received! Next: pay your deposit to lock in " + s.date + " — taking you to secure checkout now.");
+      window.location.href = STRIPE_DEPOSIT_URL + sep +
+        "prefilled_email=" + encodeURIComponent(s.email) +
+        "&client_reference_id=" + encodeURIComponent(ref);
+    } else {
+      alert("🎉 Booking request sent! We'll email your 50% deposit link to lock in " + s.date + ".");
+    }
+  });
+}
+
+/* Fetches a Stripe deposit checkout URL from the Apps Script backend via JSONP
+   (same channel as the availability check). Times out gracefully to a fallback. */
+function requestDeposit(s, cb){
+  if(!GCAL_WEBHOOK_URL){ cb(null); return; }
+  var done = false;
+  var fn = "ppDep_" + Date.now();
+  var script = document.createElement('script');
+  function finish(url){ if(done) return; done = true; cleanup(); cb(url || null); }
+  function cleanup(){ try{ delete window[fn]; }catch(e){ window[fn] = undefined; } if(script.parentNode) script.parentNode.removeChild(script); }
+  window[fn] = function(res){ finish(res && res.ok ? res.url : null); };
+  var sep = GCAL_WEBHOOK_URL.indexOf('?') > -1 ? '&' : '?';
+  script.src = GCAL_WEBHOOK_URL + sep + "action=checkout" +
+    "&estimate=" + encodeURIComponent(s.estimate) +
+    "&email="    + encodeURIComponent(s.email) +
+    "&name="     + encodeURIComponent(s.name) +
+    "&date="     + encodeURIComponent(s.date) +
+    "&rental="   + encodeURIComponent(s.cart !== "None" ? s.cart : s.rental) +
+    "&callback=" + fn;
+  script.onerror = function(){ finish(null); };
+  document.body.appendChild(script);
+  setTimeout(function(){ finish(null); }, 9000);
 }
 
 function openEmail(s){

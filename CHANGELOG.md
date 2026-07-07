@@ -5,6 +5,23 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-07-06
 
+### Added — Stripe deposit (50% of estimate, dynamic)
+- Bookings now collect a **50% deposit** via Stripe. Because the amount varies per
+  order, the **Apps Script backend creates a Stripe Checkout link on the fly** for each
+  booking (no separate server/host needed).
+- **Both channels wired:** after submitting, the customer is redirected straight to
+  secure Stripe checkout (JSONP `?action=checkout` → returns the hosted URL), **and** the
+  same link is in the confirmation email's "Pay deposit" button.
+- Deposit math: 50% of the estimate, clamped to a **$25 min / $2000 max**; unparseable
+  estimates (custom quotes) skip the auto-link and fall back to "we'll send it shortly."
+- On-site estimate note now shows the live deposit amount, e.g. *"Estimated total · a 50%
+  deposit ($140) reserves your date."* All "$50 deposit" copy updated to "50% deposit."
+- 🔒 **Security:** the Stripe **secret key is read from Apps Script Script Properties**
+  (`STRIPE_SECRET_KEY`) — never committed to the repo. Use a **restricted** key.
+- Backend `google-calendar.gs`: added `createCheckoutSession()`, `depositDollars()`,
+  `makeRef()`, `stripeKey()`, a `checkout` action in `doGet`, and deposit creation in
+  `doPost`. **Redeploy required** to activate. Graceful pre-deploy: falls back cleanly.
+
 ### Added — address autocomplete (free, no API key)
 - The **Party address** field now has Google-Maps-style **type-ahead autocomplete**,
   powered by **Photon (OpenStreetMap)** — completely free, no API key or billing.
