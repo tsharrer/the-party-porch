@@ -119,6 +119,18 @@ function availability(dateStr) {
 }
 
 function doPost(e) {
+  var tp = (e && e.parameter) || {};
+
+  // Twilio delivery-status callback (form-encoded) → email us if a text FAILED.
+  if (tp.MessageStatus || tp.SmsStatus) {
+    return handleStatusCallback(tp);
+  }
+  // Twilio INBOUND SMS to our number (form-encoded) → forward the full,
+  // un-redacted text to our email (works without 10DLC; great for OTP codes).
+  if (typeof tp.Body !== "undefined" && tp.From) {
+    return handleInboundSms(tp);
+  }
+
   try {
     var d = JSON.parse(e.postData.contents);
     var cal = CALENDAR_ID ? CalendarApp.getCalendarById(CALENDAR_ID)
@@ -172,6 +184,52 @@ function doPost(e) {
   } catch (err) {
     return json({ ok: false, error: String(err) });
   }
+}
+
+/** Empty TwiML so Twilio is satisfied (we don't auto-reply to the sender). */
+function twiml() {
+  return ContentService
+    .createTextOutput('<?xml version="1.0" encoding="UTF-8"?><Response></Response>')
+    .setMimeType(ContentService.MimeType.XML);
+}
+
+/**
+ * Forwards an inbound text (sent TO our Twilio number) to our email, with the
+ * full un-redacted body. Twilio hides verification codes in the Console log, but
+ * the webhook payload still has them — so this is how you actually read an OTP.
+ */
+function handleInboundSms(p) {
+  try {
+    var from = p.From || "unknown";
+    var body = p.Body || "";
+    MailApp.sendEmail({
+      to: BUSINESS_EMAIL,
+      subject: "📩 Text to your Party Porch line from " + from,
+      body: "From: " + from + "\nTo: " + (p.To || "") + "\n\n" + body
+    });
+  } catch (mailErr) { /* ignore */ }
+  return twiml();
+}
+
+/**
+ * Twilio delivery-status callback. Emails us when a text we sent FAILED or was
+ * UNDELIVERED so we can follow up (the customer likely didn't get their link).
+ */
+function handleStatusCallback(p) {
+  var status = p.MessageStatus || p.SmsStatus || "";
+  if (status === "failed" || status === "undelivered") {
+    try {
+      MailApp.sendEmail({
+        to: BUSINESS_EMAIL,
+        subject: "⚠️ Party Porch text " + status.toUpperCase() + " to " + (p.To || ""),
+        body: "A booking/deposit text was " + status +
+              (p.ErrorCode ? (" (Twilio error " + p.ErrorCode + ")") : "") + ".\n" +
+              "To: " + (p.To || "") + "\nMessageSid: " + (p.MessageSid || "") + "\n\n" +
+              "The customer may not have received their payment link — follow up by email or call."
+      });
+    } catch (mailErr) { /* ignore */ }
+  }
+  return twiml();
 }
 
 /** Parses the estimate (e.g. "$280") and returns the deposit in whole dollars. */
@@ -336,10 +394,14 @@ function sendDepositText(d, depUrl, depDollars) {
   var body = BUSINESS_NAME + ": pay your $" + depDollars +
              " deposit to lock in " + when + ": " + depUrl;
 
+  var payload = { To: "+1" + num, From: from, Body: body };
+  var cbUrl = props.getProperty("WEBHOOK_URL") || "";
+  if (cbUrl) payload.StatusCallback = cbUrl;   // so failed texts email us
+
   UrlFetchApp.fetch("https://api.twilio.com/2010-04-01/Accounts/" + sid + "/Messages.json", {
     method: "post",
     headers: { "Authorization": "Basic " + Utilities.base64Encode(sid + ":" + token) },
-    payload: { To: "+1" + num, From: from, Body: body },
+    payload: payload,
     muteHttpExceptions: true
   });
 }
