@@ -392,7 +392,8 @@ function sendDepositText(d, depUrl, depDollars) {
 
   var when = prettyDate(d.date) || d.date || "your date";
   var body = BUSINESS_NAME + ": pay your $" + depDollars +
-             " deposit to lock in " + when + ": " + depUrl;
+             " deposit to lock in " + when + ": " + depUrl +
+             " Reply STOP to opt out, HELP for help.";
 
   var payload = { To: "+1" + num, From: from, Body: body };
   var cbUrl = props.getProperty("WEBHOOK_URL") || "";
