@@ -47,7 +47,8 @@
   "name": "The Party Porch",
   "description": "Mobile Nerf battle party rentals and event rentals serving the Greater Houston area. We deliver blasters, darts, safety gear and battlefield obstacles to your backyard, park, school or event.",
   "url": "https://yourpartyporch.com/",
-  "email": "hello@yourpartyporch.com",
+  "email": "yourpartyporch@gmail.com",
+  "telephone": "+1-346-680-7603",
   "priceRange": "$$",
   "areaServed": [
     {"@type":"City","name":"Houston"},
@@ -250,6 +251,8 @@
   footer a{color:var(--gold);text-decoration:none;font-weight:700}
   .socials{margin:12px 0;font-size:1rem}
   footer small{display:block;margin-top:14px;color:#7d93a8}
+  footer .footContact{margin:8px 0 2px;font-size:1.05rem;font-weight:700;color:#fff}
+  footer .footContact a{color:#fff}
 
   @media(max-width:680px){
     h1{font-size:1.9rem}.hero h1{font-size:2rem}.hero{padding:44px 0 50px}
@@ -649,12 +652,14 @@
         </div>
 
         <label class="consent" style="display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:13.5px;line-height:1.5;color:#4a4356;text-align:left;cursor:pointer">
-          <input type="checkbox" id="f_consent" name="consent" required style="width:18px;height:18px;margin-top:2px;flex:0 0 auto;accent-color:#ff5a5f">
-          <span>I agree to receive booking-related <strong>text messages</strong> and <strong>emails</strong> from The Party Porch (confirmations, deposit &amp; payment links, and reminders) at the number and email I provide. Message frequency varies; message &amp; data rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of purchase. I have read the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a> and <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>.</span>
+          <input type="checkbox" id="f_consent" name="consent" style="width:18px;height:18px;margin-top:2px;flex:0 0 auto;accent-color:#ff5a5f">
+          <span><strong>Optional — text me updates.</strong> Yes, I'd like to receive booking-related <strong>text messages</strong> from The Party Porch (confirmations, deposit &amp; payment links, and reminders) at the number I provide. Message frequency varies; message &amp; data rates may apply. Reply STOP to opt out, HELP for help. This is completely optional — leave it unchecked and we'll simply reach you by email or phone call instead. SMS consent is not required to book and is not a condition of purchase.</span>
         </label>
+        <div class="form-note" style="margin-top:8px">By submitting this request you agree to our <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a> and <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>.</div>
 
         <button class="btn big" type="submit" style="width:100%;margin-top:14px">📩 Send My Booking Request</button>
         <div class="form-note">We'll reply within a few hours to confirm your date. No payment is taken here.</div>
+        <div class="form-note">Prefer to talk? Call or text us at <a href="tel:+13466807603" style="font-weight:700;color:#ff5a5f">(346) 680-7603</a> or email <a href="mailto:yourpartyporch@gmail.com" style="font-weight:700;color:#ff5a5f">yourpartyporch@gmail.com</a>.</div>
       </form>
     </div>
   </div>
@@ -718,6 +723,7 @@
   <div class="brand"><span class="dot">🎉</span> The Party Porch</div>
   <p>Mobile Nerf battle parties &amp; event rentals — Houston, TX and surrounding areas</p>
   <div class="socials">📸 <a href="https://instagram.com/yourpartyporch" target="_blank" rel="noopener">@yourpartyporch</a> &nbsp;·&nbsp; 🎵 <a href="https://tiktok.com/@yourpartyporch" target="_blank" rel="noopener">@yourpartyporch</a></div>
+  <p class="footContact">📞 <a href="tel:+13466807603">(346) 680-7603</a> &nbsp;·&nbsp; ✉️ <a href="mailto:yourpartyporch@gmail.com">yourpartyporch@gmail.com</a></p>
   <p><a href="#book">Book a party</a> &nbsp;·&nbsp; <a id="footEmail" href="#">Email us</a> &nbsp;·&nbsp; <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms &amp; Conditions</a></p>
   <small>yourpartyporch.com · © <span id="yr"></span> The Party Porch. All rights reserved. · Serving Houston, Katy, Sugar Land, The Woodlands, Pearland &amp; beyond.</small>
 </footer>
@@ -731,7 +737,7 @@
    formspree.io and paste its ID into FORMSPREE_ID.
    ==================================================================== */
 var BUSINESS_EMAIL = "yourpartyporch@gmail.com";   // <-- CHANGE to your email
-var BUSINESS_PHONE = "";                            // optional digits-only, e.g. "17135550123"
+var BUSINESS_PHONE = "13466807603";                 // digits-only; used for tap-to-call links
 var FORMSPREE_ID   = "xdarjgjk";                            // optional, e.g. "xyzabcd"
 var STRIPE_DEPOSIT_URL = "";   // Optional static Stripe Payment Link fallback (percentage deposits use the backend)
 var DEPOSIT_PCT = 50;          // deposit shown to customers = this % of the estimate (backend charges the same)

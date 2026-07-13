@@ -3,6 +3,22 @@
 All notable changes to the website, tracker, and booking backend are logged here.
 Newest entries first. Dates in America/Chicago.
 
+## 2026-07-13
+
+### Fixed — A2P 10DLC campaign rejection (Error 30923: forced/mandatory consent)
+- Twilio rejected the STARTER campaign (SID `CMc19bb419a049fe69c9370518b43adb51`) because
+  the booking form's SMS consent checkbox was **`required`**, making texting consent a
+  mandatory condition of submitting a booking (forced consent).
+- **Made SMS opt-in entirely optional**: removed the `required` attribute from the
+  `#f_consent` checkbox, reworded it as an explicit optional opt-in ("Optional — text me
+  updates"), and clarified that leaving it unchecked still lets customers book (we contact
+  them by email or phone call instead).
+- **Decoupled the Terms/Privacy agreement from SMS consent**: agreeing to the Privacy Policy
+  and Terms is now handled by a submit-implied note, so it no longer rides on the SMS checkbox.
+- Updated **`privacy.html`** SMS section to state opt-in is voluntary, unchecked by default,
+  and that customers can decline and still use our services.
+- Next step: resubmit the campaign in the Twilio Console for carrier review.
+
 ## 2026-07-07
 
 ## 2026-07-07
