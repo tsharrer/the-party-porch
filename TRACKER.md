@@ -1,8 +1,8 @@
 # ✅ Master Tracker
 
-> 📱 **Best experience: open [`index.html`](index.html) on your phone** — it's an interactive
-> tracker that saves your progress. Live URL (after GitHub Pages is on):
-> **https://tsharrer.github.io/the-party-porch/**
+> 📱 **The interactive tracker now lives in a private repo:**
+> **https://github.com/tsharrer/party-porch-tracker** — open its `index.html` on your phone;
+> it saves your progress locally on your device.
 >
 > This file is the plain-text mirror.
 

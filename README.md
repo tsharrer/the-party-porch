@@ -9,9 +9,11 @@
 - **Goal:** **+$10,000/month net profit within 18 months** (by ~March 2028)
 - **Starting budget:** $600
 
-## 📱 Live tracker (open on your phone)
-**https://yourpartyporch.com/tracker/** (or the GitHub Pages URL `https://tsharrer.github.io/the-party-porch/tracker/`) — interactive app; tap tasks to check them
-off (saves on your device). Tabs: **Tracker · Leads · Expenses · Timeline · Gantt · Marketing ·
+## 📱 Private launch tracker
+The interactive launch tracker now lives in a **separate private repo**:
+**https://github.com/tsharrer/party-porch-tracker** (not served on the public website).
+Open its `index.html` on your phone/computer to use it — progress, leads, and expenses
+save locally on your device. Tabs: **Tracker · Leads · Expenses · Timeline · Gantt · Marketing ·
 Clients · Scripts · Shopping · Pricing · Money · ROI · Plan**. The **Leads** tab logs inquiries with source,
 status (Lead → Quoted → Booked → Done → Lost) and value so you learn which channel books best.
 
@@ -23,7 +25,6 @@ status (Lead → Quoted → Booked → Done → Lost) and value so you learn whi
 |-----|---------|
 | [TRACKER.md](TRACKER.md) | ✅ Master task tracker — check things off as you go |
 | [index.html](index.html) | 🌐 **Booking website** (served at the domain root) — SEO-optimized, self-contained |
-| [tracker/index.html](tracker/index.html) | 📊 Internal launch tracker/dashboard app (served at `/tracker/`) |
 | [google-calendar.gs](google-calendar.gs) | 📅 Apps Script backend: availability + booking + confirmation email |
 | [docs/website-setup.md](docs/website-setup.md) | How the site works: cart, availability, confirmation email, SEO |
 | [docs/business-plan.md](docs/business-plan.md) | Full business plan, unit economics, 18-month ramp |
