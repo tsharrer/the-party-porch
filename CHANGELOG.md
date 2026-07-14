@@ -5,6 +5,26 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-07-13
 
+### Added — Hidden per-item sourcing lead times (rolling availability)
+- Every catalog item now carries a `lead` (days) = how long we need to source/test it
+  before an event. An item simply appears **unavailable** for any date sooner than
+  `today + its lead` — to customers it reads like it's sold out for that date. There is
+  **no lead-time text shown** anywhere on the site.
+- Earliest bookable date for an order = today + the **longest** lead among selected items
+  (Nerf 5, snack machines 5, Movie Night 7, Yard Games 10, Water Battles 14, Photo Booth /
+  Flower Backdrop / Soft Play / Bounce House 42). Rolls forward automatically each day —
+  no manual updates.
+- Enforced in the booking form: the date field's `min` is set from the current selection,
+  a too-soon date is cleared with a generic "not available" message, and `submitBooking`
+  guards against bypass. Past dates are blocked (`min = today`).
+
+### Changed — "Coming soon" items are now normal bookable products
+- Removed all "coming soon" / "launching soon" / "join the waitlist" language from the
+  booking form, experience cards, add-on list, FAQ, JSON-LD, and the six experience
+  subpages (Photo Booth, Flower Backdrop, Water Battles, Yard Games, Soft Play, White
+  Bounce Houses). They now show "Available now" and "Book this experience", gated only by
+  the hidden sold-out-by-date logic above. Gave each a base price so estimates compute.
+
 ### Fixed — A2P 10DLC campaign rejection (Error 30923: forced/mandatory consent)
 - Twilio rejected the STARTER campaign (SID `CMc19bb419a049fe69c9370518b43adb51`) because
   the booking form's SMS consent checkbox was **`required`**, making texting consent a
