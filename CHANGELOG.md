@@ -3,6 +3,15 @@
 All notable changes to the website, tracker, and booking backend are logged here.
 Newest entries first. Dates in America/Chicago.
 
+## 2026-07-16
+
+### Changed - Hero tagline + removed em dashes site-wide
+- Hero tagline now notes the business is **based in Oak Forest** ("Greater Houston's
+  mobile party company, based in Oak Forest.").
+- Replaced every em dash (—) with a spaced hyphen (-) across all site pages:
+  `index.html`, `privacy.html`, `terms.html`, `experiences/*.html`, and
+  `docs/index-wordpress.html`.
+
 ## 2026-07-13
 
 ### Added — Hidden per-item sourcing lead times (rolling availability)
