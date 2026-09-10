@@ -5,6 +5,12 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-09-10
 
+### Changed - Added optional Snack Bar supply packs
+- Clarified that Snack Bar prices cover machine rental; consumables are optional.
+- Added $20 packs for up to 45 servings: popcorn corn and oil, cotton candy sugar and
+  paper tubes, or shaved ice syrups. Ice is not included.
+- Added all three supply packs to the booking form and live estimate.
+
 ### Changed - Nerf rentals are now overnight
 - Updated the website and customer guide to describe overnight Nerf rentals with
   next-day pickup.

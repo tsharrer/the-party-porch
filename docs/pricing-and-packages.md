@@ -14,6 +14,15 @@ pay their way.
 Gear included: blasters, darts, safety glasses, bunkers/obstacles. Delivery + next-day pickup included
 within 15 miles.
 
+## Snack Bar consumables
+
+Machine rentals do not include consumables. Add a **$20 supply pack per machine** for up
+to 45 servings:
+
+- Popcorn: corn + oil
+- Cotton candy: sugar + paper tubes
+- Shaved ice: syrups (customer provides ice)
+
 ## Player-count matrix
 | Players | Rental | + Referee(s) | Full (rental + refs) |
 |---------|--------|--------------|----------------------|

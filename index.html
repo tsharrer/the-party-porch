@@ -86,7 +86,7 @@
   "mainEntity":[
     {"@type":"Question","name":"What experiences and rentals do you offer?","acceptedAnswer":{"@type":"Answer","text":"We bring Nerf parties and event rentals to the Houston area. Everything is available to book: Nerf Battles, Movie Night (projector + 15ft screen, evenings only), snack machines (popcorn, cotton candy, shaved ice), Photo Booth, Flower Backdrop, Water Battles, Yard Games, Soft Play and White Bounce Houses. Mix any of them into one Custom Package."}},
     {"@type":"Question","name":"How much is a Nerf party in Houston?","acceptedAnswer":{"@type":"Answer","text":"Our overnight Nerf party rental starts at $180 for up to 12 players. Delivery, next-day pickup, blasters, darts, safety glasses and battlefield obstacles are included. Add a referee for +$100 to have our host run the games."}},
-    {"@type":"Question","name":"How much do the snack machines cost?","acceptedAnswer":{"@type":"Answer","text":"Add a popcorn Snack Bar for +$69, a Cotton Candy machine for +$79, or a Shaved Ice machine for +$79 to any party. Supplies, delivery and pickup are included. Ice for the shaved ice machine is not included - you provide the ice."}},
+    {"@type":"Question","name":"How much do the snack machines cost?","acceptedAnswer":{"@type":"Answer","text":"Add a popcorn machine for +$69, a Cotton Candy machine for +$79, or a Shaved Ice machine for +$79. For an additional $20 per machine, we can provide enough consumables for up to 45 servings: corn and oil for popcorn, sugar and paper tubes for cotton candy, or syrups for shaved ice. Ice is not included."}},
     {"@type":"Question","name":"How much is a photo booth rental in Houston?","acceptedAnswer":{"@type":"Answer","text":"Our photo booth launches soon at an intro price of $375. You can add it to your booking now to lock in the rate."}},
     {"@type":"Question","name":"How much do flower backdrops, soft play, bounce houses, yard games and movie nights cost?","acceptedAnswer":{"@type":"Answer","text":"Our intro prices: Photo Booth $375, Flower Backdrop $225, Soft Play $295, White Bounce House $255, Yard Games (Giant Connect Four, Jenga, cornhole) $89, Water Battles $225 for up to 20 players, and Movie Night (projector + 15ft screen, evenings only) $375. Movie Night is available now; the others launch soon."}},
     {"@type":"Question","name":"Can I bundle several experiences together?","acceptedAnswer":{"@type":"Answer","text":"Yes. Pick a main rental and add any others, including coming-soon items, right in the booking form, or choose a Custom Package and we will build one quote for the whole event."}},
@@ -424,7 +424,7 @@
       <a class="exp avail" href="experiences/snack-bar.html" style="background-image:linear-gradient(150deg,rgba(224,67,71,.66),rgba(255,183,3,.66)),url('assets/exp-snackbar.jpg')">
         <span class="exp-emoji">🍿</span><span class="badge">Add-on</span>
         <h3>Snack Bar</h3>
-        <p>Popcorn, cotton candy &amp; shaved ice machines that keep the whole crew fueled.</p>
+        <p>Popcorn, cotton candy &amp; shaved ice machines. Add a $20 supply pack for up to 45 servings.</p>
         <span class="go">Learn more →</span>
       </a>
       <a class="exp avail" href="experiences/water-battles.html" style="background-image:linear-gradient(150deg,rgba(0,180,216,.62),rgba(0,119,182,.7)),url('assets/exp-water.jpg')">
@@ -565,9 +565,12 @@
       <h2 style="font-size:1.3rem">Add-ons &amp; experiences - starting at these prices</h2>
     </div>
     <div class="addons">
-      <div class="addon"><span>🍿 The Snack Bar (popcorn machine)</span><b>+$69</b></div>
+      <div class="addon"><span>🍿 Popcorn machine</span><b>+$69</b></div>
+      <div class="addon"><span>🌽 Popcorn corn + oil <em style="color:var(--muted);font-style:normal">· up to 45 servings</em></span><b>+$20</b></div>
       <div class="addon"><span>🍭 Cotton Candy machine</span><b>+$79</b></div>
+      <div class="addon"><span>🍬 Cotton candy sugar + paper tubes <em style="color:var(--muted);font-style:normal">· up to 45 servings</em></span><b>+$20</b></div>
       <div class="addon"><span>🍧 Shaved Ice machine <em style="color:var(--muted);font-style:normal">· ice not included</em></span><b>+$79</b></div>
+      <div class="addon"><span>🥤 Shaved ice syrups <em style="color:var(--muted);font-style:normal">· up to 45 servings</em></span><b>+$20</b></div>
       <div class="addon"><span>🛠️ We set up + tear down for you</span><b>+$40</b></div>
       <div class="addon"><span>⏱️ Extra referee hour</span><b>+$40</b></div>
       <div class="addon"><span>📸 Photo Booth</span><b>$375</b></div>
@@ -669,11 +672,14 @@
 
         <label class="f">Add more to your party (optional)</label>
         <div class="checks">
-          <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Snack Bar" data-price="69" onchange="calcEstimate()"> 🍿 Snack Bar +$69</label>
-          <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Cotton Candy" data-price="79" onchange="calcEstimate()"> 🍭 Cotton Candy +$79</label>
-          <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Shaved Ice" data-price="79" onchange="calcEstimate()"> 🍧 Shaved Ice +$79 (ice not included)</label>
-          <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="We set up" data-price="40" onchange="calcEstimate()"> 🛠️ We set up +$40</label>
-          <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Extra hour" data-price="40" onchange="calcEstimate()"> ⏱️ Extra hour +$40</label>
+        <label class="chk"><input type="checkbox" id="addon_popcorn" name="addons" class="addon-c" value="Snack Bar" data-price="69" onchange="calcEstimate()"> 🍿 Popcorn machine +$69</label>
+        <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Popcorn supplies - up to 45 servings" data-price="20" data-requires="addon_popcorn" onchange="calcEstimate()" disabled> 🌽 Corn + oil (up to 45 servings) +$20</label>
+        <label class="chk"><input type="checkbox" id="addon_cottoncandy" name="addons" class="addon-c" value="Cotton Candy" data-price="79" onchange="calcEstimate()"> 🍭 Cotton Candy machine +$79</label>
+        <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Cotton candy supplies - up to 45 servings" data-price="20" data-requires="addon_cottoncandy" onchange="calcEstimate()" disabled> 🍬 Sugar + paper tubes (up to 45 servings) +$20</label>
+        <label class="chk"><input type="checkbox" id="addon_shavedice" name="addons" class="addon-c" value="Shaved Ice" data-price="79" onchange="calcEstimate()"> 🍧 Shaved Ice machine +$79 (ice not included)</label>
+        <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Shaved ice syrups - up to 45 servings" data-price="20" data-requires="addon_shavedice" onchange="calcEstimate()" disabled> 🥤 Syrups (up to 45 servings) +$20</label>
+        <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="We set up" data-price="40" onchange="calcEstimate()"> 🛠️ We set up +$40</label>
+        <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Extra referee hour" data-price="40" onchange="calcEstimate()"> ⏱️ Extra referee hour +$40</label>
           <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Photo Booth" data-price="375" onchange="calcEstimate()"> 📸 Photo Booth +$375</label>
           <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Flower Backdrop" data-price="225" onchange="calcEstimate()"> 🌸 Flower Backdrop +$225</label>
           <label class="chk"><input type="checkbox" name="addons" class="addon-c" value="Water Battles" data-price="225" onchange="calcEstimate()"> 💦 Water Battles +$225</label>
@@ -729,7 +735,7 @@
     </div>
     <details open><summary>What experiences and rentals do you offer?</summary><p>We bring <strong>Nerf parties</strong> and event rentals to the Houston area. Everything is available to book: <strong>Nerf Battles</strong>, <strong>Movie Night</strong> (projector + 15ft screen, evenings only), snack machines (popcorn, cotton candy, shaved ice), <strong>Photo Booth, Flower Backdrop, Water Battles, Yard Games, Soft Play</strong> and <strong>White Bounce Houses</strong>. Mix any of them into one <strong>Custom Package</strong>.</p></details>
     <details><summary>How much is a Nerf party in Houston?</summary><p>Our overnight Nerf party rental starts at $180 for up to 12 players. Delivery, next-day pickup, blasters, darts, safety glasses and battlefield obstacles are included. Add a referee for +$100 to have our host run the scheduled games and handle safety.</p></details>
-    <details><summary>What do the snack machines cost?</summary><p>Add a popcorn <strong>Snack Bar for +$69</strong>, a <strong>Cotton Candy machine for +$79</strong>, or a <strong>Shaved Ice machine for +$79</strong> to any party - supplies, delivery and pickup included. <em>Note: ice for the shaved ice machine is not included - you provide the ice.</em></p></details>
+    <details><summary>What do the snack machines and supplies cost?</summary><p>Add a <strong>popcorn machine for +$69</strong>, a <strong>Cotton Candy machine for +$79</strong>, or a <strong>Shaved Ice machine for +$79</strong>. For an additional <strong>$20 per machine</strong>, we can provide enough consumables for up to 45 servings: corn and oil for popcorn, sugar and paper tubes for cotton candy, or syrups for shaved ice. <em>Ice is not included with the shaved ice machine.</em></p></details>
     <details><summary>How much is a photo booth?</summary><p>Our photo booth is <strong>$375</strong>. Add it to your booking to reserve your date.</p></details>
     <details><summary>Do you rent flower backdrops / flower walls?</summary><p>Yes - <strong>$225</strong>. Perfect behind a cake table or as a photo backdrop.</p></details>
     <details><summary>Do you have soft play or bounce houses for little kids?</summary><p>Yes: <strong>Soft Play for $295</strong> (toddler-safe padded sets &amp; ball pit) and a modern <strong>White Bounce House for $255</strong>.</p></details>
@@ -838,7 +844,7 @@ var REF = {12:100, 18:100, 24:200};
 /* What each rental type needs from the form */
 var RENTALS = {
   "Nerf Battles":        {players:true, note:"🎯 Overnight rental with next-day pickup. Return all equipment empty, clean and dry."},
-  "Snack Bar":           {players:false, note:"Pick your machine(s) in the add-ons below - popcorn, cotton candy or shaved ice."},
+  "Snack Bar":           {players:false, note:"Pick your machine(s) below. Optional $20 supply packs provide up to 45 servings per machine; ice is not included."},
   "Photo Booth":         {players:false, base:375},
   "Flower Backdrop":     {players:false, base:225},
   "Water Battles":       {players:false, base:225},
@@ -857,9 +863,9 @@ function currentRental(){ return document.getElementById('f_rental').value; }
 var CATALOG = {
   "nerf":       {name:"Nerf Battles",        price:180, emoji:"🎯", soon:false, lead:5,  note:"Overnight · up to 12 players · +$100 referee option"},
   "movie":      {name:"Movie Night",         price:375, emoji:"🎬", soon:false, lead:7,  note:"Projector + 15ft screen · evenings only"},
-  "popcorn":    {name:"Snack Bar - Popcorn", price:69,  emoji:"🍿", soon:false, lead:5,  note:"Fresh popcorn machine + supplies"},
-  "cottoncandy":{name:"Cotton Candy",        price:79,  emoji:"🍭", soon:false, lead:5,  note:"Cotton candy machine + supplies"},
-  "shavedice":  {name:"Shaved Ice",          price:79,  emoji:"🍧", soon:false, lead:5,  note:"Machine + syrups · ice not included"},
+  "popcorn":    {name:"Snack Bar - Popcorn", price:69,  emoji:"🍿", soon:false, lead:5,  note:"Machine rental · corn + oil pack $20"},
+  "cottoncandy":{name:"Cotton Candy",        price:79,  emoji:"🍭", soon:false, lead:5,  note:"Machine rental · sugar + tubes pack $20"},
+  "shavedice":  {name:"Shaved Ice",          price:79,  emoji:"🍧", soon:false, lead:5,  note:"Machine rental · syrup pack $20 · ice not included"},
   "photobooth": {name:"Photo Booth",         price:375, emoji:"📸", soon:false, lead:42, note:"Props, prints & digital copies"},
   "flower":     {name:"Flower Backdrop",     price:225, emoji:"🌸", soon:false, lead:42, note:"Flower wall + freestanding frame"},
   "water":      {name:"Water Battles",       price:225, emoji:"💦", soon:false, lead:14, note:"Water blasters for up to 20"},
@@ -1093,6 +1099,11 @@ function onRentalChange(){
 
 function calcEstimate(){
   refreshBookingDate();
+  document.querySelectorAll('.addon-c[data-requires]').forEach(function(supply){
+    var machine = document.getElementById(supply.getAttribute('data-requires'));
+    supply.disabled = !machine || !machine.checked;
+    if(supply.disabled) supply.checked = false;
+  });
   var r = currentRental();
   var cfg = RENTALS[r] || {};
   var amtEl = document.getElementById('est_amt');
