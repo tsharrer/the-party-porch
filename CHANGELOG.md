@@ -5,6 +5,10 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-09-10
 
+### Changed - Positioned the service as Nerf parties
+- Removed "mobile" from customer-facing business copy to avoid suggesting a game truck.
+- Updated homepage, SEO metadata, Nerf page and site footers to lead with "Nerf parties."
+
 ### Changed - Added real Nerf battle gallery photos
 - Replaced the four template images on the Nerf Battles page with optimized photos from
   a real setup and party.
