@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /tracker/
+Disallow: /customer/
 
 Sitemap: https://yourpartyporch.com/sitemap.xml

@@ -31,6 +31,7 @@ var BUSINESS_NAME  = "The Party Porch";
 var BUSINESS_EMAIL = "yourpartyporch@gmail.com";   // shown as reply-to / signature
 var BUSINESS_PHONE = "";                            // optional, e.g. "(713) 555-0142" — shows in the email if set
 var SEND_CONFIRM_EMAIL = true;                      // master switch for the auto confirmation email
+var NERF_GUIDE_URL = "https://yourpartyporch.com/customer/nerf-party-guide.html";
 
 // --- Text the customer their deposit link (Twilio SMS) -----------------------
 // Sends the deposit link by SMS through Twilio. Your Twilio credentials are read
@@ -318,6 +319,8 @@ function sendConfirmationEmail(d, depUrl, depDollars) {
   var cart  = d.cart || d.service || "your party";
   var est   = d.estimate ? String(d.estimate) : "";
   var phoneLine = BUSINESS_PHONE ? ("<br>Call/text: <strong>" + BUSINESS_PHONE + "</strong>") : "";
+  var hasNerf = String(d.items || "").split(",").indexOf("nerf") > -1 ||
+                d.rental === "Nerf Battles" || /Nerf Battles/.test(cart);
 
   var amt  = depDollars ? ("$" + depDollars) : "";
   var link = depUrl || DEPOSIT_LINK;
@@ -339,6 +342,13 @@ function sendConfirmationEmail(d, depUrl, depDollars) {
       '<strong>' + pctLabel + '</strong> (applied to your total) shortly.</p>';
   }
 
+  var guideBlock = hasNerf ?
+    '<div style="margin:22px 0;padding:18px;border-radius:12px;background:#fff8f0;border:1px solid #e7ded3">' +
+      '<strong style="color:#12263a">Your Nerf party setup &amp; game guide</strong>' +
+      '<p style="margin:6px 0 12px;color:#4b5968">Keep this guide handy for setup, safety rules, game ideas and the return checklist.</p>' +
+      '<a href="' + NERF_GUIDE_URL + '" style="color:#e04347;font-weight:700">Open the customer guide &rarr;</a>' +
+    '</div>' : "";
+
   var html =
     '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1a1a2e">' +
       '<h2 style="color:#ff5a5f;margin:0 0 6px">You\u2019re on the calendar, ' + esc(first) + '! 🎉</h2>' +
@@ -354,6 +364,7 @@ function sendConfirmationEmail(d, depUrl, depDollars) {
         (est ? row("Estimate", esc(est)) : "") +
       '</table>' +
       depositBlock +
+      guideBlock +
       '<hr style="border:none;border-top:1px solid #eee;margin:22px 0">' +
       '<p style="font-size:13px;color:#667;line-height:1.6">' +
         'Delivery is free within 12 miles of 77018 (a small fee applies beyond that). ' +
@@ -373,7 +384,8 @@ function sendConfirmationEmail(d, depUrl, depDollars) {
     body: "Thanks for booking with " + BUSINESS_NAME + "! We received your request for " + cart +
           (when ? " on " + when : "") + ". " +
           (link && amt ? ("Place your " + amt + " (" + DEPOSIT_PERCENT + "%) deposit here: " + link)
-                       : ("We'll send a secure link for your " + DEPOSIT_PERCENT + "% deposit shortly."))
+                       : ("We'll send a secure link for your " + DEPOSIT_PERCENT + "% deposit shortly.")) +
+          (hasNerf ? (" Nerf party setup and game guide: " + NERF_GUIDE_URL) : "")
   });
 }
 

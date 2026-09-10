@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#12263a">
+<link rel="icon" href="../assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<title>Nerf Party Setup &amp; Game Guide | The Party Porch</title>
+<style>
+:root{--navy:#12263a;--navy2:#1b3652;--coral:#ff5a5f;--coral-d:#e04347;--gold:#ffb703;--cream:#fff8f0;--ink:#1d2733;--muted:#5c6b7a;--line:#e7ded3;--good:#168451}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55}
+img{max-width:100%}
+h1,h2,h3{line-height:1.15;color:var(--navy)}
+h1{margin:.2em 0;font-size:clamp(2rem,7vw,3.5rem)}
+h2{margin:0 0 18px;font-size:clamp(1.5rem,4vw,2rem)}
+h3{margin:0 0 8px;font-size:1.12rem}
+p{margin:0 0 1em}
+a{color:var(--coral-d)}
+.wrap{width:min(960px,100%);margin:0 auto;padding:0 20px}
+.top{background:var(--navy);color:#fff}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 20px}
+.nav img{display:block;width:auto;height:52px}
+.nav span{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-align:right;text-transform:uppercase;color:#dce8f2}
+.hero{position:relative;overflow:hidden;background:linear-gradient(150deg,rgba(18,38,58,.83),rgba(27,54,82,.86)),url("../assets/gallery/nerf-battles-2.jpg") center/cover;color:#fff;padding:64px 0}
+.hero .wrap{position:relative}
+.eyebrow{font-size:.8rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.hero h1{color:#fff}
+.hero p{max-width:670px;margin:0;font-size:1.12rem;color:#e6eef5}
+.quick-nav{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:28px}
+.quick-nav a{display:flex;align-items:center;justify-content:center;min-height:46px;padding:10px;border:1px solid rgba(255,255,255,.35);border-radius:12px;background:rgba(18,38,58,.55);color:#fff;font-weight:800;text-align:center;text-decoration:none}
+main section{padding:46px 0}
+main section:nth-child(even){background:#fff;border-block:1px solid var(--line)}
+.notice{display:flex;gap:14px;align-items:flex-start;margin:0 0 24px;padding:18px;border:2px solid var(--coral);border-radius:16px;background:#fff}
+.notice .icon{font-size:1.8rem;line-height:1}
+.notice strong{display:block;color:var(--navy);font-size:1.05rem}
+.steps{display:grid;gap:14px;counter-reset:step}
+.step{position:relative;padding:20px 20px 20px 70px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 4px 14px rgba(18,38,58,.05)}
+.step:before{counter-increment:step;content:counter(step);position:absolute;left:18px;top:18px;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--gold);color:var(--navy);font-weight:900}
+.step p{margin:0;color:var(--muted)}
+.water{color:var(--coral-d);font-weight:900}
+.checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0;list-style:none}
+.checklist li{position:relative;padding:16px 16px 16px 48px;border:1px solid var(--line);border-radius:14px;background:#fff;font-weight:700;color:var(--navy)}
+.checklist li:before{content:"✓";position:absolute;left:17px;color:var(--good);font-size:1.2rem;font-weight:900}
+.safety{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.safety div{padding:16px;border-left:5px solid var(--gold);border-radius:8px;background:#fff}
+.safety strong{display:block;color:var(--navy)}
+.game-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.game{border:1px solid var(--line);border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 5px 16px rgba(18,38,58,.06)}
+.game-head{display:flex;align-items:center;gap:12px;padding:18px;background:var(--navy);color:#fff}
+.game-head span{font-size:1.8rem}.game-head h3{margin:0;color:#fff}
+.game-body{padding:18px}
+.game-body p:last-child{margin-bottom:0}
+.label{font-weight:900;color:var(--coral-d)}
+.round{display:inline-block;margin-top:4px;padding:4px 10px;border-radius:999px;background:#fff1e8;color:var(--coral-d);font-size:.78rem;font-weight:800}
+.return-box{padding:24px;border-radius:18px;background:var(--navy);color:#fff}
+.return-box h2{color:#fff}
+.return-box .checklist li{border-color:rgba(255,255,255,.25)}
+.contact{text-align:center}
+.contact a{font-weight:800}
+footer{padding:28px 20px;background:var(--navy);color:#c3d2e0;text-align:center;font-size:.9rem}
+@media(max-width:700px){
+  .hero{padding:46px 0}
+  .quick-nav{grid-template-columns:repeat(2,1fr)}
+  .checklist,.safety,.game-grid{grid-template-columns:1fr}
+  main section{padding:36px 0}
+}
+@media(max-width:420px){
+  .nav img{height:44px}
+  .nav span{font-size:.66rem}
+  .quick-nav{grid-template-columns:1fr}
+  .step{padding:66px 16px 18px}
+}
+@media print{
+  body{background:#fff;font-size:10.5pt}
+  .nav,.quick-nav,footer{display:none}
+  .hero{padding:24px 0;background:var(--navy)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main section{padding:20px 0;break-inside:avoid}
+  .game{break-inside:avoid}
+  .game-head,.return-box{background:var(--navy)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .game-grid{gap:10px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="nav wrap">
+    <img src="../assets/logo.png" alt="The Party Porch">
+    <span>Confirmed customer guide</span>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Setup, play &amp; return</div>
+    <h1>Your Nerf Party Guide</h1>
+    <p>Everything you need to set up the battlefield, run exciting games and have the equipment ready for pickup.</p>
+    <nav class="quick-nav" aria-label="Guide sections">
+      <a href="#setup">Setup</a>
+      <a href="#safety">Safety</a>
+      <a href="#games">Game ideas</a>
+      <a href="#return">Return checklist</a>
+    </nav>
+  </div>
+</div>
+
+<main>
+  <section id="setup">
+    <div class="wrap">
+      <h2>Set up the battlefield</h2>
+      <div class="notice">
+        <div class="icon" aria-hidden="true">💧</div>
+        <div><strong>Each inflatable needs one gallon of water before air is added.</strong> The water anchors the inflatable so it stays in place during play.</div>
+      </div>
+      <div class="steps">
+        <article class="step">
+          <h3>Choose the play area</h3>
+          <p>Use a flat, open area away from streets, pools, grills, sharp objects and anything breakable. Clear away sticks, rocks and debris before laying out the inflatables.</p>
+        </article>
+        <article class="step">
+          <h3>Lay out the inflatables</h3>
+          <p>Spread the obstacles around the field with enough room for players to move safely between them. Mix tall and short obstacles to create cover on both sides.</p>
+        </article>
+        <article class="step">
+          <h3>Add one gallon of water to each inflatable</h3>
+          <p>Open the water-fill valve and add <span class="water">one full gallon of water to every inflatable</span>. Close each water valve tightly before moving to the next step.</p>
+        </article>
+        <article class="step">
+          <h3>Add air with the provided pump</h3>
+          <p>Connect the pump we provided to the air valve. Inflate each obstacle until it stands upright and feels firm, then close the air valve securely. Do not overinflate.</p>
+        </article>
+        <article class="step">
+          <h3>Create team bases and boundaries</h3>
+          <p>Choose opposite ends of the field as team bases. Show every player the boundaries, the respawn areas and any spaces that are out of bounds.</p>
+        </article>
+        <article class="step">
+          <h3>Set up the gear station</h3>
+          <p>Place blasters, darts and safety glasses together at the edge of the field. Give each player safety glasses before handing out blasters.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="safety">
+    <div class="wrap">
+      <h2>Rules before every game</h2>
+      <div class="safety">
+        <div><strong>Safety glasses stay on.</strong> Every player must wear the provided eye protection while a game is active.</div>
+        <div><strong>Aim below the shoulders.</strong> No intentional shots at faces or heads.</div>
+        <div><strong>Stay inside the boundaries.</strong> Stop play if anyone enters a street, driveway or other unsafe area.</div>
+        <div><strong>Do not climb or tackle.</strong> Inflatables are for cover, not climbing, sitting or jumping on.</div>
+        <div><strong>Call a pause when needed.</strong> Anyone may call “pause” for a fallen player, loose obstacle or safety issue.</div>
+        <div><strong>Use adult supervision.</strong> An adult should explain the rules, start and stop each round, and watch the field throughout play.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="games">
+    <div class="wrap">
+      <h2>Game ideas</h2>
+      <div class="game-grid">
+        <article class="game">
+          <div class="game-head"><span aria-hidden="true">🚩</span><h3>Capture the Flag</h3></div>
+          <div class="game-body">
+            <p><span class="label">Setup:</span> Divide players into two teams. Place a flag or bright bandana at each team's base.</p>
+            <p><span class="label">How to play:</span> Steal the other team's flag and carry it back to your own base. When hit, return to your respawn point, count to 10 and rejoin. Players cannot guard within 10 feet of a flag.</p>
+            <p><span class="label">Win:</span> The first team to bring the opposing flag to its own base wins.</p>
+            <span class="round">8–12 minute rounds</span>
+          </div>
+        </article>
+
+        <article class="game">
+          <div class="game-head"><span aria-hidden="true">⭐</span><h3>Protect the MVP</h3></div>
+          <div class="game-body">
+            <p><span class="label">Setup:</span> Each team secretly chooses one MVP. The MVP gets three lives; every other player respawns after a 10-count.</p>
+            <p><span class="label">How to play:</span> Protect your MVP while trying to hit the other team's MVP. The MVP raises a hand and counts down one life after each hit.</p>
+            <p><span class="label">Win:</span> The first team to take all three lives from the opposing MVP wins.</p>
+            <span class="round">6–10 minute rounds</span>
+          </div>
+        </article>
+
+        <article class="game">
+          <div class="game-head"><span aria-hidden="true">🎯</span><h3>Team Elimination</h3></div>
+          <div class="game-body">
+            <p><span class="label">Setup:</span> Split into two teams at opposite ends of the field.</p>
+            <p><span class="label">How to play:</span> A player who is hit raises their blaster and leaves the field. No respawns during the round.</p>
+            <p><span class="label">Win:</span> The last team with at least one player still in the game wins.</p>
+            <span class="round">3–5 minute rounds</span>
+          </div>
+        </article>
+
+        <article class="game">
+          <div class="game-head"><span aria-hidden="true">🩹</span><h3>Medic</h3></div>
+          <div class="game-body">
+            <p><span class="label">Setup:</span> Each team selects one medic.</p>
+            <p><span class="label">How to play:</span> When hit, a player kneels and raises a hand. The medic brings them back by safely tagging their shoulder. A medic who is hit returns to base, counts to 15 and then rejoins.</p>
+            <p><span class="label">Win:</span> Score one point for every opposing player hit. The team with the most points when time expires wins.</p>
+            <span class="round">8 minute rounds</span>
+          </div>
+        </article>
+
+        <article class="game">
+          <div class="game-head"><span aria-hidden="true">🧟</span><h3>Zombie Outbreak</h3></div>
+          <div class="game-body">
+            <p><span class="label">Setup:</span> Choose one or two zombies. Everyone else begins as a survivor.</p>
+            <p><span class="label">How to play:</span> Zombies tag survivors with a hand; survivors may freeze a zombie for a 10-count with one dart hit. A tagged survivor becomes a zombie.</p>
+            <p><span class="label">Win:</span> Survivors win if anyone remains when time expires. Zombies win if everyone is converted.</p>
+            <span class="round">5 minute rounds</span>
+          </div>
+        </article>
+
+        <article class="game">
+          <div class="game-head"><span aria-hidden="true">👑</span><h3>King of the Fort</h3></div>
+          <div class="game-body">
+            <p><span class="label">Setup:</span> Choose one inflatable as the fort and mark a nearby scoring zone. One team defends while the other attacks.</p>
+            <p><span class="label">How to play:</span> Attackers score by reaching the zone and holding it for five seconds. Hit players return to their base, count to 10 and rejoin.</p>
+            <p><span class="label">Win:</span> Attackers have five minutes to score three times, then teams switch roles.</p>
+            <span class="round">5 minute turns</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="return">
+    <div class="wrap">
+      <div class="return-box">
+        <h2>Return everything clean, dry and empty</h2>
+        <p>Please complete every item before pickup. Moisture, water or dirt left in the equipment can damage it and delay the next party.</p>
+        <ul class="checklist">
+          <li>Collect all blasters, darts, safety glasses, inflatables and the pump.</li>
+          <li>Wipe dirt, grass, mud, food and spills from every item.</li>
+          <li>Open each air valve and fully deflate every inflatable.</li>
+          <li>Open each water valve and drain all water from every inflatable.</li>
+          <li>Tilt each inflatable in different directions until no water remains.</li>
+          <li>Wipe every item dry and allow damp surfaces to air-dry completely.</li>
+          <li>Close the valves only after the inflatables are empty and dry.</li>
+          <li>Place all equipment together in the pickup area.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact">
+    <div class="wrap">
+      <h2>Need help during setup?</h2>
+      <p>Call or text <a href="tel:+13466807603">(346) 680-7603</a> or email <a href="mailto:yourpartyporch@gmail.com">yourpartyporch@gmail.com</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <strong>The Party Porch</strong><br>
+  Nerf parties in Greater Houston
+</footer>
+</body>
+</html>

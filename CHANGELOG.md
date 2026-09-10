@@ -5,6 +5,12 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-09-10
 
+### Added - Confirmed-customer Nerf party guide
+- Added an unlinked, noindex setup and game guide to share after booking.
+- Included one-gallon water anchoring and pump instructions for every inflatable,
+  safety rules, six game formats, and a clean/dry/empty return checklist.
+- Added the guide to confirmation emails only when the booking includes Nerf.
+
 ### Changed - Positioned the service as Nerf parties
 - Removed "mobile" from customer-facing business copy to avoid suggesting a game truck.
 - Updated homepage, SEO metadata, Nerf page and site footers to lead with "Nerf parties."
