@@ -27,7 +27,22 @@ img{max-width:100%}h1,h2,h3{line-height:1.15;margin:0 0 .4em}h1{font-size:2.2rem
 header{position:sticky;top:0;z-index:20;background:rgba(255,248,240,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .nav{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;max-width:960px;margin:0 auto}
 .brand img{height:46px;width:auto;display:block}.nav .btn{padding:10px 20px;font-size:.9rem}
-.hero{background-color:var(--navy);background-size:cover;background-position:center;color:#fff;padding:64px 0 68px;text-align:center}
+.hero{background-color:var(--navy);color:#fff;padding:64px 0 68px;text-align:center;position:relative;overflow:hidden}
+.hero-slides,.hero-slide,.hero-slide img{position:absolute;inset:0;width:100%;height:100%}
+.hero-slide{opacity:0;transition:opacity .8s ease}.hero-slide.active{opacity:1}
+.hero-slide img{display:block;object-fit:cover;object-position:center}.hero-slide:first-child img{object-position:center 35%}
+.hero:after{content:"";position:absolute;z-index:1;inset:0;background:linear-gradient(160deg,rgba(18,38,58,.8),rgba(27,54,82,.8))}
+.hero .wrap{position:relative;z-index:2}
+.hero-arrow{position:absolute;z-index:3;top:50%;transform:translateY(-50%);width:44px;height:44px;border:1px solid rgba(255,255,255,.5);border-radius:50%;background:rgba(18,38,58,.5);color:#fff;font-size:1.7rem;line-height:1;cursor:pointer}
+.hero-arrow:hover,.hero-arrow:focus-visible{background:rgba(18,38,58,.85)}
+.hero-arrow.prev{left:16px}.hero-arrow.next{right:16px}
+.hero-dots{position:absolute;z-index:3;left:50%;bottom:6px;transform:translateX(-50%);display:flex}
+.hero-dot{display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;background:transparent;cursor:pointer}
+.hero-dot:before{content:"";width:9px;height:9px;border:1px solid #fff;border-radius:50%;background:transparent}
+.hero-dot[aria-current="true"]:before{background:#fff}
+.hero-dot:focus-visible{outline:2px solid #fff;outline-offset:0;border-radius:50%}
+@media(max-width:700px){.hero-arrow{top:auto;bottom:8px;transform:none;font-size:1.5rem}.hero-arrow.prev{left:12px}.hero-arrow.next{right:12px}.hero-dots{bottom:14px}}
+@media(prefers-reduced-motion:reduce){.hero-slide{transition:none}}
 .hero .emoji{font-size:3rem;display:block;margin-bottom:8px}
 .hero .badge{display:inline-block;background:var(--gold);color:var(--navy);font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:.6px;padding:5px 13px;border-radius:999px;margin-bottom:14px}
 .hero p{max-width:640px;margin:0 auto 22px;font-size:1.12rem;color:#eaf1f8}
@@ -40,8 +55,9 @@ ul.inc li:before{content:"✓";color:var(--coral);font-weight:900;margin-right:1
 .price-note{background:var(--cream);border:1.5px dashed var(--coral);border-radius:14px;padding:16px;text-align:center;font-weight:700;color:var(--navy);margin:8px 0 0}
 .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 @media(min-width:640px){.gallery{grid-template-columns:repeat(4,1fr)}}
-.shot{position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:#eee;background-size:cover;background-position:center;border:1px solid var(--line)}
-.shot span{position:absolute;left:0;right:0;bottom:0;background:rgba(18,38,58,.55);color:#fff;font-size:.7rem;text-align:center;padding:5px;font-weight:700}
+.shot{position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:#eee;border:1px solid var(--line);margin:0}
+.shot img{display:block;width:100%;height:100%;object-fit:cover}
+.shot:first-child img{object-position:center 35%}
 .cta-band{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;text-align:center}
 .cta-band h2{color:#fff}
 footer{background:var(--navy);color:#c3d2e0;text-align:center;padding:36px 18px;font-size:.9rem}
@@ -56,7 +72,21 @@ footer a{color:#fff}
   </div>
 </header>
 
-<div class="hero" style="background-image:linear-gradient(160deg,rgba(18,38,58,.82),rgba(27,54,82,.82)),url('../assets/exp-nerf.jpg')">
+<div class="hero" data-hero-carousel>
+  <div class="hero-slides" aria-hidden="true">
+    <div class="hero-slide active"><img src="../assets/gallery/nerf-battles-1.jpg" alt="" fetchpriority="high"></div>
+    <div class="hero-slide"><img src="../assets/gallery/nerf-battles-2.jpg" alt="" loading="lazy"></div>
+    <div class="hero-slide"><img src="../assets/gallery/nerf-battles-3.jpg" alt="" loading="lazy"></div>
+    <div class="hero-slide"><img src="../assets/gallery/nerf-battles-4.jpg" alt="" loading="lazy"></div>
+  </div>
+  <button class="hero-arrow prev" type="button" aria-label="Show previous banner photo">&#8249;</button>
+  <button class="hero-arrow next" type="button" aria-label="Show next banner photo">&#8250;</button>
+  <div class="hero-dots" aria-label="Choose banner photo">
+    <button class="hero-dot" type="button" aria-label="Show banner photo 1" aria-current="true"></button>
+    <button class="hero-dot" type="button" aria-label="Show banner photo 2" aria-current="false"></button>
+    <button class="hero-dot" type="button" aria-label="Show banner photo 3" aria-current="false"></button>
+    <button class="hero-dot" type="button" aria-label="Show banner photo 4" aria-current="false"></button>
+  </div>
   <div class="wrap">
     <span class="emoji">🎯</span>
     <span class="badge">Available now</span>
@@ -99,8 +129,13 @@ footer a{color:#fff}
 <section class="section-alt">
   <div class="wrap">
     <h2>Photos</h2>
-    <p style="color:var(--muted)">Real party photos coming soon. (Replace the images in <code>assets/gallery/</code> to fill these in.)</p>
-    <div class="gallery"><div class="shot" style="background-image:url('../assets/gallery/nerf-battles-1.jpg')"><span>Add your photo</span></div><div class="shot" style="background-image:url('../assets/gallery/nerf-battles-2.jpg')"><span>Add your photo</span></div><div class="shot" style="background-image:url('../assets/gallery/nerf-battles-3.jpg')"><span>Add your photo</span></div><div class="shot" style="background-image:url('../assets/gallery/nerf-battles-4.jpg')"><span>Add your photo</span></div></div>
+    <p style="color:var(--muted)">A look at the action and everything included in a Party Porch Nerf battle.</p>
+    <div class="gallery">
+      <figure class="shot"><img src="../assets/gallery/nerf-battles-1.jpg" alt="Child wearing safety glasses playing in a Party Porch Nerf battle" loading="lazy" decoding="async"></figure>
+      <figure class="shot"><img src="../assets/gallery/nerf-battles-2.jpg" alt="Party Porch Nerf battlefield with inflatable obstacles, blasters and safety gear" loading="lazy" decoding="async"></figure>
+      <figure class="shot"><img src="../assets/gallery/nerf-battles-3.jpg" alt="Nerf blasters arranged across inflatable battlefield obstacles" loading="lazy" decoding="async"></figure>
+      <figure class="shot"><img src="../assets/gallery/nerf-battles-4.jpg" alt="Bin of Nerf blasters ready for party guests" loading="lazy" decoding="async"></figure>
+    </div>
   </div>
 </section>
 
@@ -117,5 +152,44 @@ footer a{color:#fff}
   <p><a href="../index.html">← Back to all experiences</a> &nbsp;·&nbsp; <a href="../index.html#book">Book a party</a></p>
   <p>📸 <a href="https://instagram.com/yourpartyporch" target="_blank" rel="noopener">@yourpartyporch</a> &nbsp;·&nbsp; 🎵 <a href="https://tiktok.com/@yourpartyporch" target="_blank" rel="noopener">@yourpartyporch</a></p>
 </footer>
+<script>
+function initHeroCarousel(carousel){
+  var slides = carousel.querySelectorAll('.hero-slide');
+  var dots = carousel.querySelectorAll('.hero-dot');
+  var current = 0;
+  var timer;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function show(index){
+    current = (index + slides.length) % slides.length;
+    slides.forEach(function(slide, i){ slide.classList.toggle('active', i === current); });
+    dots.forEach(function(dot, i){ dot.setAttribute('aria-current', i === current ? 'true' : 'false'); });
+  }
+  function stop(){ if(timer) window.clearInterval(timer); timer = null; }
+  function start(){ stop(); if(!reduceMotion) timer = window.setInterval(function(){ show(current + 1); }, 5000); }
+  carousel.querySelector('.hero-arrow.prev').addEventListener('click', function(){ show(current - 1); start(); });
+  carousel.querySelector('.hero-arrow.next').addEventListener('click', function(){ show(current + 1); start(); });
+  dots.forEach(function(dot, i){ dot.addEventListener('click', function(){ show(i); start(); }); });
+  var touchStart;
+  carousel.addEventListener('touchstart', function(e){
+    var touch = e.changedTouches[0];
+    touchStart = {x:touch.clientX, y:touch.clientY};
+  }, {passive:true});
+  carousel.addEventListener('touchend', function(e){
+    if(!touchStart) return;
+    var touch = e.changedTouches[0];
+    var dx = touch.clientX - touchStart.x;
+    var dy = touch.clientY - touchStart.y;
+    touchStart = null;
+    if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)){ show(current + (dx < 0 ? 1 : -1)); start(); }
+  }, {passive:true});
+  carousel.addEventListener('mouseenter', stop);
+  carousel.addEventListener('mouseleave', start);
+  carousel.addEventListener('focusin', stop);
+  carousel.addEventListener('focusout', start);
+  document.addEventListener('visibilitychange', function(){ document.hidden ? stop() : start(); });
+  start();
+}
+document.querySelectorAll('[data-hero-carousel]').forEach(initHeroCarousel);
+</script>
 </body>
 </html>

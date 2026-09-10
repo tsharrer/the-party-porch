@@ -3,6 +3,16 @@
 All notable changes to the website, tracker, and booking backend are logged here.
 Newest entries first. Dates in America/Chicago.
 
+## 2026-09-10
+
+### Changed - Added real Nerf battle gallery photos
+- Replaced the four template images on the Nerf Battles page with optimized photos from
+  a real setup and party.
+- Removed the placeholder labels and added descriptive alternative text and lazy loading.
+- Replaced the static homepage and Nerf page banner backgrounds with rotating carousels
+  of the new photos, including arrows, position controls, mobile swipe navigation,
+  touch-friendly controls and reduced-motion support.
+
 ## 2026-07-16
 
 ### Changed - Hero tagline + removed em dashes site-wide

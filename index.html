@@ -131,11 +131,27 @@
   @media(max-width:560px){.hero-logo{height:112px}}
   .nav .btn{padding:10px 20px;font-size:.9rem}
 
-  .hero{background-color:var(--navy);background-image:linear-gradient(160deg,rgba(18,38,58,.90),rgba(27,54,82,.90)),url('assets/hero.jpg');background-size:cover;background-position:center;color:#fff;padding:56px 0 64px;text-align:center;position:relative;overflow:hidden}
-  .hero:before{content:"";position:absolute;inset:0;background:
+  .hero{background-color:var(--navy);color:#fff;padding:56px 0 64px;text-align:center;position:relative;overflow:hidden}
+  .hero-slides,.hero-slide,.hero-slide img{position:absolute;inset:0;width:100%;height:100%}
+  .hero-slide{opacity:0;transition:opacity .8s ease}
+  .hero-slide.active{opacity:1}
+  .hero-slide img{display:block;object-fit:cover;object-position:center}
+  .hero-slide:first-child img{object-position:center 35%}
+  .hero:before{content:"";position:absolute;z-index:1;inset:0;background:
+    linear-gradient(160deg,rgba(18,38,58,.84),rgba(27,54,82,.84)),
     radial-gradient(circle at 15% 20%,rgba(255,183,3,.18),transparent 40%),
     radial-gradient(circle at 85% 30%,rgba(255,90,95,.22),transparent 45%)}
-  .hero .wrap{position:relative}
+  .hero .wrap{position:relative;z-index:2}
+  .hero-arrow{position:absolute;z-index:3;top:50%;transform:translateY(-50%);width:44px;height:44px;border:1px solid rgba(255,255,255,.5);border-radius:50%;background:rgba(18,38,58,.5);color:#fff;font-size:1.7rem;line-height:1;cursor:pointer}
+  .hero-arrow:hover,.hero-arrow:focus-visible{background:rgba(18,38,58,.85)}
+  .hero-arrow.prev{left:16px}.hero-arrow.next{right:16px}
+  .hero-dots{position:absolute;z-index:3;left:50%;bottom:6px;transform:translateX(-50%);display:flex}
+  .hero-dot{display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;background:transparent;cursor:pointer}
+  .hero-dot:before{content:"";width:9px;height:9px;border:1px solid #fff;border-radius:50%;background:transparent}
+  .hero-dot[aria-current="true"]:before{background:#fff}
+  .hero-dot:focus-visible{outline:2px solid #fff;outline-offset:0;border-radius:50%}
+  @media(max-width:700px){.hero-arrow{top:auto;bottom:8px;transform:none;font-size:1.5rem}.hero-arrow.prev{left:12px}.hero-arrow.next{right:12px}.hero-dots{bottom:14px}}
+  @media(prefers-reduced-motion:reduce){.hero-slide{transition:none}}
   .hero h1{color:#fff;font-size:2.5rem}
   .hero .tag{display:inline-block;background:rgba(255,255,255,.14);color:#ffe;padding:6px 14px;border-radius:20px;
     font-weight:700;font-size:.85rem;margin-bottom:16px;letter-spacing:.3px}
@@ -352,7 +368,21 @@
 <button class="cart-fab" id="cartFab" type="button" onclick="openCart()" style="display:none">🛒 Cart <span class="cc" id="fabCount">0</span></button>
 
 <a id="top"></a>
-<section class="hero">
+<section class="hero" data-hero-carousel>
+  <div class="hero-slides" aria-hidden="true">
+    <div class="hero-slide active"><img src="assets/gallery/nerf-battles-1.jpg" alt="" fetchpriority="high"></div>
+    <div class="hero-slide"><img src="assets/gallery/nerf-battles-2.jpg" alt="" loading="lazy"></div>
+    <div class="hero-slide"><img src="assets/gallery/nerf-battles-3.jpg" alt="" loading="lazy"></div>
+    <div class="hero-slide"><img src="assets/gallery/nerf-battles-4.jpg" alt="" loading="lazy"></div>
+  </div>
+  <button class="hero-arrow prev" type="button" aria-label="Show previous banner photo">&#8249;</button>
+  <button class="hero-arrow next" type="button" aria-label="Show next banner photo">&#8250;</button>
+  <div class="hero-dots" aria-label="Choose banner photo">
+    <button class="hero-dot" type="button" aria-label="Show banner photo 1" aria-current="true"></button>
+    <button class="hero-dot" type="button" aria-label="Show banner photo 2" aria-current="false"></button>
+    <button class="hero-dot" type="button" aria-label="Show banner photo 3" aria-current="false"></button>
+    <button class="hero-dot" type="button" aria-label="Show banner photo 4" aria-current="false"></button>
+  </div>
   <div class="wrap">
     <img class="hero-logo" src="assets/logo.png" alt="The Party Porch logo">
     <span class="tag">📍 Serving Greater Houston, Katy, Sugar Land, The Woodlands &amp; beyond</span>
@@ -729,6 +759,44 @@
 </footer>
 
 <script>
+function initHeroCarousel(carousel){
+  var slides = carousel.querySelectorAll('.hero-slide');
+  var dots = carousel.querySelectorAll('.hero-dot');
+  var current = 0;
+  var timer;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function show(index){
+    current = (index + slides.length) % slides.length;
+    slides.forEach(function(slide, i){ slide.classList.toggle('active', i === current); });
+    dots.forEach(function(dot, i){ dot.setAttribute('aria-current', i === current ? 'true' : 'false'); });
+  }
+  function stop(){ if(timer) window.clearInterval(timer); timer = null; }
+  function start(){ stop(); if(!reduceMotion) timer = window.setInterval(function(){ show(current + 1); }, 5000); }
+  carousel.querySelector('.hero-arrow.prev').addEventListener('click', function(){ show(current - 1); start(); });
+  carousel.querySelector('.hero-arrow.next').addEventListener('click', function(){ show(current + 1); start(); });
+  dots.forEach(function(dot, i){ dot.addEventListener('click', function(){ show(i); start(); }); });
+  var touchStart;
+  carousel.addEventListener('touchstart', function(e){
+    var touch = e.changedTouches[0];
+    touchStart = {x:touch.clientX, y:touch.clientY};
+  }, {passive:true});
+  carousel.addEventListener('touchend', function(e){
+    if(!touchStart) return;
+    var touch = e.changedTouches[0];
+    var dx = touch.clientX - touchStart.x;
+    var dy = touch.clientY - touchStart.y;
+    touchStart = null;
+    if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)){ show(current + (dx < 0 ? 1 : -1)); start(); }
+  }, {passive:true});
+  carousel.addEventListener('mouseenter', stop);
+  carousel.addEventListener('mouseleave', start);
+  carousel.addEventListener('focusin', stop);
+  carousel.addEventListener('focusout', start);
+  document.addEventListener('visibilitychange', function(){ document.hidden ? stop() : start(); });
+  start();
+}
+document.querySelectorAll('[data-hero-carousel]').forEach(initHeroCarousel);
+
 /* ====================================================================
    CONFIG - edit these with your real contact info.
    By default, submitting the form opens the customer's email app
