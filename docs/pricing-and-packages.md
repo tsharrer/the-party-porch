@@ -5,13 +5,13 @@ runs it. If they want it hands-off, they **add a referee** (our host) to run the
 handle safety. Price scales by **player count**, so small parties stay cheap and big parties
 pay their way.
 
-## Base (up to 12 players, ~2 hrs, all gear)
+## Base (up to 12 players, overnight, all gear)
 | Option | Price |
 |--------|-------|
 | **Rental** — we deliver, you set up & run | **$180** |
 | **+ Referee** — our host runs every game + safety | **+$100** |
 
-Gear included: blasters, darts, safety glasses, bunkers/obstacles. Delivery + pickup included
+Gear included: blasters, darts, safety glasses, bunkers/obstacles. Delivery + next-day pickup included
 within 15 miles.
 
 ## Player-count matrix

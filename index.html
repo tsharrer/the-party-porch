@@ -75,7 +75,7 @@
     "name":"Nerf Party",
     "priceCurrency":"USD",
     "price":"180",
-    "description":"Nerf battle party rental for up to 12 players, ~2 hours, all gear included. Free delivery and pickup within 12 miles of ZIP 77018; a delivery fee applies beyond that."
+    "description":"Overnight Nerf party rental for up to 12 players with all gear included. Free delivery and next-day pickup within 12 miles of ZIP 77018; a delivery fee applies beyond that."
   }
 }
 </script>
@@ -85,7 +85,7 @@
   "@type":"FAQPage",
   "mainEntity":[
     {"@type":"Question","name":"What experiences and rentals do you offer?","acceptedAnswer":{"@type":"Answer","text":"We bring Nerf parties and event rentals to the Houston area. Everything is available to book: Nerf Battles, Movie Night (projector + 15ft screen, evenings only), snack machines (popcorn, cotton candy, shaved ice), Photo Booth, Flower Backdrop, Water Battles, Yard Games, Soft Play and White Bounce Houses. Mix any of them into one Custom Package."}},
-    {"@type":"Question","name":"How much is a Nerf party in Houston?","acceptedAnswer":{"@type":"Answer","text":"Our Nerf party starts at $180 for up to 12 players and about 2 hours. That includes delivery, blasters, darts, safety glasses and battlefield obstacles. Add a referee for +$100 to have our host run every game."}},
+    {"@type":"Question","name":"How much is a Nerf party in Houston?","acceptedAnswer":{"@type":"Answer","text":"Our overnight Nerf party rental starts at $180 for up to 12 players. Delivery, next-day pickup, blasters, darts, safety glasses and battlefield obstacles are included. Add a referee for +$100 to have our host run the games."}},
     {"@type":"Question","name":"How much do the snack machines cost?","acceptedAnswer":{"@type":"Answer","text":"Add a popcorn Snack Bar for +$69, a Cotton Candy machine for +$79, or a Shaved Ice machine for +$79 to any party. Supplies, delivery and pickup are included. Ice for the shaved ice machine is not included - you provide the ice."}},
     {"@type":"Question","name":"How much is a photo booth rental in Houston?","acceptedAnswer":{"@type":"Answer","text":"Our photo booth launches soon at an intro price of $375. You can add it to your booking now to lock in the rate."}},
     {"@type":"Question","name":"How much do flower backdrops, soft play, bounce houses, yard games and movie nights cost?","acceptedAnswer":{"@type":"Answer","text":"Our intro prices: Photo Booth $375, Flower Backdrop $225, Soft Play $295, White Bounce House $255, Yard Games (Giant Connect Four, Jenga, cornhole) $89, Water Battles $225 for up to 20 players, and Movie Night (projector + 15ft screen, evenings only) $375. Movie Night is available now; the others launch soon."}},
@@ -131,7 +131,7 @@
   @media(max-width:560px){.hero-logo{height:112px}}
   .nav .btn{padding:10px 20px;font-size:.9rem}
 
-  .hero{background-color:var(--navy);color:#fff;padding:56px 0 64px;text-align:center;position:relative;overflow:hidden}
+  .hero{display:grid;align-items:center;min-height:560px;background-color:var(--navy);color:#fff;padding:56px clamp(72px,8vw,112px) 76px;text-align:center;position:relative;overflow:hidden;isolation:isolate;touch-action:pan-y}
   .hero-slides,.hero-slide,.hero-slide img{position:absolute;inset:0;width:100%;height:100%}
   .hero-slide{opacity:0;transition:opacity .8s ease}
   .hero-slide.active{opacity:1}
@@ -141,16 +141,16 @@
     linear-gradient(160deg,rgba(18,38,58,.84),rgba(27,54,82,.84)),
     radial-gradient(circle at 15% 20%,rgba(255,183,3,.18),transparent 40%),
     radial-gradient(circle at 85% 30%,rgba(255,90,95,.22),transparent 45%)}
-  .hero .wrap{position:relative;z-index:2}
+  .hero .wrap{position:relative;z-index:2;width:100%}
   .hero-arrow{position:absolute;z-index:3;top:50%;transform:translateY(-50%);width:44px;height:44px;border:1px solid rgba(255,255,255,.5);border-radius:50%;background:rgba(18,38,58,.5);color:#fff;font-size:1.7rem;line-height:1;cursor:pointer}
   .hero-arrow:hover,.hero-arrow:focus-visible{background:rgba(18,38,58,.85)}
-  .hero-arrow.prev{left:16px}.hero-arrow.next{right:16px}
-  .hero-dots{position:absolute;z-index:3;left:50%;bottom:6px;transform:translateX(-50%);display:flex}
-  .hero-dot{display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;background:transparent;cursor:pointer}
+  .hero-arrow.prev{left:clamp(12px,2vw,28px)}.hero-arrow.next{right:clamp(12px,2vw,28px)}
+  .hero-dots{position:absolute;z-index:3;left:50%;bottom:4px;transform:translateX(-50%);display:flex}
+  .hero-dot{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;background:transparent;cursor:pointer}
   .hero-dot:before{content:"";width:9px;height:9px;border:1px solid #fff;border-radius:50%;background:transparent}
   .hero-dot[aria-current="true"]:before{background:#fff}
   .hero-dot:focus-visible{outline:2px solid #fff;outline-offset:0;border-radius:50%}
-  @media(max-width:700px){.hero-arrow{top:auto;bottom:8px;transform:none;font-size:1.5rem}.hero-arrow.prev{left:12px}.hero-arrow.next{right:12px}.hero-dots{bottom:14px}}
+  @media(max-width:900px){.hero{padding-inline:20px;padding-bottom:104px}.hero-arrow{top:auto;bottom:16px;transform:none;font-size:1.5rem}.hero-arrow.prev{left:12px}.hero-arrow.next{right:12px}.hero-dots{bottom:16px}}
   @media(prefers-reduced-motion:reduce){.hero-slide{transition:none}}
   .hero h1{color:#fff;font-size:2.5rem}
   .hero .tag{display:inline-block;background:rgba(255,255,255,.14);color:#ffe;padding:6px 14px;border-radius:20px;
@@ -271,13 +271,23 @@
   footer .footContact a{color:#fff}
 
   @media(max-width:680px){
-    h1{font-size:1.9rem}.hero h1{font-size:2rem}.hero{padding:44px 0 50px}
+    h1{font-size:1.9rem}.hero h1{font-size:2rem}.hero{min-height:0;padding:44px 0 104px}
     .steps{grid-template-columns:1fr}.incl{grid-template-columns:1fr}
     .grid2{grid-template-columns:1fr}.checks{grid-template-columns:1fr}.addons{grid-template-columns:1fr}
     .perfect{grid-template-columns:1fr 1fr}
     section{padding:40px 0}
     .shop-grid{grid-template-columns:1fr 1fr}
     .cart-drawer{width:100%}
+  }
+  @media(max-width:420px){
+    .hero-logo{height:92px;margin-bottom:14px}
+    .hero h1{font-size:1.75rem}
+    .hero .tag{font-size:.75rem;margin-bottom:13px}
+    .hero .promise{font-size:1.08rem}
+    .hero p.lead{font-size:1rem;line-height:1.45;margin-bottom:20px}
+    .hero .cta-row{display:grid;grid-template-columns:1fr}
+    .hero .btn.big{width:100%;padding:14px 18px}
+    .trust{font-size:.8rem}
   }
 
   /* ---------- Build-your-party shop + cart ---------- */
@@ -388,7 +398,7 @@
     <span class="tag">📍 Serving Greater Houston, Katy, Sugar Land, The Woodlands &amp; beyond</span>
     <h1>Nerf Parties in Houston</h1>
     <p class="promise">🎉 We bring the party to you - the most affordable rentals in Houston.</p>
-    <p class="lead">The Party Porch brings Nerf parties to Greater Houston from our home base in Oak Forest. We deliver the blasters, darts, safety gear and battlefield obstacles, then pick everything up. You just bring the crew.</p>
+    <p class="lead">The Party Porch brings Nerf parties to Greater Houston from our home base in Oak Forest. We deliver the blasters, darts, safety gear and battlefield obstacles, you keep them overnight, and we pick up the next day.</p>
     <div class="cta-row">
       <a class="btn big" href="#experiences">🎈 See What We Offer</a>
       <a class="btn big alt" href="#book">Book a Party</a>
@@ -408,7 +418,7 @@
       <a class="exp avail" href="experiences/nerf-battles.html" style="background-image:linear-gradient(150deg,rgba(27,54,82,.62),rgba(255,90,95,.66)),url('assets/exp-nerf.jpg')">
         <span class="exp-emoji">🎯</span><span class="badge">Available now</span>
         <h3>Nerf Battles</h3>
-        <p>Blasters, darts, safety gear &amp; inflatable bunkers delivered to your yard. Add a referee to run the games.</p>
+        <p>Blasters, darts, safety gear &amp; inflatable bunkers delivered for an overnight rental. Add a referee to run the games.</p>
         <span class="go">Learn more →</span>
       </a>
       <a class="exp avail" href="experiences/snack-bar.html" style="background-image:linear-gradient(150deg,rgba(224,67,71,.66),rgba(255,183,3,.66)),url('assets/exp-snackbar.jpg')">
@@ -477,7 +487,7 @@
       <p>We handle delivery and pickup so you can focus on the party.</p>
     </div>
     <div class="benefits">
-      <div class="benefit"><span class="bi">🚚</span><h3>We come to you</h3><p>Delivery and pickup are included - right to your backyard, park or venue. Setup is not included, but you can add setup + tear down for +$40.</p></div>
+      <div class="benefit"><span class="bi">🚚</span><h3>We come to you</h3><p>Delivery and next-day pickup are included for Nerf parties - right to your backyard, park or venue. Setup is not included, but you can add setup + tear down for +$40.</p></div>
       <div class="benefit"><span class="bi">🛡️</span><h3>Safety first</h3><p>Every rental is cleaned, sanitized and set up safely - whatever you book.</p></div>
       <div class="benefit"><span class="bi">⭐</span><h3>All-inclusive</h3><p>Transparent pricing starting at a great rate covers everything for your experience. No surprises.</p></div>
       <div class="benefit"><span class="bi">📆</span><h3>Book in minutes</h3><p>Reserve online, pay a 50% deposit, and your date is locked in. Easy.</p></div>
@@ -490,12 +500,12 @@
     <div class="section-head">
       <div class="kicker">How it works</div>
       <h2>Booking your party in 3 easy steps</h2>
-      <p>No cleanup, no stress, no last-minute trips to the store. Whatever you rent, we handle it - you just enjoy the party.</p>
+      <p>No shopping trips and no last-minute scrambling. We deliver everything you need, and you enjoy the party.</p>
     </div>
     <div class="steps">
       <div class="step"><div class="num">1</div><h3>Book online</h3><p>Pick your date and what you'd like to rent - Nerf, snacks, a photo booth, a bounce house and more. Get an instant estimate.</p></div>
       <div class="step"><div class="num">2</div><h3>We deliver</h3><p>We bring everything right to your backyard, park or venue. Set it up yourself, or add our setup + tear down service for +$40.</p></div>
-      <div class="step"><div class="num">3</div><h3>Enjoy - we pick up</h3><p>You have all the fun. When it's over, we come back to collect the gear and haul it away.</p></div>
+      <div class="step"><div class="num">3</div><h3>Keep it overnight</h3><p>Enjoy the Nerf gear for the rest of the day. Have it clean, dry and ready when we return for pickup the next day.</p></div>
     </div>
   </div>
 </section>
@@ -540,10 +550,10 @@
     <div class="section-head">
       <div class="kicker">Simple pricing</div>
       <h2>Nerf party pricing - pay for what you want</h2>
-      <p>Start with the rental (you set up &amp; run it). Add a referee to make it fully hands-off. Base covers 12 players &amp; about 2 hours of play.</p>
+      <p>Start with an overnight rental for up to 12 players (you set up &amp; run it). Add a referee to make the scheduled games fully hands-off.</p>
     </div>
     <table class="price">
-      <tr><th>Players</th><th>Rental (you set up)</th><th>+ Referee(s)</th><th>Full experience</th></tr>
+      <tr><th>Players</th><th>Overnight rental (you set up)</th><th>+ Referee(s)</th><th>Full experience</th></tr>
       <tr><td>Up to 12</td><td>$180</td><td>+$100 (1)</td><td class="full">$280</td></tr>
       <tr><td>Up to 18</td><td>$250</td><td>+$100 (1)</td><td class="full">$350</td></tr>
       <tr><td>Up to 24</td><td>$320</td><td>+$200 (2)</td><td class="full">$520</td></tr>
@@ -559,7 +569,7 @@
       <div class="addon"><span>🍭 Cotton Candy machine</span><b>+$79</b></div>
       <div class="addon"><span>🍧 Shaved Ice machine <em style="color:var(--muted);font-style:normal">· ice not included</em></span><b>+$79</b></div>
       <div class="addon"><span>🛠️ We set up + tear down for you</span><b>+$40</b></div>
-      <div class="addon"><span>⏱️ Extra hour of play</span><b>+$40</b></div>
+      <div class="addon"><span>⏱️ Extra referee hour</span><b>+$40</b></div>
       <div class="addon"><span>📸 Photo Booth</span><b>$375</b></div>
       <div class="addon"><span>🌸 Flower Backdrop (flower wall)</span><b>$225</b></div>
       <div class="addon"><span>💦 Water Battles (up to 20)</span><b>$225</b></div>
@@ -651,7 +661,7 @@
           <div>
             <label class="f">Service level <span class="req">*</span></label>
             <select id="f_service" name="service" onchange="calcEstimate()">
-              <option value="rental">Rental only - we deliver, you run it</option>
+              <option value="rental">Overnight rental - we deliver, you run it</option>
               <option value="referee">Rental + Referee - we run the games</option>
             </select>
           </div>
@@ -718,7 +728,7 @@
       <h2>Party rental FAQ</h2>
     </div>
     <details open><summary>What experiences and rentals do you offer?</summary><p>We bring <strong>Nerf parties</strong> and event rentals to the Houston area. Everything is available to book: <strong>Nerf Battles</strong>, <strong>Movie Night</strong> (projector + 15ft screen, evenings only), snack machines (popcorn, cotton candy, shaved ice), <strong>Photo Booth, Flower Backdrop, Water Battles, Yard Games, Soft Play</strong> and <strong>White Bounce Houses</strong>. Mix any of them into one <strong>Custom Package</strong>.</p></details>
-    <details><summary>How much is a Nerf party in Houston?</summary><p>Our Nerf party starts at $180 for up to 12 players and about 2 hours. That includes delivery, blasters, darts, safety glasses and battlefield obstacles. Add a referee for +$100 to have our host run every game and handle safety.</p></details>
+    <details><summary>How much is a Nerf party in Houston?</summary><p>Our overnight Nerf party rental starts at $180 for up to 12 players. Delivery, next-day pickup, blasters, darts, safety glasses and battlefield obstacles are included. Add a referee for +$100 to have our host run the scheduled games and handle safety.</p></details>
     <details><summary>What do the snack machines cost?</summary><p>Add a popcorn <strong>Snack Bar for +$69</strong>, a <strong>Cotton Candy machine for +$79</strong>, or a <strong>Shaved Ice machine for +$79</strong> to any party - supplies, delivery and pickup included. <em>Note: ice for the shaved ice machine is not included - you provide the ice.</em></p></details>
     <details><summary>How much is a photo booth?</summary><p>Our photo booth is <strong>$375</strong>. Add it to your booking to reserve your date.</p></details>
     <details><summary>Do you rent flower backdrops / flower walls?</summary><p>Yes - <strong>$225</strong>. Perfect behind a cake table or as a photo backdrop.</p></details>
@@ -827,7 +837,7 @@ var REF = {12:100, 18:100, 24:200};
 
 /* What each rental type needs from the form */
 var RENTALS = {
-  "Nerf Battles":        {players:true},
+  "Nerf Battles":        {players:true, note:"🎯 Overnight rental with next-day pickup. Return all equipment empty, clean and dry."},
   "Snack Bar":           {players:false, note:"Pick your machine(s) in the add-ons below - popcorn, cotton candy or shaved ice."},
   "Photo Booth":         {players:false, base:375},
   "Flower Backdrop":     {players:false, base:225},
@@ -845,7 +855,7 @@ function currentRental(){ return document.getElementById('f_rental').value; }
    CATALOG + CART + AVAILABILITY
    ==================================================================== */
 var CATALOG = {
-  "nerf":       {name:"Nerf Battles",        price:180, emoji:"🎯", soon:false, lead:5,  note:"Up to 12 players · +$100 referee option"},
+  "nerf":       {name:"Nerf Battles",        price:180, emoji:"🎯", soon:false, lead:5,  note:"Overnight · up to 12 players · +$100 referee option"},
   "movie":      {name:"Movie Night",         price:375, emoji:"🎬", soon:false, lead:7,  note:"Projector + 15ft screen · evenings only"},
   "popcorn":    {name:"Snack Bar - Popcorn", price:69,  emoji:"🍿", soon:false, lead:5,  note:"Fresh popcorn machine + supplies"},
   "cottoncandy":{name:"Cotton Candy",        price:79,  emoji:"🍭", soon:false, lead:5,  note:"Cotton candy machine + supplies"},

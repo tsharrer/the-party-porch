@@ -36,7 +36,7 @@ SEO/listing line: *"Nerf war parties, photo booths, snack bars & party rentals â
 
 ## Unit Economics
 
-**Core product:** mobile Nerf war party (up to 12 kids, ~2 hr). All gear included.
+**Core product:** overnight Nerf party rental (up to 12 kids). All gear included, with next-day pickup.
 **Houston strategy:** a **rental + referee matrix** that scales by player count. Base is a
 rental (we deliver, family sets up & runs); families add a referee (our host) to run the games.
 Undercuts rivals on both the rental AND the fully-hosted price (Yard Wars $245/$395, Texas

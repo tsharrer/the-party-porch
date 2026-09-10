@@ -8,12 +8,12 @@
 <link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
 <meta name="theme-color" content="#ff5a5f">
 <title>Nerf Battles - Party Rentals Houston | The Party Porch</title>
-<meta name="description" content="A complete Nerf party delivered right to your backyard, park or venue. Serving Houston, Katy, Sugar Land, The Woodlands, Pearland &amp; beyond. Book with The Party Porch.">
+<meta name="description" content="An overnight Nerf party delivered right to your backyard, park or venue, with next-day pickup. Serving Houston, Katy, Sugar Land, The Woodlands, Pearland &amp; beyond.">
 <link rel="canonical" href="https://yourpartyporch.com/experiences/nerf-battles.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Party Porch">
 <meta property="og:title" content="Nerf Battles - The Party Porch">
-<meta property="og:description" content="A complete Nerf party delivered right to your backyard, park or venue.">
+<meta property="og:description" content="An overnight Nerf party delivered to your backyard, park or venue, with next-day pickup.">
 <meta property="og:image" content="https://yourpartyporch.com/experiences/../assets/exp-nerf.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <style>
@@ -27,25 +27,26 @@ img{max-width:100%}h1,h2,h3{line-height:1.15;margin:0 0 .4em}h1{font-size:2.2rem
 header{position:sticky;top:0;z-index:20;background:rgba(255,248,240,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .nav{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;max-width:960px;margin:0 auto}
 .brand img{height:46px;width:auto;display:block}.nav .btn{padding:10px 20px;font-size:.9rem}
-.hero{background-color:var(--navy);color:#fff;padding:64px 0 68px;text-align:center;position:relative;overflow:hidden}
+.hero{display:grid;align-items:center;min-height:400px;background-color:var(--navy);color:#fff;padding:64px clamp(72px,8vw,112px) 80px;text-align:center;position:relative;overflow:hidden;isolation:isolate;touch-action:pan-y}
 .hero-slides,.hero-slide,.hero-slide img{position:absolute;inset:0;width:100%;height:100%}
 .hero-slide{opacity:0;transition:opacity .8s ease}.hero-slide.active{opacity:1}
 .hero-slide img{display:block;object-fit:cover;object-position:center}.hero-slide:first-child img{object-position:center 35%}
 .hero:after{content:"";position:absolute;z-index:1;inset:0;background:linear-gradient(160deg,rgba(18,38,58,.8),rgba(27,54,82,.8))}
-.hero .wrap{position:relative;z-index:2}
+.hero .wrap{position:relative;z-index:2;width:100%}
 .hero-arrow{position:absolute;z-index:3;top:50%;transform:translateY(-50%);width:44px;height:44px;border:1px solid rgba(255,255,255,.5);border-radius:50%;background:rgba(18,38,58,.5);color:#fff;font-size:1.7rem;line-height:1;cursor:pointer}
 .hero-arrow:hover,.hero-arrow:focus-visible{background:rgba(18,38,58,.85)}
-.hero-arrow.prev{left:16px}.hero-arrow.next{right:16px}
-.hero-dots{position:absolute;z-index:3;left:50%;bottom:6px;transform:translateX(-50%);display:flex}
-.hero-dot{display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;background:transparent;cursor:pointer}
+.hero-arrow.prev{left:clamp(12px,2vw,28px)}.hero-arrow.next{right:clamp(12px,2vw,28px)}
+.hero-dots{position:absolute;z-index:3;left:50%;bottom:4px;transform:translateX(-50%);display:flex}
+.hero-dot{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;background:transparent;cursor:pointer}
 .hero-dot:before{content:"";width:9px;height:9px;border:1px solid #fff;border-radius:50%;background:transparent}
 .hero-dot[aria-current="true"]:before{background:#fff}
 .hero-dot:focus-visible{outline:2px solid #fff;outline-offset:0;border-radius:50%}
-@media(max-width:700px){.hero-arrow{top:auto;bottom:8px;transform:none;font-size:1.5rem}.hero-arrow.prev{left:12px}.hero-arrow.next{right:12px}.hero-dots{bottom:14px}}
+@media(max-width:900px){.hero{min-height:0;padding:52px 20px 104px}.hero-arrow{top:auto;bottom:16px;transform:none;font-size:1.5rem}.hero-arrow.prev{left:12px}.hero-arrow.next{right:12px}.hero-dots{bottom:16px}}
 @media(prefers-reduced-motion:reduce){.hero-slide{transition:none}}
 .hero .emoji{font-size:3rem;display:block;margin-bottom:8px}
 .hero .badge{display:inline-block;background:var(--gold);color:var(--navy);font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:.6px;padding:5px 13px;border-radius:999px;margin-bottom:14px}
 .hero p{max-width:640px;margin:0 auto 22px;font-size:1.12rem;color:#eaf1f8}
+@media(max-width:420px){.hero{padding:42px 0 104px}.hero h1{font-size:1.85rem}.hero p{font-size:1rem}.hero .emoji{font-size:2.5rem}}
 .crumbs{font-size:.85rem;color:var(--muted);padding:16px 0 0}.crumbs a{color:var(--coral-d);text-decoration:none}
 section{padding:40px 0}.section-alt{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .lead{font-size:1.15rem;color:var(--navy);font-weight:700}
@@ -91,7 +92,7 @@ footer a{color:#fff}
     <span class="emoji">🎯</span>
     <span class="badge">Available now</span>
     <h1>Nerf Battles</h1>
-    <p>A complete Nerf party delivered right to your backyard, park or venue.</p>
+    <p>An overnight Nerf party delivered right to your backyard, park or venue.</p>
     <a class="btn" href="../index.html?exp=Nerf%20Battles#book">Book a Nerf party</a>
   </div>
 </div>
@@ -100,16 +101,16 @@ footer a{color:#fff}
 
 <section>
   <div class="wrap">
-    <p class="lead">A complete Nerf party delivered right to your backyard, park or venue.</p>
-    <p>We bring the blasters, hundreds of darts, safety glasses and inflatable bunkers to build an epic battlefield wherever you are. Add a referee and we'll run safe, high-energy games from start to finish so you can just enjoy the party.</p>
-    <div class="price-note">From $180 for up to 12 players (~2 hours). Referee +$100.</div>
+    <p class="lead">A complete overnight Nerf party delivered right to your backyard, park or venue.</p>
+    <p>We bring the blasters, hundreds of darts, safety glasses and inflatable bunkers to build an epic battlefield wherever you are. Keep the gear overnight and we'll pick it up the next day. Add a referee and we'll run safe, high-energy games during your scheduled party time.</p>
+    <div class="price-note">Overnight rental from $180 for up to 12 players. Referee +$100.</div>
   </div>
 </section>
 
 <section class="section-alt">
   <div class="wrap">
     <h2>What's included</h2>
-    <ul class="inc"><li>Blasters &amp; hundreds of darts for the whole crew</li><li>Safety glasses for every player</li><li>Inflatable bunkers &amp; battlefield obstacles</li><li>Delivery &amp; pickup included (setup not included - add setup + tear down for +$40)</li><li>Optional trained referee to run every game</li></ul>
+    <ul class="inc"><li>Blasters &amp; hundreds of darts for the whole crew</li><li>Safety glasses for every player</li><li>Inflatable bunkers &amp; battlefield obstacles</li><li>Overnight rental with next-day pickup</li><li>Delivery &amp; pickup included (setup not included - add setup + tear down for +$40)</li><li>Optional trained referee for your scheduled party time</li></ul>
   </div>
 </section>
 
@@ -119,8 +120,8 @@ footer a{color:#fff}
     <ul class="inc">
       <li><strong>1. Book online</strong> - pick your date, player count, and whether you want a referee. Get an instant price estimate.</li>
       <li><strong>2. We deliver</strong> - we drop off blasters, hundreds of darts, safety glasses and inflatable bunkers right to your backyard or park. Set it up yourself, or add setup + tear down for +$40.</li>
-      <li><strong>3. Battle on!</strong> - set it up and play, or let our referee run safe, high-energy games from start to finish.</li>
-      <li><strong>4. We pack it up</strong> - when the fun's over, we come back to collect the gear. No cleanup for you.</li>
+      <li><strong>3. Battle on!</strong> - play throughout the day and keep the gear overnight. If you added a referee, we'll run safe, high-energy games during your scheduled party time.</li>
+      <li><strong>4. Next-day pickup</strong> - empty, clean and dry the equipment after play, then have everything together when we return the next day.</li>
     </ul>
     <p style="margin-top:14px"><strong>Space needed:</strong> a flat backyard, park or open area about half a basketball court suits 10–20 players. Not sure? Send us a photo or your address and we'll confirm the best fit.</p>
   </div>

@@ -23,7 +23,7 @@
  */
 
 var CALENDAR_ID = "yourpartyporch@gmail.com";  // "" = default calendar; pinned to your Party Porch calendar
-var EVENT_HOURS = 3;            // block length: ~2h play + setup/teardown
+var EVENT_HOURS = 3;            // calendar block for the scheduled party start/referee window
 var INVITE_CUSTOMER = true;     // email the customer a calendar invite too
 
 // --- Confirmation email + deposit --------------------------------------------
@@ -67,8 +67,9 @@ function stripeKey() {
  * The site calls this via JSONP:  GET ...?action=availability&date=YYYY-MM-DD&callback=fn
  *
  * Inventory model: you own ONE of each item to start, so an item is UNAVAILABLE
- * on a date once it's already booked that day. Each booking event stores its item
- * keys in the description as "Items: nerf,movie,photobooth" — we read those back.
+ * on a date once it's already booked that day. Nerf is also unavailable the day
+ * after a booking so the overnight rental can be collected, cleaned and reset.
+ * Each event stores item keys as "Items: nerf,movie,photobooth" in its description.
  *
  * A whole date is CLOSED (nothing available) if you add an all-day event that day
  * whose title contains BLOCKED / CLOSED / UNAVAILABLE / VACATION (your manual day-off).
@@ -96,27 +97,36 @@ function availability(dateStr) {
   try {
     var start = parseStart(dateStr, "00:00"); start.setHours(0, 0, 0, 0);
     if (isNaN(start.getTime())) return { ok: false, error: "bad date" };
-    var end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+    var end = new Date(start); end.setDate(end.getDate() + 1);
+    var previousStart = new Date(start); previousStart.setDate(previousStart.getDate() - 1);
     var cal = CALENDAR_ID ? CalendarApp.getCalendarById(CALENDAR_ID)
                           : CalendarApp.getDefaultCalendar();
     var evs = cal.getEvents(start, end);
+    var previousEvs = cal.getEvents(previousStart, start);
     var closed = false, booked = {};
     for (var i = 0; i < evs.length; i++) {
       var t = String(evs[i].getTitle() || "").toUpperCase();
       if (t.indexOf("BLOCKED") > -1 || t.indexOf("CLOSED") > -1 ||
           t.indexOf("UNAVAILABLE") > -1 || t.indexOf("VACATION") > -1) closed = true;
-      var m = String(evs[i].getDescription() || "").match(/Items?:[ \t]*([a-z0-9_,\t ]+)/i);
-      if (m) {
-        m[1].split(",").forEach(function (k) {
-          k = k.trim().toLowerCase();
-          if (k) booked[k] = true;
-        });
-      }
+      eventItemKeys(evs[i]).forEach(function (k) { booked[k] = true; });
+    }
+    for (var j = 0; j < previousEvs.length; j++) {
+      if (eventItemKeys(previousEvs[j]).indexOf("nerf") > -1) booked.nerf = true;
     }
     return { ok: true, date: dateStr, closed: closed, booked: Object.keys(booked) };
   } catch (err) {
     return { ok: false, error: String(err) };
   }
+}
+
+function eventItemKeys(event) {
+  var m = String(event.getDescription() || "").match(/Items?:[ \t]*([a-z0-9_,\t ]+)/i);
+  if (!m) return [];
+  return m[1].split(",").map(function (k) {
+    return k.trim().toLowerCase();
+  }).filter(function (k) {
+    return !!k;
+  });
 }
 
 function doPost(e) {
@@ -344,8 +354,8 @@ function sendConfirmationEmail(d, depUrl, depDollars) {
 
   var guideBlock = hasNerf ?
     '<div style="margin:22px 0;padding:18px;border-radius:12px;background:#fff8f0;border:1px solid #e7ded3">' +
-      '<strong style="color:#12263a">Your Nerf party setup &amp; game guide</strong>' +
-      '<p style="margin:6px 0 12px;color:#4b5968">Keep this guide handy for setup, safety rules, game ideas and the return checklist.</p>' +
+      '<strong style="color:#12263a">Your overnight Nerf party setup &amp; game guide</strong>' +
+      '<p style="margin:6px 0 12px;color:#4b5968">Keep the gear overnight, then have everything empty, clean and dry for pickup the next day. This guide covers setup, safety rules, game ideas and the return checklist.</p>' +
       '<a href="' + NERF_GUIDE_URL + '" style="color:#e04347;font-weight:700">Open the customer guide &rarr;</a>' +
     '</div>' : "";
 
@@ -385,7 +395,7 @@ function sendConfirmationEmail(d, depUrl, depDollars) {
           (when ? " on " + when : "") + ". " +
           (link && amt ? ("Place your " + amt + " (" + DEPOSIT_PERCENT + "%) deposit here: " + link)
                        : ("We'll send a secure link for your " + DEPOSIT_PERCENT + "% deposit shortly.")) +
-          (hasNerf ? (" Nerf party setup and game guide: " + NERF_GUIDE_URL) : "")
+          (hasNerf ? (" Your Nerf rental is overnight with pickup the next day. Setup and game guide: " + NERF_GUIDE_URL) : "")
   });
 }
 

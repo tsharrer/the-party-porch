@@ -5,6 +5,15 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-09-10
 
+### Changed - Nerf rentals are now overnight
+- Updated the website and customer guide to describe overnight Nerf rentals with
+  next-day pickup.
+- Availability now blocks Nerf on both the booking date and the following day for
+  pickup, cleaning and reset; other inventory remains independently bookable.
+- Renamed the extra-hour add-on to "Extra referee hour" to match the overnight rental.
+- Tuned both photo carousels for desktop, tablet, phone and narrow-phone layouts with
+  protected text space, dedicated mobile controls and 44px touch targets.
+
 ### Added - Confirmed-customer Nerf party guide
 - Added an unlinked, noindex setup and game guide to share after booking.
 - Included one-gallon water anchoring and pump instructions for every inflatable,

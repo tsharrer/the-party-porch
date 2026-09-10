@@ -129,9 +129,10 @@ The **Check my date** picker asks your Google Apps Script whether a date is open
    item **available** or **Booked on this date**. **Until the URL is set, it gracefully
    falls back** to "we'll confirm availability within a few hours."
 3. **Inventory model: you own one of each item to start.** An item shows as
-   **unavailable** on a date once it's already booked that day — every booking stores
+   **unavailable** on a date once it's already booked that day - every booking stores
    its item keys in the calendar event description as `Items: nerf,movie` and later
-   checks read them back. Other items on that date stay available.
+   checks read them back. Nerf is also unavailable the day after its booking for
+   overnight pickup, cleaning and reset. Other items on that date stay available.
 4. To take a whole day off, add an **all-day calendar event** whose title contains
    `BLOCKED`, `CLOSED`, `UNAVAILABLE` or `VACATION` — that date shows unavailable for
    everything.
