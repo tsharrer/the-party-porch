@@ -3,6 +3,15 @@
 All notable changes to the website, tracker, and booking backend are logged here.
 Newest entries first. Dates in America/Chicago.
 
+## 2026-11-13
+
+### Added - Referee training manual
+- Added an unlisted, print-friendly staff manual for two-hour hosted Nerf sessions,
+  with arrival 60 minutes early, host-supplied hose/water and outlet, referee
+  eligibility and waiver requirements, setup, safety, games, incidents and closeout.
+- Included shared-valve instructions and dry, empty equipment returned in its bin
+  on the porch at the agreed pickup date and time.
+
 ## 2026-11-12
 
 ### Added - Owner notifications and customer contacts
