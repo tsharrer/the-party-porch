@@ -136,3 +136,46 @@ The **Check my date** picker asks your Google Apps Script whether a date is open
 4. To take a whole day off, add an **all-day calendar event** whose title contains
    `BLOCKED`, `CLOSED`, `UNAVAILABLE` or `VACATION` — that date shows unavailable for
    everything.
+
+### Seven-day deposit invoices and temporary holds
+
+The booking POST creates one Stripe invoice, stores its hosted payment link, and
+emails that same link to the customer. The website polls by a random booking ID;
+it does not create a second payment. The deadline is the earlier of seven days from
+submission or the event start, in the Apps Script project's time zone.
+
+New calendar entries contain a `Booking ID:` linked to private Script Properties.
+Pending bookings block inventory until their invoice deadline. After that deadline,
+Stripe-paid invoices keep the reservation; unpaid open invoices are voided and the
+hold is released. If Stripe cannot be checked, availability reports an error instead
+of releasing inventory. Legacy calendar entries without a booking ID are unchanged.
+
+Deployment order:
+
+1. Set the Apps Script project time zone to **America/Chicago**.
+2. Ensure `STRIPE_SECRET_KEY` has read/write access to **Customers, Invoices, and
+   Invoice Items**. Do not paste the key into website code.
+3. Paste the updated `google-calendar.gs` into Apps Script. Run
+   `installBookingHoldTrigger()` once and authorize it. It installs a five-minute
+   reconciliation job; Stripe invoices have due dates, but do not void themselves.
+   The installer explicitly requests any missing project permissions. Approve the
+   permissions requested for this project before running it again; opening a scope
+   URL in a browser does not grant authorization.
+   If `appsscript.json` has an explicit `oauthScopes` list, preserve its existing
+   Calendar, email and external-request scopes and add
+   `https://www.googleapis.com/auth/script.scriptapp`. Otherwise the installer
+   cannot request permission to manage triggers.
+4. Redeploy the existing web app as a **new version**, preserving the `/exec` URL.
+5. Publish the matching `index.html` and `terms.html` only after the backend deploy.
+
+Voiding and releasing overdue holds occurs on the next scheduled check (normally
+within five minutes) or an availability request. A paid invoice is never automatically
+voided. The integration does not automatically migrate existing Checkout sessions,
+invoices or calendar entries: handle those separately after checking for payment.
+Custom-quote requests are emailed for manual follow-up; they create neither a payment
+invoice nor a calendar hold until pricing is agreed and an invoice is issued.
+Invoice delivery uses the existing booking email (and consented Twilio SMS), not an
+additional automatic Stripe invoice email. An issued invoice can also be sent from
+the Stripe Dashboard.
+
+Use `node --test tests/booking-payments.test.cjs` for offline payment-flow tests.

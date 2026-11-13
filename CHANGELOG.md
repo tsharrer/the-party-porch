@@ -3,6 +3,17 @@
 All notable changes to the website, tracker, and booking backend are logged here.
 Newest entries first. Dates in America/Chicago.
 
+## 2026-11-12
+
+### Changed - Seven-day deposit invoices and inventory holds
+- Replaced duplicate 24-hour Checkout sessions with one hosted deposit invoice per
+  booking and a read-only payment-link lookup.
+- Set the deposit deadline to seven days or the event start, whichever is sooner.
+- Hold inventory pending payment; preserve paid reservations and void unpaid invoices
+  before releasing expired holds. Existing calendar entries remain unchanged.
+- Added deployment instructions for Stripe permissions, the Apps Script reconciliation
+  trigger, and the coordinated website/backend rollout.
+
 ## 2026-09-10
 
 ### Changed - Added optional Snack Bar supply packs

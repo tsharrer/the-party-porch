@@ -92,7 +92,7 @@
     {"@type":"Question","name":"Can I bundle several experiences together?","acceptedAnswer":{"@type":"Answer","text":"Yes. Pick a main rental and add any others, including coming-soon items, right in the booking form, or choose a Custom Package and we will build one quote for the whole event."}},
     {"@type":"Question","name":"What ages are your parties for?","acceptedAnswer":{"@type":"Answer","text":"Something for every age: Soft Play for toddlers, bounce houses and yard games for all ages, and Nerf battles for ages 5 and up - birthdays, school events, church and community groups, even adults."}},
     {"@type":"Question","name":"What areas do you serve?","acceptedAnswer":{"@type":"Answer","text":"We serve the Greater Houston area including Katy, Sugar Land, The Woodlands, Pearland, Cypress, Spring, Humble, Kingwood, Tomball, Friendswood and League City. Delivery and pickup are free within 12 miles of ZIP 77018; otherwise a delivery fee is charged ($2/mile beyond that)."}},
-    {"@type":"Question","name":"How do I book and reserve my date?","acceptedAnswer":{"@type":"Answer","text":"Submit the online booking form and we will confirm availability. A 50% deposit reserves your date, with the balance due the day of the party."}}
+    {"@type":"Question","name":"How do I book and reserve my date?","acceptedAnswer":{"@type":"Answer","text":"Submit the online booking form. Once availability is verified, we hold your date for up to seven days while you pay the 50% deposit invoice. If the event is sooner, the deposit is due before the event starts. Unpaid holds are released. The balance is due on the event day."}}
   ]
 }
 </script>
@@ -609,7 +609,7 @@
     <div class="section-head">
       <div class="kicker" style="color:var(--gold)">Book your party</div>
       <h2>Request your Houston party date</h2>
-      <p>Tell us what you'd like to rent and we'll confirm availability &amp; lock in your date. A 50% deposit reserves it.</p>
+      <p>Tell us what you'd like to rent. Once availability is verified, we hold your date for up to seven days while you pay the 50% deposit invoice. For short-notice bookings, payment is due before your event starts. Unpaid holds are released.</p>
     </div>
     <div class="form-card">
       <form id="bookForm" onsubmit="return submitBooking(event)">
@@ -749,7 +749,7 @@
     <details><summary>Do you provide safety gear?</summary><p>Yes - for Nerf battles, safety glasses are included and required for every player. All equipment is cleaned and sanitized between events.</p></details>
     <details><summary>What if it rains?</summary><p>No problem - reschedule with 48 hours' notice and your deposit transfers to your new date.</p></details>
     <details><summary>How far in advance should I book?</summary><p>We recommend 3–4 weeks ahead to secure your date, especially weekends in spring and fall. Need something sooner? Ask us - we'll do our best.</p></details>
-    <details><summary>How do I reserve my date?</summary><p>Submit the booking form above. We'll confirm availability and send a simple invoice - a 50% deposit locks in your date, with the balance due the day of the party.</p></details>
+    <details><summary>How do I reserve my date?</summary><p>Submit the booking form above. Once availability is verified, we hold your date for up to seven days while you pay the <strong>50% deposit invoice</strong>. If your event is sooner, payment is due before it starts. Unpaid holds are released after the deadline shown on your invoice. The remaining balance is due on the event day.</p></details>
   </div>
 </section>
 
@@ -823,11 +823,10 @@ document.querySelectorAll('[data-hero-carousel]').forEach(initHeroCarousel);
 var BUSINESS_EMAIL = "yourpartyporch@gmail.com";   // <-- CHANGE to your email
 var BUSINESS_PHONE = "13466807603";                 // digits-only; used for tap-to-call links
 var FORMSPREE_ID   = "xdarjgjk";                            // optional, e.g. "xyzabcd"
-var STRIPE_DEPOSIT_URL = "";   // Optional static Stripe Payment Link fallback (percentage deposits use the backend)
 var DEPOSIT_PCT = 50;          // deposit shown to customers = this % of the estimate (backend charges the same)
 function depositNote(total){
   var d = Math.max(25, Math.round((total||0) * DEPOSIT_PCT / 100));
-  return (total ? ("a " + DEPOSIT_PCT + "% deposit ($" + d + ")") : ("a " + DEPOSIT_PCT + "% deposit")) + " reserves your date";
+  return (total ? ("a " + DEPOSIT_PCT + "% deposit ($" + d + ")") : ("a " + DEPOSIT_PCT + "% deposit")) + " confirms your date; pay within 7 days or before the event, whichever is sooner";
 }
 /* CART: the add-to-cart shopping experience is built and ready, but hidden until
    Stripe is set up for direct booking. Flip to true to re-enable the cart, shop
@@ -1179,8 +1178,18 @@ function bookingSummary(){
   };
 }
 
+var bookingSubmitting = false;
+var lastBookingSubmission = null;
+function setBookingSubmitting(active){
+  bookingSubmitting = active;
+  var button = document.querySelector('#bookForm button[type="submit"]');
+  button.disabled = active;
+  button.textContent = active ? "Preparing your request..." : "📩 Send My Booking Request";
+}
+
 function submitBooking(e){
   e.preventDefault();
+  if(bookingSubmitting) return false;
   var dateEl = document.getElementById('f_date');
   var minStr = bookingMinDate();
   if(dateEl && (!dateEl.value || dateEl.value < minStr)){
@@ -1194,12 +1203,18 @@ function submitBooking(e){
     return false;
   }
   var s = bookingSummary();
+  var signature = JSON.stringify(s);
+  s.bookingId = lastBookingSubmission && lastBookingSubmission.signature === signature ?
+    lastBookingSubmission.bookingId : crypto.randomUUID();
+  lastBookingSubmission = {signature:signature, bookingId:s.bookingId};
+  setBookingSubmitting(true);
   sendToCalendar(s);
   if(FORMSPREE_ID){
     var fd = new FormData(document.getElementById('bookForm'));
     fd.append("estimate", s.estimate);
     fd.append("cart", s.cart);
     fd.append("cart_total", s.cartTotal);
+    fd.append("booking_id", s.bookingId);
     fd.append("_subject", "New booking: " + (s.cart !== "None" ? s.cart : s.rental) + " - " + s.name + " (" + s.date + ")");
     fetch("https://formspree.io/f/" + FORMSPREE_ID, {
       method:"POST", headers:{"Accept":"application/json"},
@@ -1207,15 +1222,19 @@ function submitBooking(e){
     }).then(function(r){
       if(!r.ok) throw new Error("bad response");
       afterBooked(s);
-    }).catch(function(){ openEmail(s); });
+    }).catch(function(err){
+      console.error("Booking notification failed", err);
+      if(GCAL_WEBHOOK_URL) afterBooked(s);
+      else { openEmail(s); setBookingSubmitting(false); }
+    });
     return false;
   }
-  openEmail(s);
+  if(GCAL_WEBHOOK_URL) afterBooked(s);
+  else { openEmail(s); setBookingSubmitting(false); }
   return false;
 }
 
-/* Fire-and-forget: POST the booking to your Google Apps Script so it lands on
-   your Google Calendar. no-cors keeps it simple (we don't need the response). */
+/* The invoice result is retrieved separately because this POST uses no-cors. */
 function sendToCalendar(s){
   if(!GCAL_WEBHOOK_URL) return;
   try{
@@ -1223,56 +1242,62 @@ function sendToCalendar(s){
       method:"POST", mode:"no-cors",
       headers:{"Content-Type":"text/plain;charset=utf-8"},
       body: JSON.stringify(s)
-    });
-  }catch(err){}
+    }).catch(function(err){ console.error("Booking request failed", err); });
+  }catch(err){ console.error("Booking request failed", err); }
 }
 
-/* After a booking is captured: send them to pay the Stripe deposit
-   (if a Payment Link is set), otherwise just confirm. */
+/* Open the same deposit invoice emailed by the booking backend. */
 function afterBooked(s){
-  document.getElementById('bookForm').reset();
-  try{ localStorage.removeItem('pp_cart'); }catch(e){}
-  renderCart(); calcEstimate();
-  // Ask the backend to create this booking's Stripe deposit link (50% of the
-  // estimate), then send them straight to secure checkout. Falls back cleanly.
-  requestDeposit(s, function(url){
-    if(url){
-      alert("🎉 Booking received! Next: pay your 50% deposit to lock in " + s.date + " - taking you to secure checkout now. (A copy of this link is also in your email.)");
-      window.location.href = url;
-    } else if(STRIPE_DEPOSIT_URL){
-      var ref = (s.name + "_" + s.date).replace(/[^a-zA-Z0-9_-]/g,"").slice(0,180);
-      var sep = STRIPE_DEPOSIT_URL.indexOf("?") > -1 ? "&" : "?";
-      alert("🎉 Booking received! Next: pay your deposit to lock in " + s.date + " - taking you to secure checkout now.");
-      window.location.href = STRIPE_DEPOSIT_URL + sep +
-        "prefilled_email=" + encodeURIComponent(s.email) +
-        "&client_reference_id=" + encodeURIComponent(ref);
+  requestDeposit(s, function(result){
+    setBookingSubmitting(false);
+    if(result.ok){
+      document.getElementById('bookForm').reset();
+      lastBookingSubmission = null;
+      try{ localStorage.removeItem('pp_cart'); }catch(e){}
+      renderCart(); calcEstimate();
+    }
+    if(result.ok && result.quote){
+      alert("Your quote request was received. We'll confirm pricing and availability separately. No payment is due and no date is held yet.");
+      return;
+    }
+    if(result.ok && result.url){
+      var due = new Date(result.due * 1000).toLocaleString('en-US', {timeZone:'America/Chicago'});
+      alert("🎉 Booking received! Your date is held until " + due + " Houston time. Pay the 50% deposit by then to confirm it. Opening your invoice now.");
+      window.location.href = result.url;
     } else {
-      alert("🎉 Booking request sent! We'll email your 50% deposit link to lock in " + s.date + ".");
+      console.error("Deposit invoice unavailable:", result.error);
+      alert("We received your request, but couldn't confirm a payment invoice or date hold. Please call or text (346) 680-7603 before sending another booking.");
     }
   });
 }
 
-/* Fetches a Stripe deposit checkout URL from the Apps Script backend via JSONP
-   (same channel as the availability check). Times out gracefully to a fallback. */
+/* Polls the invoice created by the booking POST; never creates a second payment. */
 function requestDeposit(s, cb){
-  if(!GCAL_WEBHOOK_URL){ cb(null); return; }
-  var done = false;
-  var fn = "ppDep_" + Date.now();
-  var script = document.createElement('script');
-  function finish(url){ if(done) return; done = true; cleanup(); cb(url || null); }
-  function cleanup(){ try{ delete window[fn]; }catch(e){ window[fn] = undefined; } if(script.parentNode) script.parentNode.removeChild(script); }
-  window[fn] = function(res){ finish(res && res.ok ? res.url : null); };
-  var sep = GCAL_WEBHOOK_URL.indexOf('?') > -1 ? '&' : '?';
-  script.src = GCAL_WEBHOOK_URL + sep + "action=checkout" +
-    "&estimate=" + encodeURIComponent(s.estimate) +
-    "&email="    + encodeURIComponent(s.email) +
-    "&name="     + encodeURIComponent(s.name) +
-    "&date="     + encodeURIComponent(s.date) +
-    "&rental="   + encodeURIComponent(s.cart !== "None" ? s.cart : s.rental) +
-    "&callback=" + fn;
-  script.onerror = function(){ finish(null); };
-  document.body.appendChild(script);
-  setTimeout(function(){ finish(null); }, 9000);
+  if(!GCAL_WEBHOOK_URL){ cb({ok:false, error:"not_configured"}); return; }
+  var started = Date.now();
+  var attempts = 0;
+  function poll(){
+    var fn = "ppDep_" + Date.now() + "_" + attempts++;
+    var script = document.createElement('script');
+    var finished = false;
+    var timeout;
+    function finish(result){
+      if(finished) return;
+      finished = true;
+      clearTimeout(timeout);
+      delete window[fn];
+      script.remove();
+      if(result.pending && Date.now() - started < 90000) setTimeout(poll, 2000);
+      else cb(result.pending ? {ok:false, error:"invoice_timeout"} : result);
+    }
+    window[fn] = function(result){ finish(result); };
+    var sep = GCAL_WEBHOOK_URL.indexOf('?') > -1 ? '&' : '?';
+    script.src = GCAL_WEBHOOK_URL + sep + "action=checkout&bookingId=" + encodeURIComponent(s.bookingId) + "&callback=" + fn;
+    script.onerror = function(){ finish({ok:false, error:"invoice_network_error"}); };
+    timeout = setTimeout(function(){ finish({ok:false, error:"invoice_timeout"}); }, 20000);
+    document.body.appendChild(script);
+  }
+  poll();
 }
 
 function openEmail(s){

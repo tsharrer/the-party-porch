@@ -49,14 +49,19 @@ var SEND_SMS = true;
 // NEVER stored in this file / the public repo.
 //   Set it once:  Apps Script → Project Settings (gear) → Script Properties →
 //   Add property   STRIPE_SECRET_KEY = sk_live_...  (use a restricted key that
-//   can create Checkout Sessions). Use sk_test_... while testing.
+//   can read/write Customers, Invoices and Invoice Items). Use sk_test_... while testing.
 var DEPOSIT_PERCENT = 50;      // % of the estimate collected as the deposit
 var DEPOSIT_MIN     = 25;      // never charge less than this ($)
 var DEPOSIT_MAX     = 2000;    // safety cap ($)
+var DEPOSIT_DAYS    = 7;
+var BOOKING_PREFIX = "booking_";
 var CURRENCY        = "usd";
-var SUCCESS_URL     = "https://yourpartyporch.com/?paid=1";
-var CANCEL_URL      = "https://yourpartyporch.com/#book";
-var DEPOSIT_LINK    = "";      // optional manual fallback link (Venmo/CashApp) if Stripe isn't set up yet
+var bookingLock;
+
+function getBookingLock() {
+  if (!bookingLock) bookingLock = LockService.getScriptLock();
+  return bookingLock;
+}
 
 function stripeKey() {
   return PropertiesService.getScriptProperties().getProperty("STRIPE_SECRET_KEY") || "";
@@ -80,15 +85,18 @@ function doGet(e) {
     return reply(availability(p.date), p.callback);
   }
   if (p.action === "checkout") {
-    // Creates a Stripe Checkout link for this booking's deposit and returns it
-    // to the site (JSONP) so we can send the customer straight to payment.
-    var dep = depositDollars(p.estimate);
-    var r = { url: "", status: 0, error: "exception" };
-    try { r = stripeCheckout(dep, p.email, makeRef(p.name, p.date), (p.rental || "Party") + " deposit"); }
-    catch (err) { r = { url: "", status: 0, error: String(err) }; }
-    var out = { ok: !!r.url, url: r.url, amount: dep };
-    if (p.debug === "1") { out.status = r.status; out.stripeError = r.error; }
-    return reply(out, p.callback);
+    if (!validBookingId(p.bookingId)) return reply({ ok: false, error: "missing_booking_id" }, p.callback);
+    try {
+      var booking = loadBooking(p.bookingId);
+      if (!booking || booking.status === "preparing") return reply({ ok: false, pending: true }, p.callback);
+      if (booking.status === "failed") return reply({ ok: false, error: "invoice_failed" }, p.callback);
+      if (booking.status === "quote_requested") return reply({ ok: true, quote: true }, p.callback);
+      if (!bookingHoldActive(p.bookingId)) return reply({ ok: false, error: "hold_expired" }, p.callback);
+      return reply({ ok: true, url: booking.url, due: booking.due }, p.callback);
+    } catch (err) {
+      console.error("Deposit lookup failed: " + String(err));
+      return reply({ ok: false, error: "invoice_unavailable" }, p.callback);
+    }
   }
   return reply({ ok: true, service: "Party Porch availability" }, p.callback);
 }
@@ -108,10 +116,10 @@ function availability(dateStr) {
       var t = String(evs[i].getTitle() || "").toUpperCase();
       if (t.indexOf("BLOCKED") > -1 || t.indexOf("CLOSED") > -1 ||
           t.indexOf("UNAVAILABLE") > -1 || t.indexOf("VACATION") > -1) closed = true;
-      eventItemKeys(evs[i]).forEach(function (k) { booked[k] = true; });
+      if (eventHoldActive(evs[i])) eventItemKeys(evs[i]).forEach(function (k) { booked[k] = true; });
     }
     for (var j = 0; j < previousEvs.length; j++) {
-      if (eventItemKeys(previousEvs[j]).indexOf("nerf") > -1) booked.nerf = true;
+      if (eventHoldActive(previousEvs[j]) && eventItemKeys(previousEvs[j]).indexOf("nerf") > -1) booked.nerf = true;
     }
     return { ok: true, date: dateStr, closed: closed, booked: Object.keys(booked) };
   } catch (err) {
@@ -142,8 +150,44 @@ function doPost(e) {
     return handleInboundSms(tp);
   }
 
+  var lock = getBookingLock();
+  var bookingId = "";
+  var booking;
   try {
+    lock.waitLock(30000);
     var d = JSON.parse(e.postData.contents);
+    bookingId = d.bookingId || Utilities.getUuid();
+    if (!validBookingId(bookingId)) throw new Error("Invalid booking ID");
+    booking = loadBooking(bookingId);
+    if (booking) return json({ ok: booking.status !== "failed" && booking.status !== "released", duplicate: true });
+    var due = depositDeadline(d.date, d.time, new Date());
+    booking = { status: "preparing", due: due };
+    saveBooking(bookingId, booking);
+    var depDollars = depositDollars(d.estimate);
+    if (!depDollars) {
+      MailApp.sendEmail({
+        to: BUSINESS_EMAIL,
+        subject: BUSINESS_NAME + " - manual quote request " + bookingId,
+        body: JSON.stringify(d, null, 2)
+      });
+      if (SEND_CONFIRM_EMAIL) sendConfirmationEmail(d, "", 0, null);
+      booking.status = "quote_requested";
+      saveBooking(bookingId, booking);
+      return json({ ok: true, quote: true });
+    }
+    var available = availability(d.date);
+    if (!available.ok) throw new Error("Could not verify inventory: " + available.error);
+    var items = String(d.items || "").split(",").map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
+    if (available.closed || items.some(function(k) { return available.booked.indexOf(k) > -1; })) {
+      throw new Error("Selected inventory is no longer available");
+    }
+    if (items.indexOf("nerf") > -1) {
+      var nextDay = parseStart(d.date, "00:00"); nextDay.setDate(nextDay.getDate() + 1);
+      var nextAvailable = availability(Utilities.formatDate(nextDay, Session.getScriptTimeZone(), "yyyy-MM-dd"));
+      if (!nextAvailable.ok || nextAvailable.booked.indexOf("nerf") > -1) {
+        throw new Error("Nerf inventory is unavailable for the overnight rental");
+      }
+    }
     var cal = CALENDAR_ID ? CalendarApp.getCalendarById(CALENDAR_ID)
                           : CalendarApp.getDefaultCalendar();
 
@@ -154,6 +198,8 @@ function doPost(e) {
                 " (" + (d.players || "") + ")";
 
     var desc = [
+      "Booking ID: " + bookingId,
+      "Deposit due: " + new Date(due * 1000).toISOString(),
       "Items: "    + (d.items    || ""),
       "Cart: "     + (d.cart     || ""),
       "Service: "  + (d.service  || ""),
@@ -176,24 +222,36 @@ function doPost(e) {
       opts.sendInvites = true;
     }
 
-    cal.createEvent(title, start, end, opts);
+    var event = cal.createEvent(title, start, end, opts);
+    booking.eventId = event.getId();
+    saveBooking(bookingId, booking);
 
-    // Create the Stripe deposit link for this booking (50% of the estimate).
-    var depDollars = depositDollars(d.estimate);
-    var depUrl = "";
-    try { depUrl = createCheckoutSession(depDollars, d.email, makeRef(d.name, d.date), (d.rental || d.cart || "Party") + " deposit"); } catch (payErr) {}
+    var invoice = createDepositInvoice(d, bookingId, booking, depDollars);
+    var depUrl = invoice.hosted_invoice_url;
+    booking.status = "pending";
+    booking.url = depUrl;
+    saveBooking(bookingId, booking);
 
     if (SEND_CONFIRM_EMAIL && d.email && /@/.test(d.email)) {
-      try { sendConfirmationEmail(d, depUrl, depDollars); } catch (mailErr) { /* don't fail the booking on email trouble */ }
+      try { sendConfirmationEmail(d, depUrl, depDollars, due); }
+      catch (mailErr) { console.error("Booking confirmation email failed: " + String(mailErr)); }
     }
 
-    if (SEND_SMS && depUrl) {
-      try { sendDepositText(d, depUrl, depDollars); } catch (smsErr) { /* don't fail the booking on SMS trouble */ }
+    if (SEND_SMS && d.consent === "Yes" && depUrl) {
+      try { sendDepositText(d, depUrl, depDollars, due); }
+      catch (smsErr) { console.error("Deposit SMS failed: " + String(smsErr)); }
     }
 
     return json({ ok: true, depositUrl: depUrl, deposit: depDollars });
   } catch (err) {
-    return json({ ok: false, error: String(err) });
+    console.error("Booking invoice failed: " + String(err));
+    if (bookingId && booking) {
+      booking.status = "failed";
+      saveBooking(bookingId, booking);
+    }
+    return json({ ok: false, error: "Booking could not be completed. Please contact The Party Porch." });
+  } finally {
+    if (lock.hasLock()) lock.releaseLock();
   }
 }
 
@@ -258,45 +316,143 @@ function makeRef(name, date) {
   return String((name || "") + "_" + (date || "")).replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 180);
 }
 
-/**
- * Creates a Stripe Checkout Session for the deposit and returns its hosted URL.
- * Returns "" if no secret key is set or the amount is 0 (caller falls back
- * gracefully to a manual link / "we'll send it shortly").
- */
-function createCheckoutSession(dollars, email, ref, desc) {
-  return stripeCheckout(dollars, email, ref, desc).url;
+function validBookingId(id) {
+  return /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(String(id || ""));
 }
 
-/** Calls Stripe and returns { url, status, error } for diagnostics. */
-function stripeCheckout(dollars, email, ref, desc) {
+function loadBooking(id) {
+  var stored = PropertiesService.getScriptProperties().getProperty(BOOKING_PREFIX + id);
+  return stored ? JSON.parse(stored) : null;
+}
+
+function saveBooking(id, booking) {
+  PropertiesService.getScriptProperties().setProperty(BOOKING_PREFIX + id, JSON.stringify(booking));
+}
+
+function depositDeadline(dateStr, timeStr, now) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateStr)) || !/^\d{2}:\d{2}$/.test(String(timeStr))) {
+    throw new Error("An event date and start time are required");
+  }
+  var eventStart = parseStart(dateStr, timeStr);
+  if (Utilities.formatDate(eventStart, Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm") !== dateStr + " " + timeStr ||
+      eventStart.getTime() <= now.getTime()) throw new Error("Event must start in the future");
+  return Math.floor(Math.min(now.getTime() + DEPOSIT_DAYS * 86400000, eventStart.getTime()) / 1000);
+}
+
+function stripeRequest(path, method, payload, idempotencyKey) {
   var key = stripeKey();
-  if (!key)     return { url: "", status: 0, error: "no STRIPE_SECRET_KEY property set" };
-  if (!dollars) return { url: "", status: 0, error: "no deposit amount (estimate not numeric)" };
-  var cents = Math.round(dollars * 100);
-  var payload = {
-    "mode": "payment",
-    "success_url": SUCCESS_URL,
-    "cancel_url": CANCEL_URL,
-    "client_reference_id": ref || "",
-    "line_items[0][quantity]": "1",
-    "line_items[0][price_data][currency]": CURRENCY,
-    "line_items[0][price_data][unit_amount]": String(cents),
-    "line_items[0][price_data][product_data][name]": ("Deposit — " + (desc || BUSINESS_NAME)),
-    "metadata[ref]": ref || "",
-    "metadata[deposit_percent]": String(DEPOSIT_PERCENT)
-  };
-  if (email && /@/.test(email)) payload["customer_email"] = email;
-  var res = UrlFetchApp.fetch("https://api.stripe.com/v1/checkout/sessions", {
-    method: "post",
-    headers: { "Authorization": "Bearer " + key },
-    payload: payload,
-    muteHttpExceptions: true
-  });
+  if (!key) throw new Error("STRIPE_SECRET_KEY is not configured");
+  var headers = { "Authorization": "Bearer " + key };
+  if (idempotencyKey) headers["Idempotency-Key"] = idempotencyKey;
+  var options = { method: method, headers: headers, muteHttpExceptions: true };
+  if (payload) options.payload = payload;
+  var res = UrlFetchApp.fetch("https://api.stripe.com/v1/" + path, options);
   var status = res.getResponseCode();
-  var body = {};
-  try { body = JSON.parse(res.getContentText() || "{}"); } catch (e) {}
-  var errMsg = body.error ? (body.error.message || body.error.type || "stripe error") : "";
-  return { url: body.url || "", status: status, error: errMsg };
+  var body = JSON.parse(res.getContentText());
+  if (status < 200 || status >= 300) {
+    throw new Error("Stripe " + status + ": " + (body.error ? body.error.message : "request failed"));
+  }
+  return body;
+}
+
+function createDepositInvoice(d, bookingId, booking, dollars) {
+  if (!dollars || !d.email || !/@/.test(d.email)) throw new Error("A deposit amount and customer email are required");
+  var prefix = "party-porch-" + bookingId;
+  var customer = stripeRequest("customers", "post", {
+    email: d.email, name: d.name || "", "metadata[booking_id]": bookingId
+  }, prefix + "-customer");
+  var invoice = stripeRequest("invoices", "post", {
+    customer: customer.id,
+    collection_method: "send_invoice",
+    due_date: String(booking.due),
+    auto_advance: "false",
+    pending_invoice_items_behavior: "exclude",
+    description: BUSINESS_NAME + " - " + DEPOSIT_PERCENT + "% deposit for " + d.date,
+    footer: "The remaining balance is due on the event day. The date is held until the deposit deadline; unpaid holds are released.",
+    "payment_settings[payment_method_types][0]": "card",
+    "metadata[booking_id]": bookingId,
+    "metadata[ref]": makeRef(d.name, d.date),
+    "metadata[deposit_percent]": String(DEPOSIT_PERCENT)
+  }, prefix + "-invoice");
+  booking.invoiceId = invoice.id;
+  saveBooking(bookingId, booking);
+  stripeRequest("invoiceitems", "post", {
+    customer: customer.id,
+    invoice: invoice.id,
+    amount: String(Math.round(dollars * 100)),
+    currency: CURRENCY,
+    description: (d.rental || "Party") + " deposit - " + d.date
+  }, prefix + "-item");
+  invoice = stripeRequest("invoices/" + invoice.id + "/finalize", "post", {
+    auto_advance: "false"
+  }, prefix + "-finalize");
+  if (!invoice.hosted_invoice_url) throw new Error("Stripe did not return a hosted invoice URL");
+  return invoice;
+}
+
+function eventHoldActive(event) {
+  var match = String(event.getDescription() || "").match(/^Booking ID: ([a-f0-9-]{36})$/im);
+  return !match || bookingHoldActive(match[1]);
+}
+
+function bookingHoldActive(bookingId) {
+  var lock = getBookingLock();
+  var acquired = !lock.hasLock();
+  if (acquired) lock.waitLock(30000);
+  try {
+    return reconcileBookingHold(bookingId);
+  } finally {
+    if (acquired) lock.releaseLock();
+  }
+}
+
+function reconcileBookingHold(bookingId) {
+  var booking = loadBooking(bookingId);
+  if (!booking) throw new Error("Missing booking hold record");
+  if (booking.status === "quote_requested") return false;
+  if (booking.status === "failed" && !booking.invoiceId) return false;
+  if (booking.status === "paid") return true;
+  if (booking.status === "released") return false;
+  if (Date.now() < booking.due * 1000) return true;
+  if (booking.invoiceId) {
+    var invoice = stripeRequest("invoices/" + booking.invoiceId, "get");
+    if (invoice.status === "paid") {
+      booking.status = "paid";
+      saveBooking(bookingId, booking);
+      return true;
+    }
+    if (invoice.status === "open" || invoice.status === "uncollectible") {
+      invoice = stripeRequest("invoices/" + booking.invoiceId + "/void", "post", null, "expire-" + booking.invoiceId);
+      if (invoice.status !== "void") throw new Error("Invoice could not be voided");
+    } else if (invoice.status !== "draft" && invoice.status !== "void") {
+      throw new Error("Unexpected invoice state: " + invoice.status);
+    }
+  }
+  booking.status = "released";
+  saveBooking(bookingId, booking);
+  return false;
+}
+
+function expireBookingHolds() {
+  var props = PropertiesService.getScriptProperties().getProperties();
+  var failures = [];
+  Object.keys(props).forEach(function(key) {
+    if (key.indexOf(BOOKING_PREFIX) !== 0) return;
+    try { bookingHoldActive(key.slice(BOOKING_PREFIX.length)); }
+    catch (err) {
+      console.error("Hold expiration failed for " + key + ": " + String(err));
+      failures.push(key);
+    }
+  });
+  if (failures.length) throw new Error("Could not reconcile " + failures.length + " booking hold(s)");
+}
+
+function installBookingHoldTrigger() {
+  ScriptApp.requireAllScopes(ScriptApp.AuthMode.FULL);
+  var exists = ScriptApp.getProjectTriggers().some(function(trigger) {
+    return trigger.getHandlerFunction() === "expireBookingHolds";
+  });
+  if (!exists) ScriptApp.newTrigger("expireBookingHolds").timeBased().everyMinutes(5).create();
 }
 
 /** Builds a Date from an <input type="date"> value + optional <input type="time">. */
@@ -323,7 +479,7 @@ function json(obj) {
 }
 
 /** Sends the customer an automated booking-received email with a deposit link. */
-function sendConfirmationEmail(d, depUrl, depDollars) {
+function sendConfirmationEmail(d, depUrl, depDollars, due) {
   var first = String(d.name || "there").split(" ")[0];
   var when  = prettyDate(d.date);
   var cart  = d.cart || d.service || "your party";
@@ -333,8 +489,9 @@ function sendConfirmationEmail(d, depUrl, depDollars) {
                 d.rental === "Nerf Battles" || /Nerf Battles/.test(cart);
 
   var amt  = depDollars ? ("$" + depDollars) : "";
-  var link = depUrl || DEPOSIT_LINK;
+  var link = depUrl;
   var pctLabel = amt ? (amt + " (" + DEPOSIT_PERCENT + "% deposit)") : (DEPOSIT_PERCENT + "% deposit");
+  var deadline = due ? Utilities.formatDate(new Date(due * 1000), Session.getScriptTimeZone(), "MMM d, yyyy 'at' h:mm a z") : "";
 
   var depositBlock;
   if (link && amt) {
@@ -345,11 +502,12 @@ function sendConfirmationEmail(d, depUrl, depDollars) {
         '<a href="' + link + '" style="background:#ff5a5f;color:#fff;text-decoration:none;' +
         'font-weight:700;padding:14px 30px;border-radius:999px;display:inline-block;font-size:16px">' +
         'Pay ' + amt + ' deposit &rarr;</a></p>' +
-      '<p style="font-size:13px;color:#667">Your date isn\u2019t reserved until the deposit is received.</p>';
+      '<p style="font-size:13px;color:#667">Your date is held until <strong>' + esc(deadline) +
+      '</strong>. Pay by this deadline to confirm it. Unpaid holds are released.</p>';
   } else {
     depositBlock =
-      '<p style="margin:22px 0 10px">To lock in your date, we\u2019ll send you a secure link for your ' +
-      '<strong>' + pctLabel + '</strong> (applied to your total) shortly.</p>';
+      '<p style="margin:22px 0 10px">We\u2019ll follow up with a tailored quote and confirm ' +
+      'availability. No payment is due and no date is held until we issue a deposit invoice.</p>';
   }
 
   var guideBlock = hasNerf ?
@@ -361,7 +519,7 @@ function sendConfirmationEmail(d, depUrl, depDollars) {
 
   var html =
     '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1a1a2e">' +
-      '<h2 style="color:#ff5a5f;margin:0 0 6px">You\u2019re on the calendar, ' + esc(first) + '! 🎉</h2>' +
+      '<h2 style="color:#ff5a5f;margin:0 0 6px">Request received, ' + esc(first) + '! 🎉</h2>' +
       '<p style="margin:0 0 18px">Thanks for booking with <strong>' + BUSINESS_NAME + '</strong>. ' +
       'We\u2019ve received your request and here\u2019s what we have:</p>' +
       '<table style="width:100%;border-collapse:collapse;font-size:15px">' +
@@ -394,39 +552,43 @@ function sendConfirmationEmail(d, depUrl, depDollars) {
     body: "Thanks for booking with " + BUSINESS_NAME + "! We received your request for " + cart +
           (when ? " on " + when : "") + ". " +
           (link && amt ? ("Place your " + amt + " (" + DEPOSIT_PERCENT + "%) deposit here: " + link)
-                       : ("We'll send a secure link for your " + DEPOSIT_PERCENT + "% deposit shortly.")) +
+                       : ("We'll follow up with a tailored quote and confirm availability. No payment is due and no date is held until we issue a deposit invoice.")) +
+          (deadline ? " Your date is held until " + deadline + ". Unpaid holds are released." : "") +
           (hasNerf ? (" Your Nerf rental is overnight with pickup the next day. Setup and game guide: " + NERF_GUIDE_URL) : "")
   });
 }
 
 /**
  * Texts the customer their deposit link via Twilio. Credentials come from Script
- * Properties (TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN / TWILIO_FROM). No-ops if
- * anything is missing so a booking never fails on SMS trouble.
+ * Properties (TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN / TWILIO_FROM).
+ * The caller logs SMS failures without invalidating the payment invoice.
  */
-function sendDepositText(d, depUrl, depDollars) {
+function sendDepositText(d, depUrl, depDollars, due) {
   var num = tenDigits(d.phone);
   var props = PropertiesService.getScriptProperties();
   var sid   = props.getProperty("TWILIO_ACCOUNT_SID") || "";
   var token = props.getProperty("TWILIO_AUTH_TOKEN")  || "";
   var from  = props.getProperty("TWILIO_FROM")         || "";
-  if (!num || !depUrl || !sid || !token || !from) return;
+  if (!num || !depUrl || !sid || !token || !from) throw new Error("SMS recipient, deposit URL or Twilio configuration is missing");
 
   var when = prettyDate(d.date) || d.date || "your date";
+  var deadline = Utilities.formatDate(new Date(due * 1000), Session.getScriptTimeZone(), "MMM d, h:mm a z");
   var body = BUSINESS_NAME + ": pay your $" + depDollars +
-             " deposit to lock in " + when + ": " + depUrl +
+             " deposit for " + when + " by " + deadline + ": " + depUrl +
+             " Your date is held until then; unpaid holds are released." +
              " Reply STOP to opt out, HELP for help.";
 
   var payload = { To: "+1" + num, From: from, Body: body };
   var cbUrl = props.getProperty("WEBHOOK_URL") || "";
   if (cbUrl) payload.StatusCallback = cbUrl;   // so failed texts email us
 
-  UrlFetchApp.fetch("https://api.twilio.com/2010-04-01/Accounts/" + sid + "/Messages.json", {
+  var response = UrlFetchApp.fetch("https://api.twilio.com/2010-04-01/Accounts/" + sid + "/Messages.json", {
     method: "post",
     headers: { "Authorization": "Basic " + Utilities.base64Encode(sid + ":" + token) },
     payload: payload,
     muteHttpExceptions: true
   });
+  if (response.getResponseCode() >= 300) throw new Error("Twilio SMS failed: HTTP " + response.getResponseCode());
 }
 
 /** Normalizes a phone number to 10 digits ("" if it isn't a valid US number). */

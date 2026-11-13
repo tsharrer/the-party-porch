@@ -86,7 +86,9 @@ Referees double as your paid crew: each hired ref lets you run more parties in p
 you keep the rental margin.
 
 ## Booking terms
-- **$50 deposit** reserves the date (applied to total).
+- A **50% deposit** confirms the booking (applied to total).
+- Hold available inventory for up to seven days pending the deposit. For short-notice
+  bookings, the deadline is the event start. Release unpaid holds after that deadline.
 - Balance due day of event.
 - Reschedule (weather/illness) with 48 hr notice, deposit transfers.
 - Waiver signed at booking; eye protection required (we provide it).
