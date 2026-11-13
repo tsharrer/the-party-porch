@@ -70,6 +70,8 @@ setup. Add `waivers.gs` and `WaiverForm.html` to the existing Apps Script projec
 authorize Drive, and redeploy before using online signing. The shareable customer
 page is `/customer/waiver.html`; it keeps signing links hidden until setup is deployed.
 Signed records never belong in the public website repository.
+The same guide covers host links at booking, participant links after a tracked
+deposit payment, and the four-day customer reminder installer.
 
 ## Logo & favicon
 Brand assets live in `assets/` (generated from porch.png):

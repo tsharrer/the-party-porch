@@ -5,6 +5,18 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-11-13
 
+### Added - Automatic customer waiver requests
+- Included the host agreement in Nerf booking confirmation emails and consented
+  deposit texts. Participant/guardian links go to the host after the tracked
+  deposit invoice is verified paid on the next five-minute check.
+- Added one reminder around 9 AM Houston time four days before the party, with
+  catch-up for short-notice and existing/manual events. Immediate paid messages
+  inside that window also serve as the reminder.
+- Kept customer SMS consent separate from owner texts; email is also sent where
+  available. Delivery attempts are deduplicated and failures notify the business.
+- Documented manual-event contact labels, untracked-payment limitations and
+  the owner-only trigger installer/manual Apps Script deployment.
+
 ### Added - Online host and participant waivers
 - Added separate host and participant/guardian electronic-signature forms covering
   staffed and unrefereed parties, using the supplied Sharrer Investments LLC wording.

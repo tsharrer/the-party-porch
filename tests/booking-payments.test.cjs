@@ -34,6 +34,7 @@ function harness(config = {}) {
   };
   const calendar = {
     getEvents: (start, end) => events.filter(event => event.start < end && event.end > start),
+    getEventById: id => events.find(event => event.getId() === id) || null,
     createEvent(title, start, end, opts) {
       const event = {
         start, end,
@@ -81,7 +82,10 @@ function harness(config = {}) {
         return date.toISOString();
       }
     },
-    MailApp: { sendEmail: email => emails.push(email) },
+    MailApp: { sendEmail(email) {
+      emails.push(email);
+      if (config.mailFailure && config.mailFailure(email)) throw new Error('Mail send outcome uncertain');
+    } },
     ContentService: {
       MimeType: { JSON: 'json', JAVASCRIPT: 'js' },
       createTextOutput: content => ({ content, setMimeType() { return this; } })
@@ -307,6 +311,178 @@ test('deposit SMS requires consent and uses the same hosted invoice URL', () => 
     assert.equal(messages.length, consent === 'Yes' ? 1 : 0);
     if (messages.length) assert.ok(messages[0].payload.Body.includes(h.lookup().url));
   }
+});
+
+test('Nerf bookings include the host agreement in email and consented deposit text, but quotes and other rentals do not', () => {
+  for (const options of [{}, {items: 'movie', rental: 'Movie Night'}, {estimate: 'Custom quote'}]) {
+    const h = harness();
+    configureOwnerSms(h);
+    h.properties.delete('OWNER_SMS_TO');
+    h.post({...h.booking, consent: 'Yes', phone: '2025550110', ...options});
+    const email = h.emails.find(email => email.to === 'customer@example.com');
+    const expected = !options.items && !options.estimate;
+    assert.equal(email.body.includes('waiver.html#host'), expected);
+    assert.equal(email.htmlBody.includes('waiver.html#host'), expected);
+    const messages = h.calls.filter(call => call.url.startsWith('https://api.twilio.com/'));
+    if (expected) assert.ok(messages[0].payload.Body.includes('waiver.html#host'));
+    else assert.ok(messages.every(message => !message.payload.Body.includes('waiver.html#host')));
+  }
+});
+
+test('enabled five-minute reconciliation detects payment before expiry and sends participant invitations once, then a four-day reminder', () => {
+  const h = harness();
+  configureOwnerSms(h);
+  h.properties.delete('OWNER_SMS_TO');
+  h.properties.set('CUSTOMER_WAIVER_AUTOMATIONS', 'enabled');
+  h.post({...h.booking, consent: 'Yes', phone: '2025550110'});
+  const paidEmails = () => h.emails.filter(email => email.subject.includes('deposit received: participant'));
+  h.context.expireBookingHolds();
+  assert.equal(paidEmails().length, 0);
+  assert.equal(h.invoices.get('in_test').status, 'open');
+  h.invoices.get('in_test').status = 'paid';
+  h.context.expireBookingHolds();
+  h.context.expireBookingHolds();
+  assert.equal(h.context.loadBooking(bookingId).status, 'paid');
+  assert.equal(h.context.loadBooking(bookingId).waiverNoticeChecked, true);
+  assert.equal(paidEmails().length, 1);
+  assert.ok(paidEmails()[0].body.includes('waiver.html#participant'));
+  assert.ok(paidEmails()[0].body.includes('one form per participant'));
+  const texts = h.calls.filter(call => call.url.startsWith('https://api.twilio.com/') && call.payload.Body.includes('Your deposit for 2026-12-19 is paid'));
+  assert.equal(texts.length, 1);
+  assert.equal(h.calls.some(call => call.url.endsWith('/void')), false);
+  h.setNow(Date.parse('2026-12-15T09:00:00-06:00'));
+  h.context.sendCustomerWaiverReminders_();
+  h.context.sendCustomerWaiverReminders_();
+  assert.equal(h.emails.filter(email => email.subject.includes('party waiver reminder')).length, 1);
+});
+
+test('customer waiver payment polling is gated by installation and never treats Stripe failure as paid', () => {
+  const h = harness();
+  h.post();
+  const gets = () => h.calls.filter(call => call.method === 'get');
+  h.context.expireBookingHolds();
+  assert.equal(gets().length, 0);
+  h.properties.set('CUSTOMER_WAIVER_AUTOMATIONS', 'enabled');
+  h.failStripe();
+  assert.throws(() => h.context.expireBookingHolds(), /Could not reconcile/);
+  assert.equal(h.context.loadBooking(bookingId).status, 'pending');
+  assert.equal(h.emails.some(email => email.subject.includes('deposit received: participant')), false);
+});
+
+test('payment inside four days sends immediately and covers that channel’s scheduled reminder; no SMS without consent', () => {
+  const h = harness();
+  h.setNow(Date.parse('2026-12-17T09:00:00-06:00'));
+  h.properties.set('CUSTOMER_WAIVER_AUTOMATIONS', 'enabled');
+  h.post();
+  h.invoices.get('in_test').status = 'paid';
+  h.context.expireBookingHolds();
+  h.context.sendCustomerWaiverReminders_();
+  h.context.sendCustomerWaiverReminders_();
+  assert.equal(h.emails.filter(email => email.subject.includes('deposit received: participant')).length, 1);
+  assert.equal(h.emails.filter(email => email.subject.includes('party waiver reminder')).length, 0);
+  assert.equal(h.calls.filter(call => call.url.startsWith('https://api.twilio.com/')).length, 0);
+});
+
+test('pre-party reminders cover manual Nerf events inside four days with email and only recorded consented SMS', () => {
+  const h = harness();
+  h.setNow(Date.parse('2026-11-12T09:00:00-06:00'));
+  configureOwnerSms(h);
+  h.properties.set('CUSTOMER_WAIVER_AUTOMATIONS', 'enabled');
+  for (const days of [4, 3, 0, 5]) {
+    addReminderEvent(h, days, {description: 'Items: nerf\nEmail: host@example.com\nPhone: 2025550110\nSMS/Email consent: ' + (days === 4 ? 'Yes' : 'No')});
+  }
+  addReminderEvent(h, 2, {title: 'Nerf pickup / cleaning', description: 'Items: nerf\nEmail: host@example.com'});
+  addReminderEvent(h, 1, {title: 'CANCELLED Nerf party', description: 'Items: nerf\nEmail: host@example.com'});
+  addReminderEvent(h, 1, {id: 'movie-event', description: 'Items: movie\nEmail: host@example.com'});
+  addReminderEvent(h, -1, {hours: 60, description: 'Items: nerf\nEmail: host@example.com'});
+  h.context.sendCustomerWaiverReminders_();
+  h.context.sendCustomerWaiverReminders_();
+  assert.equal(h.emails.filter(email => email.subject.includes('party waiver reminder')).length, 3);
+  const texts = h.calls.filter(call => call.url.startsWith('https://api.twilio.com/'));
+  assert.equal(texts.length, 1);
+  assert.equal(texts[0].payload.To, '+12025550110');
+  assert.ok(texts[0].payload.Body.includes('Reply STOP'));
+  assert.ok(texts[0].payload.Body.includes('waiver.html#host'));
+});
+
+test('unpaid and released tracked bookings do not receive participant reminders', () => {
+  const h = harness();
+  h.setNow(Date.parse('2026-12-16T09:00:00-06:00'));
+  h.properties.set('CUSTOMER_WAIVER_AUTOMATIONS', 'enabled');
+  h.post();
+  h.context.sendCustomerWaiverReminders_();
+  assert.equal(h.emails.some(email => email.subject.includes('party waiver reminder')), false);
+  const booking = h.context.loadBooking(bookingId);
+  booking.status = 'released';
+  h.context.saveBooking(bookingId, booking);
+  h.context.sendCustomerWaiverReminders_();
+  assert.equal(h.emails.some(email => email.subject.includes('party waiver reminder')), false);
+});
+
+test('uncertain reminder SMS does not duplicate sends or prevent the email; owner is notified once', () => {
+  const h = harness({twilioStatus: 400});
+  configureOwnerSms(h);
+  h.properties.set('CUSTOMER_WAIVER_AUTOMATIONS', 'enabled');
+  addReminderEvent(h, 4, {description: 'Items: nerf\nEmail: host@example.com\nPhone: 2025550110\nSMS/Email consent: Yes'});
+  assert.throws(() => h.context.sendCustomerWaiverReminders_(), /Could not confirm 1/);
+  assert.throws(() => h.context.sendCustomerWaiverReminders_(), /Could not confirm 1/);
+  assert.equal(h.emails.filter(email => email.to === 'host@example.com').length, 1);
+  assert.equal(h.calls.filter(call => call.url.startsWith('https://api.twilio.com/')).length, 1);
+  assert.equal(h.emails.filter(email => email.subject.includes('customer waiver reminder sms failed')).length, 1);
+});
+
+test('uncertain paid email does not prevent consented SMS or resend on the next payment check', () => {
+  const h = harness({mailFailure: email => email.subject.includes('deposit received: participant')});
+  configureOwnerSms(h);
+  h.properties.delete('OWNER_SMS_TO');
+  h.properties.set('CUSTOMER_WAIVER_AUTOMATIONS', 'enabled');
+  h.post({...h.booking, consent: 'Yes', phone: '2025550110'});
+  h.invoices.get('in_test').status = 'paid';
+  h.context.expireBookingHolds();
+  h.context.expireBookingHolds();
+  assert.equal(h.emails.filter(email => email.subject.includes('deposit received: participant')).length, 1);
+  assert.equal(h.calls.filter(call => call.url.startsWith('https://api.twilio.com/') && call.payload.Body.includes('Your deposit for 2026-12-19 is paid')).length, 1);
+  assert.equal(h.emails.filter(email => email.subject.includes('customer waiver paid email failed')).length, 1);
+});
+
+test('manual events without contact details report the missing destination once and never infer SMS permission', () => {
+  const h = harness();
+  h.properties.set('CUSTOMER_WAIVER_AUTOMATIONS', 'enabled');
+  addReminderEvent(h, 4, {title: 'Nerf party'});
+  assert.throws(() => h.context.sendCustomerWaiverReminders_(), /Could not confirm/);
+  assert.throws(() => h.context.sendCustomerWaiverReminders_(), /Could not confirm/);
+  assert.equal(h.emails.filter(email => email.subject.includes('customer waiver reminder missing failed')).length, 1);
+  assert.equal(h.calls.length, 0);
+});
+
+test('customer waiver installer adds only one payment and reminder trigger, validates owner/setup and sends nothing', () => {
+  const h = harness();
+  const triggers = [];
+  h.context.Session.getActiveUser = () => ({getEmail: () => 'yourpartyporch@gmail.com'});
+  h.context.waiverReady_ = () => true;
+  h.context.ScriptApp = {
+    AuthMode: {FULL: 'FULL'}, requireAllScopes() {},
+    getProjectTriggers: () => triggers,
+    newTrigger(handler) {
+      return {
+        timeBased() { return this; },
+        everyMinutes(minutes) { assert.equal(minutes, 5); return this; },
+        atHour(hour) { assert.equal(hour, 9); return this; },
+        nearMinute(minute) { assert.equal(minute, 0); return this; },
+        everyDays(days) { assert.equal(days, 1); return this; },
+        inTimezone(zone) { assert.equal(zone, 'America/Chicago'); return this; },
+        create() { triggers.push({getHandlerFunction: () => handler}); }
+      };
+    }
+  };
+  h.context.installCustomerWaiverAutomations();
+  h.context.installCustomerWaiverAutomations();
+  assert.deepEqual(triggers.map(trigger => trigger.getHandlerFunction()), ['expireBookingHolds', 'sendCustomerWaiverReminders_']);
+  assert.equal(h.context.customerWaiverAutomationsReady_(), true);
+  assert.equal(h.calls.length, 0);
+  assert.equal(h.emails.length, 0);
+  h.context.Session.getActiveUser = () => ({getEmail: () => ''});
+  assert.throws(() => h.context.installCustomerWaiverAutomations(), /Run this installer as/);
 });
 
 function configureOwnerSms(h) {

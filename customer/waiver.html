@@ -22,12 +22,12 @@ a{color:#a1272b}.button{display:inline-block;padding:12px 20px;border-radius:7px
   <p>These forms cover Nerf parties with or without a Party Porch referee. Complete the required forms before participation; booking or payment alone is not a signature.</p>
   <p id="status" role="status">Checking online signing availability...</p>
   <div id="forms" hidden>
-    <section class="card">
+    <section class="card" id="host">
       <h2>Host / rental agreement</h2>
       <p>The adult host or renter completes this form for their rental and safety responsibilities. This does not sign for all guests.</p>
       <a class="button" id="host-link">Complete host agreement</a>
     </section>
-    <section class="card">
+    <section class="card" id="participant">
       <h2>Participant / parent or guardian</h2>
       <p>Complete one form per participant. Adults sign for themselves. Each minor needs their own parent or legal guardian to sign; the party host cannot sign for other people's children solely as host.</p>
       <a class="button" id="participant-link">Complete participant form</a>
@@ -60,6 +60,9 @@ a{color:#a1272b}.button{display:inline-block;padding:12px 20px;border-radius:7px
     document.getElementById("participant-link").href = endpoint + "?action=waiver&type=participant";
     document.getElementById("forms").hidden = false;
     status.textContent = "Choose the form you need. Online signing opens on Google's secure Apps Script service.";
+    if (location.hash === "#host" || location.hash === "#participant") {
+      document.getElementById(location.hash.slice(1)).scrollIntoView();
+    }
   };
   script.src = endpoint + "?action=waiverStatus&callback=partyPorchWaiverReady";
   script.onerror = unavailable;

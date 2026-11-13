@@ -34,6 +34,10 @@ var BUSINESS_EMAIL = "yourpartyporch@gmail.com";   // shown as reply-to / signat
 var BUSINESS_PHONE = "";                            // optional, e.g. "(713) 555-0142" — shows in the email if set
 var SEND_CONFIRM_EMAIL = true;                      // master switch for the auto confirmation email
 var NERF_GUIDE_URL = "https://yourpartyporch.com/customer/nerf-party-guide.html";
+var HOST_WAIVER_URL = "https://yourpartyporch.com/customer/waiver.html#host";
+var PARTICIPANT_WAIVER_URL = "https://yourpartyporch.com/customer/waiver.html#participant";
+var CUSTOMER_WAIVER_REMINDER_DAYS = 4;
+var CUSTOMER_WAIVER_PREFIX = "customer_waiver_";
 
 // --- Text the customer their deposit link (Twilio SMS) -----------------------
 // Sends the deposit link by SMS through Twilio. Your Twilio credentials are read
@@ -92,7 +96,10 @@ function doGet(e) {
   var p = (e && e.parameter) || {};
   if (p.action === "waiver") return renderWaiverForm_(p.type);
   if (p.action === "waiverStatus") {
-    return reply({ ok: true, waiversReady: waiverReady_(), version: WAIVER_VERSION }, p.callback);
+    return reply({
+      ok: true, waiversReady: waiverReady_(), version: WAIVER_VERSION,
+      notificationsReady: customerWaiverAutomationsReady_()
+    }, p.callback);
   }
   if (p.action === "availability") {
     return reply(availability(p.date), p.callback);
@@ -412,25 +419,26 @@ function eventHoldActive(event) {
   return !match || bookingHoldActive(match[1]);
 }
 
-function bookingHoldActive(bookingId) {
+function bookingHoldActive(bookingId, checkPayment) {
   var lock = getBookingLock();
   var acquired = !lock.hasLock();
   if (acquired) lock.waitLock(30000);
   try {
-    return reconcileBookingHold(bookingId);
+    return reconcileBookingHold(bookingId, checkPayment);
   } finally {
     if (acquired) lock.releaseLock();
   }
 }
 
-function reconcileBookingHold(bookingId) {
+function reconcileBookingHold(bookingId, checkPayment) {
   var booking = loadBooking(bookingId);
   if (!booking) throw new Error("Missing booking hold record");
   if (booking.status === "quote_requested") return false;
   if (booking.status === "failed" && !booking.invoiceId) return false;
   if (booking.status === "paid") return true;
   if (booking.status === "released") return false;
-  if (Date.now() < booking.due * 1000) return true;
+  var beforeDeadline = Date.now() < booking.due * 1000;
+  if (beforeDeadline && !checkPayment) return true;
   if (booking.invoiceId) {
     var invoice = stripeRequest("invoices/" + booking.invoiceId, "get");
     if (invoice.status === "paid") {
@@ -438,12 +446,14 @@ function reconcileBookingHold(bookingId) {
       saveBooking(bookingId, booking);
       return true;
     }
+    if (beforeDeadline) return true;
     if (invoice.status === "open" || invoice.status === "uncollectible") {
       invoice = stripeRequest("invoices/" + booking.invoiceId + "/void", "post", null, "expire-" + booking.invoiceId);
       if (invoice.status !== "void") throw new Error("Invoice could not be voided");
     } else if (invoice.status !== "draft" && invoice.status !== "void") {
       throw new Error("Unexpected invoice state: " + invoice.status);
     }
+    if (beforeDeadline) return true;
   }
   booking.status = "released";
   saveBooking(bookingId, booking);
@@ -455,7 +465,20 @@ function expireBookingHolds() {
   var failures = [];
   Object.keys(props).forEach(function(key) {
     if (key.indexOf(BOOKING_PREFIX) !== 0) return;
-    try { bookingHoldActive(key.slice(BOOKING_PREFIX.length)); }
+    try {
+      var bookingId = key.slice(BOOKING_PREFIX.length);
+      var notificationsEnabled = customerWaiverAutomationsReady_();
+      bookingHoldActive(bookingId, notificationsEnabled);
+      var booking = loadBooking(bookingId);
+      if (notificationsEnabled && booking.status === "paid" && booking.eventId && !booking.waiverNoticeChecked) {
+        var calendar = CALENDAR_ID ? CalendarApp.getCalendarById(CALENDAR_ID) : CalendarApp.getDefaultCalendar();
+        var event = calendar.getEventById(booking.eventId);
+        if (event) sendCustomerWaiverNotice_(event, "paid");
+        else console.warn("Paid booking " + bookingId + " has no calendar event; no waiver message sent.");
+        booking.waiverNoticeChecked = true;
+        saveBooking(bookingId, booking);
+      }
+    }
     catch (err) {
       console.error("Hold expiration failed for " + key + ": " + String(err));
       failures.push(key);
@@ -502,8 +525,7 @@ function sendConfirmationEmail(d, depUrl, depDollars, due) {
   var cart  = d.cart || d.service || "your party";
   var est   = d.estimate ? String(d.estimate) : "";
   var phoneLine = BUSINESS_PHONE ? ("<br>Call/text: <strong>" + BUSINESS_PHONE + "</strong>") : "";
-  var hasNerf = String(d.items || "").split(",").indexOf("nerf") > -1 ||
-                d.rental === "Nerf Battles" || /Nerf Battles/.test(cart);
+  var hasNerf = bookingIncludesNerf_(d);
   var refereedNerf = hasNerf && d.service === "Rental + Referee";
   var nerfServiceNote = refereedNerf ?
     "Your referee handles setup, runs two hours of games, then tears down, packs and removes the equipment. Please provide a hose with running water and an accessible outlet for setup." :
@@ -553,6 +575,11 @@ function sendConfirmationEmail(d, depUrl, depDollars, due) {
         (est ? row("Estimate", esc(est)) : "") +
       '</table>' +
       depositBlock +
+      (hasNerf && link ? '<div style="margin:22px 0;padding:18px;border:2px solid #12263a">' +
+        '<strong>Host agreement - complete at booking</strong><p>The adult host/renter must sign their own agreement. ' +
+        'Booking or payment does not sign it or cover guests. We will send the participant/guardian link after ' +
+        'your deposit is paid, with a reminder before the party.</p><a href="' + HOST_WAIVER_URL +
+        '">Complete the host agreement</a></div>' : "") +
       guideBlock +
       '<hr style="border:none;border-top:1px solid #eee;margin:22px 0">' +
       '<p style="font-size:13px;color:#667;line-height:1.6">' +
@@ -576,6 +603,8 @@ function sendConfirmationEmail(d, depUrl, depDollars, due) {
           (link && amt ? ("Place your " + amt + " (" + DEPOSIT_PERCENT + "%) deposit here: " + link)
                        : ("We'll follow up with a tailored quote and confirm availability. No payment is due and no date is held until we issue a deposit invoice.")) +
           (deadline ? " Your date is held until " + deadline + ". Unpaid holds are released." : "") +
+          (hasNerf && link ? " Host agreement - please complete at booking: " + HOST_WAIVER_URL +
+            " Your host signature does not cover guests. After your deposit is paid, we will send the participant/guardian link to share." : "") +
           (hasNerf ? (" " + nerfServiceNote + " Setup and game guide: " + NERF_GUIDE_URL) : "")
   });
 }
@@ -593,6 +622,7 @@ function sendDepositText(d, depUrl, depDollars, due) {
   var body = BUSINESS_NAME + ": pay your $" + depDollars +
              " deposit for " + when + " by " + deadline + ": " + depUrl +
              " Your date is held until then; unpaid holds are released." +
+             (bookingIncludesNerf_(d) ? " Host agreement - please sign at booking: " + HOST_WAIVER_URL : "") +
              " Reply STOP to opt out, HELP for help.";
 
   return sendTwilioText(d.phone, body);
@@ -622,6 +652,150 @@ function sendTwilioText(phone, body) {
     throw new Error("Twilio did not accept the SMS");
   }
   return result.sid;
+}
+
+function bookingIncludesNerf_(d) {
+  return String(d.items || "").split(",").some(function(item) { return item.trim().toLowerCase() === "nerf"; }) ||
+    d.rental === "Nerf Battles" || /Nerf Battles/i.test(String(d.cart || d.service || ""));
+}
+
+function customerWaiverAutomationsReady_() {
+  return PropertiesService.getScriptProperties().getProperty("CUSTOMER_WAIVER_AUTOMATIONS") === "enabled";
+}
+
+function installCustomerWaiverAutomations() {
+  ScriptApp.requireAllScopes(ScriptApp.AuthMode.FULL);
+  if (Session.getActiveUser().getEmail().toLowerCase() !== BUSINESS_EMAIL) {
+    throw new Error("Run this installer as " + BUSINESS_EMAIL + ".");
+  }
+  if (!waiverReady_()) throw new Error("Set up private online waiver storage first.");
+  if (Session.getScriptTimeZone() !== "America/Chicago") throw new Error("Set the project time zone to America/Chicago.");
+  installBookingHoldTrigger();
+  var exists = ScriptApp.getProjectTriggers().some(function(trigger) {
+    return trigger.getHandlerFunction() === "sendCustomerWaiverReminders_";
+  });
+  if (!exists) {
+    ScriptApp.newTrigger("sendCustomerWaiverReminders_").timeBased()
+      .atHour(9).nearMinute(0).everyDays(1).inTimezone("America/Chicago").create();
+  }
+  PropertiesService.getScriptProperties().setProperty("CUSTOMER_WAIVER_AUTOMATIONS", "enabled");
+  console.log("Customer waiver messages enabled. Installation sends no customer messages.");
+}
+
+function customerWaiverEvent_(event) {
+  var description = String(event.getDescription() || "");
+  function field(label) {
+    var match = description.match(new RegExp("^" + label + ":[ \\t]*([^\\r\\n]*)", "im"));
+    return match ? match[1].trim() : "";
+  }
+  return {
+    date: Utilities.formatDate(event.getStartTime(), "America/Chicago", "yyyy-MM-dd"),
+    name: field("Customer"), email: field("Email"), phone: field("Phone"),
+    consent: field("SMS/Email consent"),
+    bookingId: field("Booking ID"),
+    nerf: eventItemKeys(event).indexOf("nerf") > -1 ||
+      /nerf|foam.dart/i.test(event.getTitle() + "\n" + description),
+    excluded: /BLOCKED|CLOSED|UNAVAILABLE|VACATION|CANCELLED|CANCELED|PICKUP|PICK.UP|CLEANING/i.test(event.getTitle())
+  };
+}
+
+function customerWaiverKey_(event, stage, channel, recipient) {
+  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,
+    event.getId() + "_" + event.getStartTime().getTime() + "_" + stage + "_" + channel + "_" + recipient);
+  return CUSTOMER_WAIVER_PREFIX + Utilities.formatDate(event.getStartTime(), "America/Chicago", "yyyy-MM-dd") +
+    "_" + Utilities.base64EncodeWebSafe(digest).replace(/=+$/, "");
+}
+
+function customerWaiverWindowEnd_() {
+  var end = new Date();
+  end.setDate(end.getDate() + CUSTOMER_WAIVER_REMINDER_DAYS);
+  return Utilities.formatDate(end, "America/Chicago", "yyyy-MM-dd");
+}
+
+function sendCustomerWaiverNotice_(event, stage) {
+  var d = customerWaiverEvent_(event);
+  if (!d.nerf || d.excluded || event.getStartTime().getTime() <= Date.now()) return null;
+  var subject = BUSINESS_NAME + (stage === "paid" ? " - deposit received: participant waivers" : " - party waiver reminder") +
+    " for " + d.date;
+  var body = BUSINESS_NAME + ": " + (stage === "paid" ? "Your deposit for " + d.date + " is paid. " : "Your party is coming up on " + d.date + ". ") +
+    "Please share this participant waiver link with every adult participant and each child's parent/legal guardian: " +
+    PARTICIPANT_WAIVER_URL + " Complete one form per participant before play. The host cannot sign for all guests. " +
+    "Host: if not already signed, complete your agreement: " + HOST_WAIVER_URL;
+  var props = PropertiesService.getScriptProperties();
+  var channels = [];
+  if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) channels.push({type: "email", to: d.email.toLowerCase()});
+  if (SEND_SMS && d.consent === "Yes" && tenDigits(d.phone)) channels.push({type: "sms", to: "+1" + tenDigits(d.phone)});
+  if (!channels.length) channels.push({type: "missing", to: ""});
+  var lock = getBookingLock();
+  var acquired = !lock.hasLock();
+  if (acquired) lock.waitLock(30000);
+  var successful = true;
+  try {
+    channels.forEach(function(channel) {
+      var key = customerWaiverKey_(event, stage, channel.type, channel.to);
+      var previous = props.getProperty(key);
+      if (previous) {
+        if (previous !== "sent" && previous !== "covered_by_paid") successful = false;
+        return;
+      }
+      props.setProperty(key, "sending");
+      try {
+        if (channel.type === "missing") throw new Error("No usable email or consented SMS destination in the calendar event.");
+        if (channel.type === "email") {
+          MailApp.sendEmail({to: channel.to, replyTo: BUSINESS_EMAIL, name: BUSINESS_NAME, subject: subject, body: body});
+        } else {
+          sendTwilioText(channel.to, body + " Reply STOP to opt out, HELP for help.");
+        }
+        props.setProperty(key, "sent");
+        // Inside four days, the immediate paid message also serves as the reminder.
+        if (stage === "paid" && d.date <= customerWaiverWindowEnd_()) {
+          props.setProperty(customerWaiverKey_(event, "reminder", channel.type, channel.to), "covered_by_paid");
+        }
+      } catch (err) {
+        props.setProperty(key, "uncertain");
+        successful = false;
+        reportOwnerAutomationFailure("customer waiver " + stage + " " + channel.type, err,
+          "Calendar event: " + event.getId() + "\nEvent date: " + d.date + "\n" + body);
+      }
+    });
+  } finally {
+    if (acquired) lock.releaseLock();
+  }
+  return successful;
+}
+
+function sendCustomerWaiverReminders_() {
+  if (!customerWaiverAutomationsReady_()) throw new Error("Run installCustomerWaiverAutomations first.");
+  if (Session.getScriptTimeZone() !== "America/Chicago") throw new Error("Set the project time zone to America/Chicago.");
+  var props = PropertiesService.getScriptProperties();
+  var start = new Date(); start.setHours(0, 0, 0, 0);
+  var cutoff = new Date(start); cutoff.setDate(cutoff.getDate() - 8);
+  var cutoffStr = Utilities.formatDate(cutoff, "America/Chicago", "yyyy-MM-dd");
+  Object.keys(props.getProperties()).forEach(function(key) {
+    if (key.indexOf(CUSTOMER_WAIVER_PREFIX) === 0 &&
+        key.slice(CUSTOMER_WAIVER_PREFIX.length, CUSTOMER_WAIVER_PREFIX.length + 10) < cutoffStr) {
+      props.deleteProperty(key);
+    }
+  });
+  var end = new Date(start); end.setDate(end.getDate() + CUSTOMER_WAIVER_REMINDER_DAYS + 1);
+  var calendar = CALENDAR_ID ? CalendarApp.getCalendarById(CALENDAR_ID) : CalendarApp.getDefaultCalendar();
+  var failures = 0;
+  calendar.getEvents(start, end).forEach(function(event) {
+    try {
+      var d = customerWaiverEvent_(event);
+      if (!d.nerf || d.excluded || event.getStartTime().getTime() <= Date.now()) return;
+      if (d.bookingId) {
+        if (!eventHoldActive(event)) return;
+        var booking = loadBooking(d.bookingId);
+        if (booking.status !== "paid") return;
+      }
+      if (sendCustomerWaiverNotice_(event, "reminder") === false) failures++;
+    } catch (err) {
+      reportOwnerAutomationFailure("customer waiver reminder", err, "Calendar event: " + event.getId());
+      failures++;
+    }
+  });
+  if (failures) throw new Error("Could not confirm " + failures + " customer waiver reminder(s). Check the business inbox.");
 }
 
 function reportOwnerAutomationFailure(feature, err, body) {
