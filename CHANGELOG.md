@@ -5,6 +5,14 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-11-13
 
+### Added - Private mobile text inbox
+- Added a separate owner-only Apps Script inbox for Twilio business numbers,
+  recent/paged conversations, message statuses, compose/reply and waiver-link buttons.
+- Kept credentials server-side and sends protected by expiring tokens and private
+  receipts; uncertain sends are not automatically repeated.
+- Documented private deployment and phone Home Screen setup without changing the
+  public booking app or existing Twilio webhooks.
+
 ### Added - Automatic customer waiver requests
 - Included the host agreement in Nerf booking confirmation emails and consented
   deposit texts. Participant/guardian links go to the host after the tracked

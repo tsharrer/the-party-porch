@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base target="_top">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#12263a">
+<title>Party Porch Text Inbox</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fff8f0;color:#12263a;font:16px/1.45 Arial,sans-serif}
+header{background:#12263a;color:#fff;padding:18px}h1{font-size:1.4rem;margin:0 0 12px}h2{font-size:1.1rem;margin:0}
+.toolbar{display:flex;align-items:end;gap:12px;flex-wrap:wrap}.toolbar label{flex:1;min-width:220px}
+main{max-width:1160px;margin:0 auto;padding:16px}.layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px}
+.card{background:#fff;border:1px solid #cbd4dc;border-radius:12px;padding:16px;min-width:0}
+button,input,select,textarea{font:inherit}button{min-height:44px;border:1px solid #12263a;background:#12263a;color:#fff;border-radius:6px;padding:10px 15px;cursor:pointer}
+button.secondary{background:#fff;color:#12263a}button:disabled{opacity:.55;cursor:default}
+input,select,textarea{width:100%;padding:11px;margin:5px 0 12px;border:1px solid #657582;border-radius:6px;background:#fff;color:#12263a}
+textarea{resize:vertical;min-height:110px}label{display:block;font-weight:bold}fieldset{border:0;padding:0;margin:0;min-width:0}
+.check{display:flex;gap:10px;font-weight:normal;margin:12px 0}.check input{width:22px;height:22px;flex:0 0 auto;margin:0}
+.help{font-size:.88rem;color:#4e6273}.status{white-space:pre-line}.error{color:#a1272b}
+.threads{max-height:65vh;overflow:auto;margin:14px 0}.thread{display:block;width:100%;text-align:left;background:white;color:#12263a;margin:0 0 8px;border-color:#ccd6df}
+.thread.selected{border:2px solid #12263a;background:#edf4f8}.thread strong,.thread small{display:block}.thread small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.conversation-heading{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}
+#messages{max-height:48vh;overflow:auto;padding:4px;display:flex;flex-direction:column;gap:10px}
+.bubble{max-width:90%;padding:12px;border-radius:12px;background:#edf2f6;align-self:flex-start;overflow-wrap:anywhere}
+.bubble.outbound{background:#12263a;color:white;align-self:flex-end}.bubble p{white-space:pre-wrap;margin:0 0 5px}.bubble a{color:inherit;text-decoration:underline}
+.bubble small{display:block;font-size:.76rem;opacity:.85}.bubble.problem{border:2px solid #be3d42}
+.actions{display:flex;gap:10px;flex-wrap:wrap}#send-status{font-weight:bold}.preview{display:block}
+button:focus,input:focus,select:focus,textarea:focus,a:focus{outline:3px solid #ffb703;outline-offset:3px}
+[hidden]{display:none!important}#back{display:none}
+@media(max-width:700px){.layout{grid-template-columns:1fr}.threads{max-height:none}.layout.chat-open aside{display:none}.layout:not(.chat-open) #chat{display:none}#back{display:inline-block}#messages{max-height:45vh}main{padding:12px}.bubble{max-width:96%}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Party Porch Text Inbox</h1>
+  <div class="toolbar">
+    <label>Send and receive from<select id="sender" disabled aria-label="Business sending number"></select></label>
+    <button id="refresh" disabled>Refresh inbox</button>
+  </div>
+</header>
+<main>
+  <p id="connection" class="status" role="status" aria-live="polite">Connecting to your private inbox...</p>
+  <div id="app" hidden>
+    <p class="help">Private to yourpartyporch@gmail.com. Recent SMS history is read from Twilio; no conversations are stored on this device. Automatic booking texts and incoming email forwarding remain unchanged.</p>
+    <div id="layout" class="layout">
+      <aside class="card">
+        <h2>Conversations</h2>
+        <label class="help" for="search">Find a phone number</label><input id="search" type="search" placeholder="Search loaded conversations">
+        <button id="new" class="secondary">New conversation</button>
+        <div id="threads" class="threads"></div>
+        <p id="empty" class="help">No messages loaded yet.</p>
+        <button id="older" class="secondary" hidden>Load older messages</button>
+        <p class="help">Only loaded history is searched. Use Load older for earlier conversations.</p>
+      </aside>
+      <section id="chat" class="card" aria-label="Conversation and message composer">
+        <div class="conversation-heading"><button id="back" class="secondary">Back</button><h2 id="peer-heading">New conversation</h2></div>
+        <div id="messages" aria-label="Message history"></div>
+        <form id="compose">
+          <fieldset id="compose-fields">
+            <label>Recipient's US phone number<input id="recipient" type="tel" maxlength="40" required autocomplete="off" placeholder="+1 or 10 digits"></label>
+            <label>Message<textarea id="body" maxlength="1600" required placeholder="Type your message..."></textarea></label>
+            <p id="count" class="help">0 / 1600 characters. Long or Unicode messages may cost multiple SMS segments.</p>
+            <div class="actions"><button id="host-template" class="secondary" type="button">Host agreement link</button><button id="participant-template" class="secondary" type="button">Participant waiver link</button></div>
+            <label class="check"><input id="consent" type="checkbox" required><span>The recipient has agreed to receive business texts. Do not message someone who has opted out.</span></label>
+          </fieldset>
+          <button id="send" type="submit">Send text</button>
+        </form>
+        <p id="send-status" class="status" role="status" aria-live="polite" tabindex="-1"></p>
+        <div id="uncertain-actions" class="actions" hidden>
+          <button id="check-send" class="secondary">Check send status</button>
+          <button id="restart" class="secondary">Start a new draft</button>
+        </div>
+        <p class="help">Queued or sent is not proof of delivery. Refresh to see Twilio's latest status. SMS only: attachments are indicated but not previewed. Twilio opt-outs, registration and normal charges still apply.</p>
+      </section>
+    </div>
+  </div>
+  <button id="reconnect" class="secondary" hidden>Retry connection</button>
+  <noscript>Enable JavaScript and sign in as the Party Porch business account to use this inbox.</noscript>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+let sender = "", peer = "", nextPageToken = "", sendToken = "", request = null;
+let sending = false, reading = false, readGeneration = 0, tokenLoading = false;
+let historyPaged = false, tokenGeneration = 0, checkingSend = false;
+const messages = new Map();
+function rpc(name, payload) {
+  return new Promise((resolve, reject) => {
+    const run = google.script.run.withSuccessHandler(resolve).withFailureHandler(() => {
+      reject(new Error("The request could not be confirmed. Check your connection and Google sign-in; do not repeat an unconfirmed send."));
+    });
+    if (payload === undefined) run[name](); else run[name](payload);
+  });
+}
+function messageStatus(text, error) {
+  $("send-status").textContent = text;
+  $("send-status").className = "status" + (error ? " error" : "");
+  $("send-status").focus();
+}
+function normalizePhone(value) {
+  let digits = value.replace(/[()\s.+-]/g, "");
+  if (digits.length === 11 && digits[0] === "1") digits = digits.slice(1);
+  return /^\d{10}$/.test(digits) ? "+1" + digits : "";
+}
+function updateCount() { $("count").textContent = $("body").value.length + " / 1600 characters. Long or Unicode messages may cost multiple SMS segments."; }
+function appendTextLinks(node, text) {
+  const pattern = /https?:\/\/[^\s<>"']+/g;
+  let end = 0;
+  for (const match of text.matchAll(pattern)) {
+    node.append(document.createTextNode(text.slice(end, match.index)));
+    const link = document.createElement("a");
+    link.textContent = match[0]; link.href = match[0]; link.target = "_blank"; link.rel = "noopener noreferrer";
+    node.append(link); end = match.index + match[0].length;
+  }
+  node.append(document.createTextNode(text.slice(end)));
+}
+function renderThreads() {
+  const grouped = new Map();
+  for (const message of messages.values()) {
+    const previous = grouped.get(message.peer);
+    if (!previous || message.at > previous.at) grouped.set(message.peer, message);
+  }
+  $("threads").replaceChildren();
+  const search = $("search").value.replace(/\s/g, "").toLowerCase();
+  const visible = [...grouped.values()].filter(message => message.peer.toLowerCase().includes(search)).sort((a,b) => b.at.localeCompare(a.at));
+  for (const message of visible) {
+    const button = document.createElement("button");
+    button.className = "thread" + (message.peer === peer ? " selected" : "");
+    const name = document.createElement("strong"); name.textContent = message.peer;
+    const preview = document.createElement("small"); preview.textContent = message.body === null ? "Text unavailable in Twilio" : (message.body || (message.mediaCount ? "Message with attachments" : "No text"));
+    button.append(name, preview); button.addEventListener("click", () => selectPeer(message.peer)); $("threads").append(button);
+  }
+  $("empty").hidden = visible.length > 0;
+  $("empty").textContent = search ? "No matching loaded conversations." : "No conversations in the loaded history.";
+  $("older").hidden = !nextPageToken;
+}
+function renderConversation(scroll) {
+  const container = $("messages");
+  container.replaceChildren();
+  const history = [...messages.values()].filter(message => message.peer === peer).sort((a,b) => a.at.localeCompare(b.at));
+  for (const message of history) {
+    const bubble = document.createElement("div");
+    bubble.className = "bubble" + (message.outbound ? " outbound" : "") + (/failed|undelivered/.test(message.status) ? " problem" : "");
+    const text = document.createElement("p");
+    appendTextLinks(text, message.body === null ? "Message text is unavailable or redacted in Twilio." : message.body);
+    bubble.append(text);
+    if (message.mediaCount) { const media = document.createElement("small"); media.textContent = message.mediaCount + " attachment(s); view in Twilio Console."; bubble.append(media); }
+    const meta = document.createElement("small");
+    meta.textContent = new Date(message.at).toLocaleString() + " | " + (message.outbound ? "Outgoing: " : "Incoming: ") +
+      message.status + (message.errorCode ? " | Error " + message.errorCode : "");
+    bubble.append(meta); container.append(bubble);
+  }
+  if (scroll) container.scrollTop = container.scrollHeight;
+}
+function canLeaveDraft() {
+  if (sending || request) { messageStatus("Resolve or review the current send before changing conversations.", true); return false; }
+  return !$("body").value.trim() || confirm("Discard this unsent draft?");
+}
+async function freshToken() {
+  const generation = ++tokenGeneration;
+  tokenLoading = true; sendToken = ""; $("send").disabled = true;
+  try {
+    const result = await rpc("createInboxSendToken");
+    if (generation !== tokenGeneration) return;
+    if (!result.ok) throw new Error(result.error);
+    sendToken = result.token;
+  } catch (error) {
+    if (generation === tokenGeneration) messageStatus(error.message, true);
+  } finally {
+    if (generation === tokenGeneration) {
+      tokenLoading = false; $("send").disabled = !sendToken || sending || !!request;
+    }
+  }
+}
+async function selectPeer(number) {
+  if (!canLeaveDraft()) return;
+  peer = number; request = null;
+  $("recipient").value = number; $("body").value = ""; $("consent").checked = false;
+  $("peer-heading").textContent = number || "New conversation";
+  $("compose-fields").disabled = false; $("uncertain-actions").hidden = true;
+  $("send-status").textContent = ""; $("layout").classList.add("chat-open");
+  renderThreads(); renderConversation(true); updateCount(); await freshToken();
+}
+async function refreshHistory(older = false) {
+  if (reading || !sender) return;
+  reading = true;
+  const generation = readGeneration;
+  const line = sender;
+  $("refresh").disabled = true; $("older").disabled = true;
+  try {
+    const result = await rpc("getInboxMessages", {sender: line, pageToken: older ? nextPageToken : ""});
+    if (generation !== readGeneration || line !== sender) return;
+    if (!result.ok) throw new Error(result.error);
+    const wasAtBottom = $("messages").scrollHeight - $("messages").scrollTop - $("messages").clientHeight < 60;
+    result.messages.forEach(message => messages.set(message.id, message));
+    // A top-page refresh must not replace the cursor for history already paged in.
+    if (older) { historyPaged = true; nextPageToken = result.nextPageToken; }
+    else if (!historyPaged) nextPageToken = result.nextPageToken;
+    $("connection").textContent = "Connected as " + $("sender").value + ". Last checked " + new Date(result.checkedAt).toLocaleTimeString() + ".";
+    $("connection").className = "status";
+    renderThreads(); renderConversation(wasAtBottom && !older);
+  } catch (error) {
+    if (generation === readGeneration) { $("connection").textContent = error.message; $("connection").className = "status error"; }
+  } finally {
+    reading = false; $("refresh").disabled = false; $("older").disabled = false;
+    if (generation !== readGeneration) refreshHistory();
+  }
+}
+async function connect() {
+  $("reconnect").hidden = true; $("connection").textContent = "Connecting to your private inbox...";
+  try {
+    const result = await rpc("getInboxConfiguration");
+    if (!result.ok) throw new Error(result.error);
+    $("sender").replaceChildren();
+    result.senders.forEach(line => { const option = document.createElement("option"); option.value = line.number; option.textContent = line.label + " (" + line.number + ")"; $("sender").append(option); });
+    sender = result.defaultSender; $("sender").value = sender; sendToken = result.sendToken;
+    $("sender").disabled = false; $("refresh").disabled = false; $("send").disabled = false;
+    $("app").hidden = false;
+    await refreshHistory();
+  } catch (error) {
+    $("connection").textContent = error.message; $("connection").className = "status error";
+    $("reconnect").hidden = false;
+  }
+}
+$("compose").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (sending || tokenLoading || request || !sendToken || !$("compose").reportValidity()) return;
+  const to = normalizePhone($("recipient").value);
+  if (!to) { messageStatus("Enter a valid US phone number.", true); return; }
+  request = {token: sendToken, from: sender, to, body: $("body").value, consent: $("consent").checked};
+  sending = true; $("compose-fields").disabled = true; $("send").disabled = true;
+  messageStatus("Sending. Keep this page open; do not repeat the send.", false);
+  try {
+    const result = await rpc("sendInboxText", request);
+    if (!result.ok) {
+      if (result.canEdit) {
+        request = null; $("compose-fields").disabled = false;
+        messageStatus(result.error, true); await freshToken();
+      } else { messageStatus(result.error, true); $("uncertain-actions").hidden = false; }
+      return;
+    }
+    peer = to; $("peer-heading").textContent = to; $("recipient").value = to;
+    request = null; $("body").value = ""; $("consent").checked = false; updateCount();
+    $("compose-fields").disabled = false;
+    messageStatus("Twilio accepted the message: " + result.status + ". Refresh to confirm delivery.", false);
+    await freshToken(); await refreshHistory();
+  } catch (error) { messageStatus(error.message, true); $("uncertain-actions").hidden = false; }
+  finally { sending = false; $("send").disabled = !sendToken || !!request || tokenLoading; }
+});
+$("check-send").addEventListener("click", async () => {
+  if (!request || sending || checkingSend) return;
+  const checkedRequest = request;
+  checkingSend = true; $("check-send").disabled = true; $("restart").disabled = true;
+  try {
+    const result = await rpc("checkInboxSend", {token: checkedRequest.token});
+    if (request !== checkedRequest) return;
+    if (!result.ok) { messageStatus(result.error, true); return; }
+    messageStatus("Twilio status: " + result.status + (result.errorCode ? " (error " + result.errorCode + ")" : "") + ". No additional text was sent.", /failed|undelivered/.test(result.status));
+    if (!/failed|undelivered/.test(result.status)) {
+      peer = checkedRequest.to; $("peer-heading").textContent = peer; $("recipient").value = peer;
+      request = null; $("body").value = ""; $("consent").checked = false; $("compose-fields").disabled = false;
+      $("uncertain-actions").hidden = true; updateCount(); await freshToken();
+    }
+    await refreshHistory();
+  } catch (error) { messageStatus(error.message, true); }
+  finally { checkingSend = false; $("check-send").disabled = false; $("restart").disabled = false; }
+});
+$("restart").addEventListener("click", async () => {
+  if (sending || checkingSend) return;
+  if (!confirm("Only continue after checking this conversation and Twilio logs. The previous message may already have been sent. Starting another send could duplicate it. Start a new draft?")) return;
+  request = null; $("compose-fields").disabled = false; $("uncertain-actions").hidden = true;
+  $("consent").checked = false; messageStatus("New draft. Review recipient and message before sending.", false); await freshToken();
+});
+$("sender").addEventListener("change", async () => {
+  if (!canLeaveDraft()) { $("sender").value = sender; return; }
+  readGeneration++; sender = $("sender").value; peer = ""; nextPageToken = ""; historyPaged = false; messages.clear();
+  $("body").value = ""; $("recipient").value = ""; $("consent").checked = false; $("layout").classList.remove("chat-open");
+  renderThreads(); renderConversation(false); updateCount();
+  await freshToken();
+  await refreshHistory();
+});
+$("new").addEventListener("click", () => selectPeer(""));
+$("back").addEventListener("click", () => $("layout").classList.remove("chat-open"));
+$("refresh").addEventListener("click", () => refreshHistory());
+$("older").addEventListener("click", () => refreshHistory(true));
+$("reconnect").addEventListener("click", connect);
+$("search").addEventListener("input", renderThreads);
+$("body").addEventListener("input", updateCount);
+$("host-template").addEventListener("click", () => { $("body").value = "Hi! This is The Party Porch. Please complete the host/rental agreement before your event: https://yourpartyporch.com/customer/waiver.html#host"; updateCount(); });
+$("participant-template").addEventListener("click", () => { $("body").value = "Hi! This is The Party Porch. Please share this waiver with each adult participant and each child's parent/legal guardian. Complete one form per participant before play: https://yourpartyporch.com/customer/waiver.html#participant"; updateCount(); });
+setInterval(() => { if (!document.hidden) refreshHistory(); }, 30000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshHistory(); });
+window.addEventListener("beforeunload", event => {
+  if (sending || request || $("body").value.trim()) { event.preventDefault(); event.returnValue = ""; }
+});
+connect();
+</script>
+</body>
+</html>
