@@ -9,8 +9,10 @@ Newest entries first. Dates in America/Chicago.
 - Added an unlisted, print-friendly staff manual for two-hour hosted Nerf sessions,
   with arrival 60 minutes early, host-supplied hose/water and outlet, referee
   eligibility and waiver requirements, setup, safety, games, incidents and closeout.
-- Included shared-valve instructions and dry, empty equipment returned in its bin
-  on the porch at the agreed pickup date and time.
+- Included shared-valve instructions and referee teardown, bin packing and removal
+  after games. Overnight porch pickup applies to rental-only bookings.
+- Clarified referee responsibilities on the website, customer guide and booking
+  emails. Hosts provide the hose/water and outlet, not referee setup/teardown labor.
 
 ## 2026-11-12
 

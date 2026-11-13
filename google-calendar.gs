@@ -498,6 +498,10 @@ function sendConfirmationEmail(d, depUrl, depDollars, due) {
   var phoneLine = BUSINESS_PHONE ? ("<br>Call/text: <strong>" + BUSINESS_PHONE + "</strong>") : "";
   var hasNerf = String(d.items || "").split(",").indexOf("nerf") > -1 ||
                 d.rental === "Nerf Battles" || /Nerf Battles/.test(cart);
+  var refereedNerf = hasNerf && d.service === "Rental + Referee";
+  var nerfServiceNote = refereedNerf ?
+    "Your referee handles setup, runs two hours of games, then tears down, packs and removes the equipment. Please provide a hose with running water and an accessible outlet for setup." :
+    "Your rental-only Nerf gear stays overnight. Return everything clean, completely dry and empty in its bin on the porch for the agreed pickup date and time.";
 
   var amt  = depDollars ? ("$" + depDollars) : "";
   var link = depUrl;
@@ -523,8 +527,8 @@ function sendConfirmationEmail(d, depUrl, depDollars, due) {
 
   var guideBlock = hasNerf ?
     '<div style="margin:22px 0;padding:18px;border-radius:12px;background:#fff8f0;border:1px solid #e7ded3">' +
-      '<strong style="color:#12263a">Your overnight Nerf party setup &amp; game guide</strong>' +
-      '<p style="margin:6px 0 12px;color:#4b5968">Keep the gear overnight, then have everything empty, clean and dry for pickup the next day. This guide covers setup, safety rules, game ideas and the return checklist.</p>' +
+      '<strong style="color:#12263a">Your Nerf party setup &amp; game guide</strong>' +
+      '<p style="margin:6px 0 12px;color:#4b5968">' + esc(nerfServiceNote) + ' This guide covers setup, safety rules, games and returns.</p>' +
       '<a href="' + NERF_GUIDE_URL + '" style="color:#e04347;font-weight:700">Open the customer guide &rarr;</a>' +
     '</div>' : "";
 
@@ -547,7 +551,8 @@ function sendConfirmationEmail(d, depUrl, depDollars, due) {
       '<hr style="border:none;border-top:1px solid #eee;margin:22px 0">' +
       '<p style="font-size:13px;color:#667;line-height:1.6">' +
         'Delivery is free within 12 miles of 77018 (a small fee applies beyond that). ' +
-        'Setup is available as a +$40 add-on. We\u2019ll confirm final details before your date.' +
+        (refereedNerf ? 'Your referee handles setup and teardown. ' : 'Setup is available as a +$40 add-on. ') +
+        'We\u2019ll confirm final details before your date.' +
         phoneLine +
       '</p>' +
       '<p style="margin-top:20px">See you soon,<br><strong>' + BUSINESS_NAME + '</strong></p>' +
@@ -565,7 +570,7 @@ function sendConfirmationEmail(d, depUrl, depDollars, due) {
           (link && amt ? ("Place your " + amt + " (" + DEPOSIT_PERCENT + "%) deposit here: " + link)
                        : ("We'll follow up with a tailored quote and confirm availability. No payment is due and no date is held until we issue a deposit invoice.")) +
           (deadline ? " Your date is held until " + deadline + ". Unpaid holds are released." : "") +
-          (hasNerf ? (" Your Nerf rental is overnight with pickup the next day. Setup and game guide: " + NERF_GUIDE_URL) : "")
+          (hasNerf ? (" " + nerfServiceNote + " Setup and game guide: " + NERF_GUIDE_URL) : "")
   });
 }
 

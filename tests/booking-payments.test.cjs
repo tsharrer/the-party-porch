@@ -202,6 +202,23 @@ test('lookup before the POST finishes waits without creating an invoice', () => 
   assert.equal(h.lookup('invalid').error, 'missing_booking_id');
 });
 
+test('Nerf emails distinguish referee teardown from rental-only porch pickup', () => {
+  for (const service of ['Rental + Referee', 'Rental only']) {
+    const h = harness();
+    assert.equal(h.post({...h.booking, service}).ok, true);
+    const email = h.emails[0];
+    if (service === 'Rental + Referee') {
+      assert.ok(email.body.includes('then tears down, packs and removes the equipment'));
+      assert.ok(email.body.includes('hose with running water'));
+      assert.equal(email.body.includes('stays overnight'), false);
+      assert.equal(email.htmlBody.includes('Setup is available as a +$40 add-on'), false);
+    } else {
+      assert.ok(email.body.includes('rental-only Nerf gear stays overnight'));
+      assert.ok(email.body.includes('in its bin on the porch'));
+    }
+  }
+});
+
 test('pending Nerf blocks its day and the following day', () => {
   const h = harness();
   h.post();
