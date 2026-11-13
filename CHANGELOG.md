@@ -29,6 +29,9 @@ Newest entries first. Dates in America/Chicago.
   retaining its owner-account check and documenting the email-identity scope.
 - Required a child's full date of birth instead of manually entered age; calculate
   age on the event date and include both in private waiver records and PDFs.
+- Added an explicit host loss/damage fee based on documented repair or equivalent
+  replacement costs, with normal wear/pre-existing/staff-caused damage exclusions,
+  itemized invoicing and no automatic saved-card charges. Matched the rental terms.
 
 ### Added - Referee training manual
 - Added an unlisted, print-friendly staff manual for two-hour hosted Nerf sessions,

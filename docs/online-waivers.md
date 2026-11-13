@@ -14,6 +14,14 @@ Apps Script and deploy a new version of the existing web app. No new folder,
 permissions or installer run is required. Previously signed records remain unchanged;
 open forms using the earlier version must be reloaded before signing.
 
+The host agreement also includes a **loss/damage fee** based on documented repair
+or equivalent replacement costs, excluding normal wear, pre-existing damage,
+equipment defects and staff-caused damage. Individual pieces are replaced when
+available, charges are itemized and invoiced separately, and no automatic saved-card
+charge is authorized. For this wording update (version **2026-11-13.3**), replace
+**Waivers.gs** and redeploy the existing web app; the HTML form reads the terms
+from that file. Previously signed records are not modified or retroactively updated.
+
 ## One-time setup in the existing Party Porch Apps Script project
 
 1. Sign into Apps Script as **yourpartyporch@gmail.com**. Replace **Code.gs** with

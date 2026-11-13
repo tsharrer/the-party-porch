@@ -201,6 +201,17 @@ test('host submission saves a PDF with the complete accepted terms and emails th
   }
   assert.equal(h.journal().data.termsConsent, true);
   assert.equal(h.journal().document.title, h.open().document.title);
+  const feeSection = h.journal().document.sections.find(section => section.title.includes('equipment fees'));
+  assert.ok(feeSection, 'The accepted host snapshot must include equipment fees');
+  for (const phrase of [
+    'agrees to pay a loss/damage fee', 'reasonable, documented repair cost',
+    'Normal wear, pre-existing damage, equipment defects and staff-caused damage are excluded',
+    'replace individual pieces when available', 'itemized explanation',
+    'does not authorize automatic charges to a saved card'
+  ]) {
+    assert.ok(feeSection.paragraphs[0].includes(phrase), phrase);
+    assert.ok(html.includes(phrase), 'Saved PDF must include: ' + phrase);
+  }
 });
 
 test('refereed host does not need overnight pickup fields', () => {
@@ -221,6 +232,7 @@ test('adult participant signs for themselves without host-only fields', () => {
   assert.ok(h.conversions[0].includes('ordinary negligence'));
   assert.ok(h.conversions[0].includes('This form applies with or without a Party Porch referee'));
   assert.equal(h.journal().data.participantType, 'adult');
+  assert.equal(h.conversions[0].includes('agrees to pay a loss/damage fee'), false);
 });
 
 test('guardian signs a separate minor form and guardian authorization is retained', () => {

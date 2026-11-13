@@ -3,7 +3,7 @@
  * as google-calendar.gs. Run installWaiverStorage from the editor, then redeploy.
  * Records remain private. Setup requires the signed-in business account.
  */
-var WAIVER_VERSION = "2026-11-13.2";
+var WAIVER_VERSION = "2026-11-13.3";
 var WAIVER_BUSINESS = "The Party Porch, a Sharrer Investments LLC company";
 var WAIVER_EMAIL = "yourpartyporch@gmail.com";
 var WAIVER_ESIGN = "I consent to use electronic records and signatures for this agreement. " +
@@ -63,9 +63,12 @@ function waiverDocument_(kind) {
           "Follow the customer guide: one gallon of water per inflatable before adding air; water and air use the same shared dual-valve assembly."
         ] },
         { title: "3. Service, overnight rental and return", paragraphs: [
-          "For refereed parties, the referee handles setup, two hours of games, teardown, packing and equipment removal at the end. The host provides the hose/water and outlet, not the setup or teardown labor. Rentals without a Party Porch referee are overnight; the host follows the setup guide unless separate setup service is booked. For these rentals, the host must return all blasters, darts, glasses, inflatables and the pump. Deflate, drain every inflatable completely and clean and fully dry all equipment before packing. Put everything back in the bin and place the bin on the porch for the agreed pickup date and time. Report loss or damage; this agreement does not authorize any unspecified damage fee or card charge."
+          "For refereed parties, the referee handles setup, two hours of games, teardown, packing and equipment removal at the end. The host provides the hose/water and outlet, not the setup or teardown labor. Rentals without a Party Porch referee are overnight; the host follows the setup guide unless separate setup service is booked. For these rentals, the host must return all blasters, darts, glasses, inflatables and the pump. Deflate, drain every inflatable completely and clean and fully dry all equipment before packing. Put everything back in the bin and place the bin on the porch for the agreed pickup date and time. Report loss or damage promptly."
         ] },
-        { title: "4. Scope of the host's signature", paragraphs: [
+        { title: "4. Lost or damaged equipment fees", paragraphs: [
+          "The host/renter agrees to pay a loss/damage fee for missing, lost, stolen or broken equipment while in the host's or guests' care. The fee is the reasonable, documented repair cost or the cost of an equivalent replacement. Normal wear, pre-existing damage, equipment defects and staff-caused damage are excluded. Repair charges cannot exceed equivalent replacement cost; replace individual pieces when available, not the whole set. The Party Porch will provide an itemized explanation and repair quote/replacement price before invoicing. Fees are invoiced separately; this agreement does not authorize automatic charges to a saved card."
+        ] },
+        { title: "5. Scope of the host's signature", paragraphs: [
           "The host signs only for the host's own agreement and rental responsibilities. A host's signature is not a substitute for each participant's required paperwork or a minor's parent/legal guardian authorization."
         ] }
       ]
