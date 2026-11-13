@@ -15,6 +15,8 @@ Newest entries first. Dates in America/Chicago.
   and documented the required Drive authorization and manual deployment.
 - Gave the editor's setup function the selectable name `installWaiverStorage`,
   retaining its owner-account check and documenting the email-identity scope.
+- Required a child's full date of birth instead of manually entered age; calculate
+  age on the event date and include both in private waiver records and PDFs.
 
 ### Added - Referee training manual
 - Added an unlisted, print-friendly staff manual for two-hour hosted Nerf sessions,

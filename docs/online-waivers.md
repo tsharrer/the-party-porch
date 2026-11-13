@@ -5,6 +5,14 @@ Customer link: `https://yourpartyporch.com/customer/waiver.html`
 The host signs the host agreement. Each adult participant signs their own participant
 form; each minor needs a participant form completed by their own parent/legal guardian.
 Both forms cover parties with and without a Party Porch referee.
+Minor forms require the child's full date of birth. Age on the event date is
+calculated server-side and included with the birth date in the private record/PDF.
+The existing age range of 1-17 applies to minor participants; an adult uses the adult option.
+
+For the date-of-birth update, replace **both Waivers.gs and WaiverForm.html** in
+Apps Script and deploy a new version of the existing web app. No new folder,
+permissions or installer run is required. Previously signed records remain unchanged;
+open forms using the earlier version must be reloaded before signing.
 
 ## One-time setup in the existing Party Porch Apps Script project
 

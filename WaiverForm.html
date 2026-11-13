@@ -66,9 +66,10 @@ button:disabled{opacity:.6}button{cursor:pointer}input:focus,select:focus,button
           <label>Participant is<select name="participantType"><option value="">Choose one</option><option value="adult">Adult (18 or older), signing for myself</option><option value="minor">Minor, signed by parent/legal guardian</option></select></label>
           <div id="guardian-fields" class="wide" hidden>
             <div class="grid">
-              <label>Minor's age<input name="age" type="number" min="1" max="17" step="1"></label>
+              <label>Child's date of birth<input name="dateOfBirth" type="date" aria-describedby="birth-help"></label>
               <label>Your relationship to the minor<select name="relationship"><option value="">Choose one</option><option>Parent</option><option>Legal guardian</option></select></label>
             </div>
+            <p id="birth-help" class="help">Enter the child's full date of birth, not just their age. Age on the event date is calculated automatically (1-17).</p>
             <label class="check"><input name="guardianConsent" type="checkbox"><span>I am this participant's parent or legal guardian and authorize their participation. I am not signing merely as the party host or another child's parent.</span></label>
           </div>
           <label>Emergency contact name<input name="emergencyName" maxlength="120"></label>
@@ -144,7 +145,9 @@ function updateFields() {
   toggleSection("host-fields", host, ["eventTime", "address"]);
   toggleSection("pickup-fields", host && controls.service.value === "unrefereed", ["pickupDate", "pickupTime"]);
   toggleSection("participant-fields", !host, ["participantType", "emergencyName", "emergencyPhone"]);
-  toggleSection("guardian-fields", !host && controls.participantType.value === "minor", ["age", "relationship", "guardianConsent"]);
+  toggleSection("guardian-fields", !host && controls.participantType.value === "minor", ["dateOfBirth", "relationship", "guardianConsent"]);
+  controls.dateOfBirth.max = controls.eventDate.value && controls.eventDate.value < config.today ?
+    controls.eventDate.value : config.today;
 }
 form.addEventListener("change", updateFields);
 updateFields();
@@ -172,7 +175,6 @@ form.addEventListener("submit", event => {
     if (!form.reportValidity()) return;
     submission = Object.fromEntries(new FormData(form).entries());
     ["termsConsent", "electronicConsent", "adultConsent", "guardianConsent"].forEach(key => { submission[key] = controls[key].checked; });
-    if (submission.age) submission.age = Number(submission.age);
     submission.token = config.token;
   }
   sending = true;

@@ -100,7 +100,9 @@ function harness(options = {}) {
       computeHmacSha256Signature: (value, key) => [...crypto.createHmac('sha256', key).update(value).digest()],
       DigestAlgorithm: {SHA_256: 'sha256'},
       computeDigest: (algorithm, value) => [...crypto.createHash(algorithm).update(value).digest()],
-      formatDate: date => date.toISOString() + ' America/Chicago'
+      formatDate: (date, zone, pattern) => pattern === 'yyyy-MM-dd' ?
+        new Intl.DateTimeFormat('en-CA', {timeZone: zone}).format(date) :
+        date.toISOString() + ' America/Chicago'
     },
     LockService: { getScriptLock: () => {
       let owned = false;
@@ -223,11 +225,16 @@ test('adult participant signs for themselves without host-only fields', () => {
 
 test('guardian signs a separate minor form and guardian authorization is retained', () => {
   const h = harness();
-  const input = {...h.input('participant'), name: 'Test Child', participantType: 'minor', age: 11,
+  const input = {...h.input('participant'), name: 'Test Child', participantType: 'minor', dateOfBirth: '2015-12-01',
     relationship: 'Parent', guardianConsent: true};
   assert.equal(h.context.submitWaiver(input).ok, true);
   assert.equal(h.journal().data.signer, 'Test Adult');
   assert.equal(h.journal().data.guardianConsent, true);
+  assert.equal(h.journal().data.dateOfBirth, '2015-12-01');
+  assert.equal(h.journal().data.age, 11);
+  assert.ok(h.conversions[0].includes("Child&#39;s date of birth"));
+  assert.ok(h.conversions[0].includes('2015-12-01'));
+  assert.ok(h.conversions[0].includes('Age on event date'));
   assert.ok(h.conversions[0].includes('does not by itself establish an enforceable release'));
 });
 
@@ -252,14 +259,49 @@ test('rejects missing consents, invalid fields, forged/expired tokens and signer
   assert.equal(h.emails.length, 0);
 });
 
-test('rejects host-only signatures for minors, invalid ages and unauthorized relationships', () => {
+test('rejects host-only signatures for minors and unauthorized relationships', () => {
   const h = harness();
   const valid = {...h.input('participant'), name: 'Test Child', participantType: 'minor',
-    age: 11, relationship: 'Parent', guardianConsent: true};
-  for (const change of [{guardianConsent: false}, {relationship: 'Host'}, {age: 18}, {age: 0}, {age: 11.5}, {age: '11'}]) {
+    dateOfBirth: '2015-12-01', relationship: 'Parent', guardianConsent: true};
+  for (const change of [{guardianConsent: false}, {relationship: 'Host'}]) {
     assert.equal(h.context.submitWaiver({...valid, ...change}).ok, false);
   }
   assert.equal(h.files.length, 0);
+});
+
+test('minor birth date is required and must be real, not future, and within the existing age range at the event', () => {
+  const h = harness();
+  const valid = {...h.input('participant'), name: 'Test Child', participantType: 'minor',
+    dateOfBirth: '2015-12-01', relationship: 'Parent', guardianConsent: true};
+  for (const dateOfBirth of [undefined, '', 'not-a-date', '2015-02-29', '2027-01-01', '2008-12-01', '2026-01-01']) {
+    const result = h.context.submitWaiver({...valid, dateOfBirth, age: 11});
+    assert.equal(result.ok, false, String(dateOfBirth));
+    assert.equal(result.canEdit, true);
+  }
+  const beforeBirth = h.context.submitWaiver({...valid, dateOfBirth: '2015-12-01', eventDate: '2015-11-30'});
+  assert.equal(beforeBirth.ok, false);
+  assert.equal(h.files.length, 0);
+  assert.equal(h.emails.length, 0);
+});
+
+test('minor age is calculated on the event date at birthday and leap-day boundaries, never trusted from the client', () => {
+  for (const [dateOfBirth, eventDate, age] of [
+    ['2015-12-01', '2026-12-01', 11],
+    ['2015-12-02', '2026-12-01', 10],
+    ['2008-12-02', '2026-12-01', 17],
+    ['2012-02-29', '2024-02-29', 12],
+    ['2012-02-29', '2025-02-28', 12],
+    ['2012-02-29', '2025-03-01', 13]
+  ]) {
+    const h = harness();
+    const input = {...h.input('participant'), name: 'Test Child', participantType: 'minor',
+      dateOfBirth, eventDate, age: 99, relationship: 'Parent', guardianConsent: true};
+    assert.equal(h.context.submitWaiver(input).ok, true);
+    assert.equal(h.journal().data.age, age);
+    assert.equal(h.context.submitWaiver(input).ok, true);
+    assert.equal(h.files.length, 2);
+    assert.equal(h.emails.length, 1);
+  }
 });
 
 test('exact retries preserve one PDF, signing time and email, and changed data is rejected', () => {

@@ -3,7 +3,7 @@
  * as google-calendar.gs. Run installWaiverStorage from the editor, then redeploy.
  * Records remain private. Setup requires the signed-in business account.
  */
-var WAIVER_VERSION = "2026-11-13.1";
+var WAIVER_VERSION = "2026-11-13.2";
 var WAIVER_BUSINESS = "The Party Porch, a Sharrer Investments LLC company";
 var WAIVER_EMAIL = "yourpartyporch@gmail.com";
 var WAIVER_ESIGN = "I consent to use electronic records and signatures for this agreement. " +
@@ -111,6 +111,7 @@ function renderWaiverForm_(kind) {
   var template = HtmlService.createTemplateFromFile("WaiverForm");
   template.configJson = JSON.stringify({
     kind: kind, version: WAIVER_VERSION, business: WAIVER_BUSINESS,
+    today: Utilities.formatDate(new Date(), "America/Chicago", "yyyy-MM-dd"),
     document: document, electronicConsent: WAIVER_ESIGN,
     token: value + "." + waiverTokenSignature_(value)
   }).replace(/</g, "\\u003c");
@@ -184,8 +185,16 @@ function validateWaiver_(input) {
     data.emergencyPhone = text("emergencyPhone", "emergency contact phone", 40);
     if (data.emergencyPhone.replace(/\D/g, "").length < 10) throw new Error("Enter a valid emergency contact phone.");
     if (data.participantType === "minor") {
-      if (!Number.isInteger(input.age) || input.age < 1 || input.age > 17) throw new Error("Enter the minor's age (1-17).");
-      data.age = input.age;
+      data.dateOfBirth = date("dateOfBirth", "child's date of birth");
+      if (data.dateOfBirth > Utilities.formatDate(new Date(), "America/Chicago", "yyyy-MM-dd") ||
+          data.dateOfBirth > data.eventDate) {
+        throw new Error("The child's date of birth cannot be in the future or after the event date.");
+      }
+      data.age = Number(data.eventDate.slice(0, 4)) - Number(data.dateOfBirth.slice(0, 4)) -
+        (data.eventDate.slice(5) < data.dateOfBirth.slice(5) ? 1 : 0);
+      if (data.age < 1 || data.age > 17) {
+        throw new Error("The minor must be age 1-17 on the event date. Participants age 18 or older must use the adult participant option.");
+      }
       data.relationship = text("relationship", "relationship to the minor", 20);
       if (["Parent", "Legal guardian"].indexOf(data.relationship) === -1 || input.guardianConsent !== true) {
         throw new Error("Only this participant's parent or legal guardian may authorize their participation.");
@@ -231,7 +240,9 @@ function waiverPdfHtml_(record) {
     if (d.pickupDate) fields.push(["Agreed pickup (Houston)", d.pickupDate + " " + d.pickupTime]);
   } else {
     fields.push(["Participant type", d.participantType], ["Emergency contact", d.emergencyName], ["Emergency phone", d.emergencyPhone]);
-    if (d.participantType === "minor") fields.push(["Minor's age", d.age], ["Parent / legal guardian", d.signer], ["Relationship", d.relationship]);
+    if (d.participantType === "minor") fields.push(
+      ["Child's date of birth", d.dateOfBirth], ["Age on event date", d.age],
+      ["Parent / legal guardian", d.signer], ["Relationship", d.relationship]);
   }
   var consent = "I have read and agree to the agreement above. I am at least 18 and sign for myself as host/adult participant, or as this minor's parent/legal guardian.";
   if (d.guardianConsent) consent += " I confirm I am this minor's parent or legal guardian and authorize their participation.";
