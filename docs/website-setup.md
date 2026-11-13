@@ -179,3 +179,62 @@ additional automatic Stripe invoice email. An issued invoice can also be sent fr
 the Stripe Dashboard.
 
 Use `node --test tests/booking-payments.test.cjs` for offline payment-flow tests.
+
+### Owner text alerts, reminders and Google Contacts
+
+Accepted bookings and custom-quote requests can text the owner through the existing
+Twilio sender. Owner alerts are independent of the customer's SMS consent; customer
+deposit texts still require consent. These are request notifications, not proof of
+deposit payment.
+
+1. In Apps Script **Project Settings -> Script Properties**, add `OWNER_SMS_TO`
+   with your own mobile number, such as `+12025550199`. Do not use the Twilio
+   sender number or publish your personal number in website code.
+2. Keep the existing `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, and `TWILIO_FROM`
+   properties. Set `WEBHOOK_URL` to the existing `/exec` URL so Twilio delivery
+   failures can email the business inbox. Outbound messaging must be enabled for
+   the Twilio sender; an accepted API request is not confirmation of delivery.
+3. Paste the updated `google-calendar.gs` into **Code.gs**. Keep any separate
+   private one-time action files unchanged.
+4. In the editor, click **Services +**, add **People API v1** with identifier
+   `People`. This enables Google's advanced People service. If the script uses a
+   standard Google Cloud project, also enable the People API in that project.
+5. In `appsscript.json`, preserve existing scopes and add
+   `https://www.googleapis.com/auth/contacts`. The required scope list is:
+
+   ```json
+   "oauthScopes": [
+     "https://www.googleapis.com/auth/calendar",
+     "https://www.googleapis.com/auth/script.send_mail",
+     "https://www.googleapis.com/auth/script.external_request",
+     "https://www.googleapis.com/auth/script.scriptapp",
+     "https://www.googleapis.com/auth/contacts"
+   ]
+   ```
+
+6. Save and run `installBookingAutomations()`. Approve the new permission for the
+   Party Porch account. It checks Contacts access and installs the daily reminder
+   trigger once; it creates no contact, invoice or calendar booking.
+7. Run `testOwnerSms()` and check your phone for its test message. This creates no
+   booking or invoice. If delivery fails, check Twilio before proceeding.
+8. **Deploy -> Manage deployments -> Edit -> New version -> Deploy**, keeping the
+   existing web-app URL. No website frontend update is required.
+
+Reminders run **around 9 AM America/Chicago**, seven days before, one day before,
+and on the event's start date. Google time triggers are approximate (about
+15 minutes either side of the requested time). They cover existing/manual events
+in the configured Party Porch calendar as well as new requests awaiting payment;
+they do not imply the deposit is paid. Closure/vacation entries and released holds
+are excluded. Removing a calendar event stops its reminders. Recurring occurrences
+are tracked separately, and reruns do not resend an already attempted milestone.
+Only put events you want operational reminders for in this business calendar.
+
+New requests save the customer's **name, email and phone** to Google Contacts under
+the account running the script. Existing contacts are matched by exact email,
+ignoring case; new phone numbers are appended without replacing saved names or
+numbers. Multiple matches or an uncertain create result require manual review
+instead of creating duplicates. Existing calendar bookings are not bulk-imported.
+Party addresses and notes remain in the booking, not in Contacts.
+
+SMS and Contacts failures do not undo a booking or create another invoice.
+Errors are logged and emailed to the business inbox for manual follow-up.

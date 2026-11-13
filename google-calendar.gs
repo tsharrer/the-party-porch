@@ -43,6 +43,13 @@ var NERF_GUIDE_URL = "https://yourpartyporch.com/customer/nerf-party-guide.html"
 // Set SEND_SMS = false to disable texting.
 var SEND_SMS = true;
 
+// Owner-only alerts use OWNER_SMS_TO in Script Properties (your own mobile).
+// Run installBookingAutomations() once for reminders around 9 AM Houston time.
+var OWNER_REMINDER_HOUR = 9;
+var OWNER_REMINDER_PREFIX = "owner_reminder_";
+// Customer contacts require the advanced People service and the contacts scope.
+var CONTACT_PREFIX = "customer_contact_";
+
 // --- Stripe deposit (percentage of the booking estimate) ---------------------
 // The deposit is created dynamically on Stripe for each booking, so it scales
 // with the order. Your Stripe SECRET key is read from Script Properties and is
@@ -173,6 +180,8 @@ function doPost(e) {
       if (SEND_CONFIRM_EMAIL) sendConfirmationEmail(d, "", 0, null);
       booking.status = "quote_requested";
       saveBooking(bookingId, booking);
+      syncCustomerContact(d);
+      notifyOwnerBooking(d, 0);
       return json({ ok: true, quote: true });
     }
     var available = availability(d.date);
@@ -231,6 +240,7 @@ function doPost(e) {
     booking.status = "pending";
     booking.url = depUrl;
     saveBooking(bookingId, booking);
+    syncCustomerContact(d);
 
     if (SEND_CONFIRM_EMAIL && d.email && /@/.test(d.email)) {
       try { sendConfirmationEmail(d, depUrl, depDollars, due); }
@@ -242,6 +252,7 @@ function doPost(e) {
       catch (smsErr) { console.error("Deposit SMS failed: " + String(smsErr)); }
     }
 
+    notifyOwnerBooking(d, depDollars);
     return json({ ok: true, depositUrl: depUrl, deposit: depDollars });
   } catch (err) {
     console.error("Booking invoice failed: " + String(err));
@@ -564,12 +575,7 @@ function sendConfirmationEmail(d, depUrl, depDollars, due) {
  * The caller logs SMS failures without invalidating the payment invoice.
  */
 function sendDepositText(d, depUrl, depDollars, due) {
-  var num = tenDigits(d.phone);
-  var props = PropertiesService.getScriptProperties();
-  var sid   = props.getProperty("TWILIO_ACCOUNT_SID") || "";
-  var token = props.getProperty("TWILIO_AUTH_TOKEN")  || "";
-  var from  = props.getProperty("TWILIO_FROM")         || "";
-  if (!num || !depUrl || !sid || !token || !from) throw new Error("SMS recipient, deposit URL or Twilio configuration is missing");
+  if (!depUrl) throw new Error("Deposit URL is missing");
 
   var when = prettyDate(d.date) || d.date || "your date";
   var deadline = Utilities.formatDate(new Date(due * 1000), Session.getScriptTimeZone(), "MMM d, h:mm a z");
@@ -578,6 +584,16 @@ function sendDepositText(d, depUrl, depDollars, due) {
              " Your date is held until then; unpaid holds are released." +
              " Reply STOP to opt out, HELP for help.";
 
+  return sendTwilioText(d.phone, body);
+}
+
+function sendTwilioText(phone, body) {
+  var num = tenDigits(phone);
+  var props = PropertiesService.getScriptProperties();
+  var sid = props.getProperty("TWILIO_ACCOUNT_SID") || "";
+  var token = props.getProperty("TWILIO_AUTH_TOKEN") || "";
+  var from = props.getProperty("TWILIO_FROM") || "";
+  if (!num || !sid || !token || !from) throw new Error("SMS recipient or Twilio configuration is missing");
   var payload = { To: "+1" + num, From: from, Body: body };
   var cbUrl = props.getProperty("WEBHOOK_URL") || "";
   if (cbUrl) payload.StatusCallback = cbUrl;   // so failed texts email us
@@ -588,7 +604,202 @@ function sendDepositText(d, depUrl, depDollars, due) {
     payload: payload,
     muteHttpExceptions: true
   });
-  if (response.getResponseCode() >= 300) throw new Error("Twilio SMS failed: HTTP " + response.getResponseCode());
+  var status = response.getResponseCode();
+  if (status < 200 || status >= 300) throw new Error("Twilio SMS failed: HTTP " + status);
+  var result = JSON.parse(response.getContentText());
+  if (!result.sid || result.error_code || result.status === "failed" || result.status === "undelivered") {
+    throw new Error("Twilio did not accept the SMS");
+  }
+  return result.sid;
+}
+
+function reportOwnerAutomationFailure(feature, err, body) {
+  console.error(feature + " failed: " + String(err));
+  try {
+    MailApp.sendEmail({
+      to: BUSINESS_EMAIL,
+      subject: BUSINESS_NAME + " - " + feature + " failed",
+      body: "An automation needs attention. Check its result before retrying.\n\n" +
+        String(err) + "\n\nNotification:\n" + body
+    });
+  } catch (mailErr) {
+    console.error("Automation fallback email failed: " + String(mailErr));
+  }
+}
+
+function notifyOwnerBooking(d, deposit) {
+  var to = PropertiesService.getScriptProperties().getProperty("OWNER_SMS_TO") || "";
+  if (!to) {
+    console.warn("Owner SMS alerts are disabled: set OWNER_SMS_TO in Script Properties.");
+    return;
+  }
+  var party = d.cart && d.cart !== "None" ? d.cart : (d.rental || "Party");
+  var body = BUSINESS_NAME + ": New " + (deposit ? "booking" : "quote") +
+    " request - " + (d.name || "Customer") + ". " + party + ". " + d.date +
+    (d.time ? " " + d.time + " CT" : "") + ". " +
+    (deposit ? "Estimate " + d.estimate + "; $" + deposit + " deposit pending." : "Pricing needed; no date held.") +
+    " See email for details.";
+  try { sendTwilioText(to, body); }
+  catch (err) { reportOwnerAutomationFailure("owner text alert", err, body); }
+}
+
+function installBookingAutomations() {
+  ScriptApp.requireAllScopes(ScriptApp.AuthMode.FULL);
+  var to = PropertiesService.getScriptProperties().getProperty("OWNER_SMS_TO");
+  if (!tenDigits(to)) throw new Error("Set OWNER_SMS_TO to your own US mobile number first.");
+  People.People.Connections.list("people/me", { pageSize: 1, personFields: "metadata" });
+  var exists = ScriptApp.getProjectTriggers().some(function(trigger) {
+    return trigger.getHandlerFunction() === "sendOwnerBookingReminders";
+  });
+  if (!exists) {
+    ScriptApp.newTrigger("sendOwnerBookingReminders").timeBased()
+      .atHour(OWNER_REMINDER_HOUR).nearMinute(0).everyDays(1)
+      .inTimezone("America/Chicago").create();
+  }
+}
+
+function testOwnerSms() {
+  var to = PropertiesService.getScriptProperties().getProperty("OWNER_SMS_TO");
+  var sid = sendTwilioText(to, BUSINESS_NAME + ": Owner booking alerts test. No booking or invoice was created.");
+  console.log("Owner test SMS accepted by Twilio: " + sid + ". Check your phone to confirm delivery.");
+}
+
+function sendOwnerBookingReminders() {
+  var props = PropertiesService.getScriptProperties();
+  if (!tenDigits(props.getProperty("OWNER_SMS_TO"))) throw new Error("OWNER_SMS_TO is missing or invalid.");
+  var timezone = Session.getScriptTimeZone();
+  if (timezone !== "America/Chicago") throw new Error("Set the project time zone to America/Chicago for owner reminders.");
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var todayStr = Utilities.formatDate(today, timezone, "yyyy-MM-dd");
+  var cutoff = new Date(today); cutoff.setDate(cutoff.getDate() - 8);
+  var cutoffStr = Utilities.formatDate(cutoff, timezone, "yyyy-MM-dd");
+  Object.keys(props.getProperties()).forEach(function(key) {
+    if (key.indexOf(OWNER_REMINDER_PREFIX) === 0 &&
+        key.slice(OWNER_REMINDER_PREFIX.length, OWNER_REMINDER_PREFIX.length + 10) < cutoffStr) {
+      props.deleteProperty(key);
+    }
+  });
+  var calendar = CALENDAR_ID ? CalendarApp.getCalendarById(CALENDAR_ID) : CalendarApp.getDefaultCalendar();
+  var failures = 0;
+  [7, 1, 0].forEach(function(daysBefore) {
+    var start = new Date(today); start.setDate(start.getDate() + daysBefore);
+    var end = new Date(start); end.setDate(end.getDate() + 1);
+    var dateStr = Utilities.formatDate(start, timezone, "yyyy-MM-dd");
+    calendar.getEvents(start, end).forEach(function(event) {
+      if (Utilities.formatDate(event.getStartTime(), timezone, "yyyy-MM-dd") !== dateStr) return;
+      if (/BLOCKED|CLOSED|UNAVAILABLE|VACATION/i.test(String(event.getTitle() || ""))) return;
+      try {
+        if (queueOwnerBookingReminder(event, daysBefore, todayStr) === false) failures++;
+      } catch (err) {
+        reportOwnerAutomationFailure("owner reminder", err, "Reminder for calendar event " + event.getId());
+        failures++;
+      }
+    });
+  });
+  if (failures) throw new Error("Could not confirm " + failures + " owner reminder(s). Check email and Twilio before retrying.");
+}
+
+function queueOwnerBookingReminder(event, daysBefore, todayStr) {
+  var props = PropertiesService.getScriptProperties();
+  var key = OWNER_REMINDER_PREFIX + todayStr + "_" +
+    encodeURIComponent(event.getId() + "_" + event.getStartTime().getTime() + "_" + daysBefore);
+  var lock = getBookingLock();
+  lock.waitLock(30000);
+  try {
+    if (!eventHoldActive(event)) return null;
+    var previous = props.getProperty(key);
+    if (previous) return previous === "sent" ? null : false;
+    // Reserve before sending so overlapping runs cannot send duplicate reminders.
+    props.setProperty(key, "sending");
+  } finally {
+    lock.releaseLock();
+  }
+  var label = daysBefore === 0 ? "Today" : (daysBefore === 1 ? "Tomorrow" : "In 1 week");
+  var when = Utilities.formatDate(event.getStartTime(), Session.getScriptTimeZone(), "MMM d, h:mm a z");
+  var body = BUSINESS_NAME + " reminder - " + label + ": " + event.getTitle() +
+    ". " + when + ". Check Calendar for details and payment status.";
+  try {
+    sendTwilioText(props.getProperty("OWNER_SMS_TO"), body);
+    props.setProperty(key, "sent");
+    return true;
+  } catch (err) {
+    props.setProperty(key, "failed");
+    reportOwnerAutomationFailure("owner reminder", err, body);
+    return false;
+  }
+}
+
+function syncCustomerContact(d) {
+  try { return saveCustomerContact(d); }
+  catch (err) {
+    reportOwnerAutomationFailure("Google Contacts save", err,
+      "Customer: " + (d.name || "") + "\nEmail: " + (d.email || "") + "\nPhone: " + (d.phone || ""));
+    return null;
+  }
+}
+
+function saveCustomerContact(d) {
+  var email = String(d.email || "").trim().toLowerCase();
+  var name = String(d.name || "").trim();
+  if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Error("A customer name and valid email are required for Contacts.");
+  var fields = "names,emailAddresses,phoneNumbers,metadata";
+  var props = PropertiesService.getScriptProperties();
+  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, email);
+  var key = CONTACT_PREFIX + Utilities.base64EncodeWebSafe(digest).replace(/=+$/, "");
+  var stored = props.getProperty(key);
+  var matches = [];
+  if (stored) {
+    var record = JSON.parse(stored);
+    if (!record.resourceName) throw new Error("A previous contact creation needs manual review in Google Contacts before retrying.");
+    var cached = People.People.get(record.resourceName, { personFields: fields, sources: ["READ_SOURCE_TYPE_CONTACT"] });
+    if (!(cached.emailAddresses || []).some(function(item) {
+      return String(item.value || "").trim().toLowerCase() === email;
+    })) throw new Error("The saved contact no longer matches this email. Review Google Contacts before changing it.");
+    matches.push(cached);
+  } else {
+    var pageToken;
+    do {
+      var options = { pageSize: 1000, personFields: fields, sources: ["READ_SOURCE_TYPE_CONTACT"] };
+      if (pageToken) options.pageToken = pageToken;
+      var page = People.People.Connections.list("people/me", options);
+      (page.connections || []).forEach(function(person) {
+        if ((person.emailAddresses || []).some(function(item) {
+          return String(item.value || "").trim().toLowerCase() === email;
+        })) matches.push(person);
+      });
+      pageToken = page.nextPageToken;
+    } while (pageToken);
+  }
+  if (matches.length > 1) throw new Error("Multiple Google Contacts match this email. Merge or review them; no new contact was created.");
+  var rawPhone = String(d.phone || "").trim();
+  var normalized = tenDigits(rawPhone);
+  var phone = normalized ? "+1" + normalized : rawPhone;
+  var person;
+  if (!matches.length) {
+    // Reserve before creating: a timed-out write must not create duplicates on retry.
+    props.setProperty(key, JSON.stringify({ creating: true }));
+    var contact = { names: [{ unstructuredName: name }], emailAddresses: [{ value: email, type: "other" }] };
+    if (phone) contact.phoneNumbers = [{ value: phone, type: "other" }];
+    person = People.People.createContact(contact, { personFields: fields });
+  } else {
+    person = matches[0];
+    props.setProperty(key, JSON.stringify({ resourceName: person.resourceName }));
+    var phones = person.phoneNumbers || [];
+    var alreadySaved = phones.some(function(item) {
+      var value = String(item.canonicalForm || item.value || "");
+      return (tenDigits(value) || value.replace(/\D/g, "")) === (normalized || phone.replace(/\D/g, ""));
+    });
+    if (phone && !alreadySaved) {
+      person = People.People.updateContact({
+        etag: person.etag,
+        metadata: person.metadata,
+        phoneNumbers: phones.concat([{ value: phone, type: "other" }])
+      }, person.resourceName, { updatePersonFields: "phoneNumbers", personFields: fields });
+    }
+  }
+  if (!person.resourceName) throw new Error("Google Contacts did not return a contact resource.");
+  props.setProperty(key, JSON.stringify({ resourceName: person.resourceName }));
+  return person.resourceName;
 }
 
 /** Normalizes a phone number to 10 digits ("" if it isn't a valid US number). */

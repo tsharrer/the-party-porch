@@ -5,6 +5,17 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-11-12
 
+### Added - Owner notifications and customer contacts
+- Added owner SMS alerts for new booking and quote requests, independent of
+  customer texting consent.
+- Added reminders around 9 AM Houston time seven days before, one day before,
+  and on the event day, including existing/manual business-calendar bookings.
+- Added Google Contacts creation and email-based matching without overwriting
+  existing names or phone numbers. Automation failures email the owner without
+  invalidating the booking.
+- Documented the private owner number, People API permission, reminder installer,
+  and Apps Script redeployment steps.
+
 ### Changed - Removed standalone availability checker
 - Removed the separate "Check my date" section because it did not list available
   experiences. Kept the booking form and its date rules unchanged.

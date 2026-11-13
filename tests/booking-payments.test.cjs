@@ -3,13 +3,14 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
+const crypto = require('node:crypto');
 
 process.env.TZ = 'America/Chicago';
 const source = fs.readFileSync(path.join(__dirname, '../google-calendar.gs'), 'utf8');
 const bookingId = '12345678-1234-4234-8234-123456789abc';
 const startTime = Date.parse('2026-11-12T19:00:00-06:00');
 
-function harness() {
+function harness(config = {}) {
   let now = startTime;
   const properties = new Map([['STRIPE_SECRET_KEY', 'test-placeholder']]);
   const calls = [];
@@ -17,6 +18,8 @@ function harness() {
   const logs = [];
   const events = [];
   const invoices = new Map();
+  const contacts = [];
+  const contactCalls = [];
   let stripeUnavailable = false;
   let locked = false;
   class Clock extends Date {
@@ -26,6 +29,7 @@ function harness() {
   const store = {
     getProperty: key => properties.get(key) || null,
     setProperty: (key, value) => properties.set(key, value),
+    deleteProperty: key => properties.delete(key),
     getProperties: () => Object.fromEntries(properties)
   };
   const calendar = {
@@ -35,6 +39,7 @@ function harness() {
         start, end,
         getId: () => `event-${events.length}`,
         getTitle: () => title,
+        getStartTime: () => start,
         getDescription: () => opts.description
       };
       events.push(event);
@@ -43,7 +48,11 @@ function harness() {
   };
   const context = {
     Date: Clock,
-    console: { error: message => logs.push(message) },
+    console: {
+      error: message => logs.push(message),
+      warn: message => logs.push(message),
+      log: message => logs.push(message)
+    },
     PropertiesService: { getScriptProperties: () => store },
     CalendarApp: { getCalendarById: () => calendar },
     LockService: { getScriptLock: () => {
@@ -61,6 +70,9 @@ function harness() {
     Utilities: {
       getUuid: () => bookingId,
       base64Encode: text => Buffer.from(text).toString('base64'),
+      base64EncodeWebSafe: bytes => Buffer.from(bytes).toString('base64url'),
+      DigestAlgorithm: {SHA_256: 'sha256'},
+      computeDigest: (algorithm, text) => crypto.createHash(algorithm).update(text).digest(),
       formatDate(date, zone, pattern) {
         const pad = number => String(number).padStart(2, '0');
         const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
@@ -79,7 +91,8 @@ function harness() {
       calls.push({url, ...options});
       const route = url.replace('https://api.stripe.com/v1/', '');
       let body;
-      if (url.startsWith('https://api.twilio.com/')) body = {sid: 'SM_test'};
+      const twilio = url.startsWith('https://api.twilio.com/');
+      if (twilio) body = {sid: 'SM_test', status: 'queued'};
       else if (route === 'customers') body = {id: 'cus_test'};
       else if (route === 'invoices') {
         body = {id: 'in_test', status: 'draft', due_date: Number(options.payload.due_date)};
@@ -97,8 +110,47 @@ function harness() {
         }
         body = invoice;
       }
-      return {getResponseCode: () => 200, getContentText: () => JSON.stringify(body)};
-    } }
+      return {
+        getResponseCode: () => twilio ? (config.twilioStatus || 201) : 200,
+        getContentText: () => JSON.stringify(body)
+      };
+    } },
+    People: {People: {
+      Connections: {list(resource, options) {
+        contactCalls.push({method: 'list', resource, options});
+        if (config.contactFailure === 'list') throw new Error('Contacts unavailable');
+        const start = Number(options.pageToken || 0);
+        const size = config.contactPageSize || options.pageSize;
+        return {
+          connections: contacts.slice(start, start + size),
+          nextPageToken: start + size < contacts.length ? String(start + size) : undefined
+        };
+      }},
+      get(resource) {
+        contactCalls.push({method: 'get', resource});
+        const person = contacts.find(item => item.resourceName === resource);
+        assert.ok(person, 'Cached contact must exist');
+        return person;
+      },
+      createContact(person) {
+        contactCalls.push({method: 'create', person});
+        const created = {
+          ...person, resourceName: `people/contact-${contacts.length + 1}`,
+          etag: 'person-etag', metadata: {sources: [{type: 'CONTACT', etag: 'contact-etag'}]}
+        };
+        contacts.push(created);
+        if (config.contactFailure === 'create') throw new Error('Contact creation outcome uncertain');
+        return created;
+      },
+      updateContact(person, resource, options) {
+        contactCalls.push({method: 'update', person, resource, options});
+        const index = contacts.findIndex(item => item.resourceName === resource);
+        assert.ok(index >= 0);
+        assert.ok(person.metadata.sources[0].etag);
+        contacts[index] = {...contacts[index], ...person};
+        return contacts[index];
+      }
+    }}
   };
   vm.createContext(context);
   vm.runInContext(source, context);
@@ -110,7 +162,7 @@ function harness() {
   const post = (data = booking) => JSON.parse(context.doPost({postData: {contents: JSON.stringify(data)}}).content);
   const lookup = (id = bookingId) => JSON.parse(context.doGet({parameter: {action: 'checkout', bookingId: id}}).content);
   return {
-    context, properties, calls, emails, logs, events, invoices, booking, post, lookup,
+    context, properties, calls, emails, logs, events, invoices, contacts, contactCalls, booking, post, lookup,
     setNow: value => { now = value; },
     failStripe: () => { stripeUnavailable = true; }
   };
@@ -237,6 +289,176 @@ test('deposit SMS requires consent and uses the same hosted invoice URL', () => 
     assert.equal(messages.length, consent === 'Yes' ? 1 : 0);
     if (messages.length) assert.ok(messages[0].payload.Body.includes(h.lookup().url));
   }
+});
+
+function configureOwnerSms(h) {
+  h.properties.set('TWILIO_ACCOUNT_SID', 'AC_test');
+  h.properties.set('TWILIO_AUTH_TOKEN', 'test-placeholder');
+  h.properties.set('TWILIO_FROM', '+12025550100');
+  h.properties.set('OWNER_SMS_TO', '+12025550199');
+}
+
+function addReminderEvent(h, days, options = {}) {
+  const start = new Date(startTime);
+  start.setDate(start.getDate() + days);
+  start.setHours(14, 0, 0, 0);
+  const end = new Date(start.getTime() + (options.hours || 3) * 3600000);
+  h.events.push({
+    start, end,
+    getStartTime: () => start,
+    getId: () => options.id || `manual-${days}`,
+    getTitle: () => options.title || 'Manual booking',
+    getDescription: () => options.description || 'Created manually'
+  });
+}
+
+test('new requests notify only the configured owner when the customer declined texts, without duplicate alerts', () => {
+  const h = harness();
+  configureOwnerSms(h);
+  h.properties.set('WEBHOOK_URL', 'https://script.google.com/exec');
+  assert.equal(h.post({...h.booking, consent: 'No', phone: '2025550110'}).ok, true);
+  h.post();
+  const messages = h.calls.filter(call => call.url.startsWith('https://api.twilio.com/'));
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0].payload.To, '+12025550199');
+  assert.equal(messages[0].payload.StatusCallback, 'https://script.google.com/exec');
+  assert.ok(messages[0].payload.Body.includes('New booking request'));
+  assert.ok(messages[0].payload.Body.includes('$195 deposit pending'));
+});
+
+test('quote requests get owner alerts without claiming a confirmed booking or a held date', () => {
+  const h = harness();
+  configureOwnerSms(h);
+  assert.equal(h.post({...h.booking, estimate: 'Custom quote'}).quote, true);
+  const message = h.calls.find(call => call.url.startsWith('https://api.twilio.com/'));
+  assert.ok(message.payload.Body.includes('New quote request'));
+  assert.ok(message.payload.Body.includes('no date held'));
+});
+
+test('owner SMS failure emails the owner without failing the booking or creating another invoice', () => {
+  const h = harness({twilioStatus: 400});
+  configureOwnerSms(h);
+  assert.equal(h.post().ok, true);
+  assert.equal(h.lookup().ok, true);
+  assert.ok(h.emails.some(email => email.subject.includes('owner text alert failed')));
+  assert.equal(h.calls.filter(call => call.url.endsWith('/invoices')).length, 1);
+});
+
+test('reminders cover manual and recurring bookings at 7 days, 1 day and day-of, once per milestone', () => {
+  const h = harness();
+  configureOwnerSms(h);
+  for (const days of [7, 1, 0]) addReminderEvent(h, days, {id: 'same-recurring-calendar-id'});
+  addReminderEvent(h, 2);
+  h.context.sendOwnerBookingReminders();
+  h.context.sendOwnerBookingReminders();
+  const messages = () => h.calls.filter(call => call.url.startsWith('https://api.twilio.com/'));
+  assert.equal(messages().length, 3);
+  for (const label of ['In 1 week', 'Tomorrow', 'Today']) {
+    assert.ok(messages().some(message => message.payload.Body.includes(label)));
+  }
+  h.setNow(startTime + 86400000);
+  h.context.sendOwnerBookingReminders();
+  assert.equal(messages().length, 5, 'The next day must send both its day-of and tomorrow reminders');
+  assert.ok(messages().slice(3).some(message => message.payload.Body.includes('Today')));
+});
+
+test('reminders skip closed dates, released holds and the second day of an overnight event', () => {
+  const h = harness();
+  configureOwnerSms(h);
+  addReminderEvent(h, 7, {title: 'CLOSED'});
+  addReminderEvent(h, 1, {description: `Booking ID: ${bookingId}\nItems: nerf`});
+  h.context.saveBooking(bookingId, {status: 'released', due: startTime / 1000});
+  addReminderEvent(h, -1, {hours: 30});
+  addReminderEvent(h, 0);
+  h.properties.set('owner_reminder_2026-10-01_old', 'sent');
+  h.properties.set('unrelated_setting', 'preserve');
+  h.context.sendOwnerBookingReminders();
+  assert.equal(h.calls.filter(call => call.url.startsWith('https://api.twilio.com/')).length, 1);
+  assert.equal(h.properties.has('owner_reminder_2026-10-01_old'), false);
+  assert.equal(h.properties.get('unrelated_setting'), 'preserve');
+});
+
+test('failed reminders are explicit and cannot send twice on a rerun', () => {
+  const h = harness({twilioStatus: 400});
+  configureOwnerSms(h);
+  addReminderEvent(h, 0);
+  assert.throws(() => h.context.sendOwnerBookingReminders(), /Could not confirm 1 owner reminder/);
+  assert.throws(() => h.context.sendOwnerBookingReminders(), /Could not confirm 1 owner reminder/);
+  assert.equal(h.calls.filter(call => call.url.startsWith('https://api.twilio.com/')).length, 1);
+  assert.equal(h.emails.filter(email => email.subject.includes('owner reminder failed')).length, 1);
+});
+
+test('automation installer schedules one 9 AM Chicago daily trigger and validates the owner recipient', () => {
+  const h = harness();
+  const triggers = [];
+  h.context.ScriptApp = {
+    AuthMode: {FULL: 'FULL'},
+    requireAllScopes() {},
+    getProjectTriggers: () => triggers,
+    newTrigger(handler) {
+      return {
+        timeBased() { return this; },
+        atHour(hour) { assert.equal(hour, 9); return this; },
+        nearMinute(minute) { assert.equal(minute, 0); return this; },
+        everyDays(days) { assert.equal(days, 1); return this; },
+        inTimezone(zone) { assert.equal(zone, 'America/Chicago'); return this; },
+        create() { triggers.push({getHandlerFunction: () => handler}); }
+      };
+    }
+  };
+  assert.throws(() => h.context.installBookingAutomations(), /Set OWNER_SMS_TO/);
+  configureOwnerSms(h);
+  h.context.installBookingAutomations();
+  h.context.installBookingAutomations();
+  assert.equal(triggers.length, 1);
+  assert.equal(triggers[0].getHandlerFunction(), 'sendOwnerBookingReminders');
+});
+
+test('accepted bookings save customer contacts and repeat customers reuse the same resource', () => {
+  const h = harness();
+  assert.equal(h.post({...h.booking, phone: '(202) 555-0110'}).ok, true);
+  assert.equal(h.contacts.length, 1);
+  assert.equal(h.contacts[0].names[0].unstructuredName, 'Test Customer');
+  assert.equal(h.contacts[0].emailAddresses[0].value, 'customer@example.com');
+  assert.equal(h.contacts[0].phoneNumbers[0].value, '+12025550110');
+  assert.equal(h.post({...h.booking, bookingId: '22345678-1234-4234-8234-123456789abc', date: '2026-12-22'}).ok, true);
+  assert.equal(h.contacts.length, 1);
+  assert.equal(h.contactCalls.filter(call => call.method === 'create').length, 1);
+  assert.ok(h.contactCalls.some(call => call.method === 'get'));
+});
+
+test('contact matching paginates, ignores email case and appends a phone without changing existing names', () => {
+  const h = harness({contactPageSize: 1});
+  h.contacts.push(
+    {resourceName: 'people/unrelated', emailAddresses: [{value: 'other@example.com'}]},
+    {
+      resourceName: 'people/existing', names: [{givenName: 'Manually saved name'}],
+      emailAddresses: [{value: 'CUSTOMER@example.com'}],
+      phoneNumbers: [{value: '+12025550111'}],
+      etag: 'etag', metadata: {sources: [{type: 'CONTACT', etag: 'source-etag'}]}
+    }
+  );
+  assert.equal(h.post({...h.booking, phone: '2025550110'}).ok, true);
+  assert.equal(h.contacts.length, 2);
+  const update = h.contactCalls.find(call => call.method === 'update');
+  assert.equal(update.options.updatePersonFields, 'phoneNumbers');
+  assert.equal(update.person.phoneNumbers.length, 2);
+  assert.equal(h.contacts[1].names[0].givenName, 'Manually saved name');
+});
+
+test('ambiguous contacts and uncertain contact creation require review without failing bookings or duplicating contacts', () => {
+  const ambiguous = harness();
+  for (const resource of ['people/one', 'people/two']) {
+    ambiguous.contacts.push({resourceName: resource, emailAddresses: [{value: 'customer@example.com'}]});
+  }
+  assert.equal(ambiguous.post().ok, true);
+  assert.equal(ambiguous.contacts.length, 2);
+  assert.ok(ambiguous.emails.some(email => email.subject.includes('Google Contacts save failed')));
+
+  const uncertain = harness({contactFailure: 'create'});
+  assert.equal(uncertain.post().ok, true);
+  assert.throws(() => uncertain.context.saveCustomerContact(uncertain.booking), /previous contact creation needs manual review/);
+  assert.equal(uncertain.contacts.length, 1);
 });
 
 test('event deadlines use Houston DST and reject a nonexistent spring-forward time', () => {
