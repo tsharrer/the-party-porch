@@ -5,6 +5,8 @@
  * as a Web App, and put the resulting /exec URL into GCAL_WEBHOOK_URL in the
  * booking site. Every booking then creates an event on your Google Calendar
  * and (optionally) emails the customer a calendar invite.
+ * Online waivers also require waivers.gs and WaiverForm.html in this project;
+ * see docs/online-waivers.md before enabling signing.
  *
  * SETUP (2 minutes):
  *  1. Go to https://script.google.com  ->  New project.
@@ -88,6 +90,10 @@ function stripeKey() {
  */
 function doGet(e) {
   var p = (e && e.parameter) || {};
+  if (p.action === "waiver") return renderWaiverForm_(p.type);
+  if (p.action === "waiverStatus") {
+    return reply({ ok: true, waiversReady: waiverReady_(), version: WAIVER_VERSION }, p.callback);
+  }
   if (p.action === "availability") {
     return reply(availability(p.date), p.callback);
   }

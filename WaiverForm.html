@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base target="_top">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Sign a waiver | The Party Porch</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fff8f0;color:#12263a;font:16px/1.5 Arial,sans-serif}
+main{max-width:820px;margin:auto;padding:24px 18px 60px}h1{line-height:1.15}h2{font-size:1.25rem}
+.card{background:white;border:1px solid #d5dce1;border-radius:12px;padding:20px;margin:20px 0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.wide{grid-column:1/-1}
+label{display:block;font-weight:bold}input,select,button{font:inherit}input:not([type=checkbox]),select{display:block;width:100%;margin-top:5px;padding:11px;border:1px solid #657582;border-radius:6px;min-height:46px;background:#fff;color:#12263a}
+.check{display:flex;align-items:flex-start;gap:12px;font-weight:normal;margin:18px 0}.check input{flex:0 0 auto;width:22px;height:22px;margin-top:2px}
+fieldset{border:0;margin:0;padding:0;min-width:0}legend{font-size:1.3rem;font-weight:bold;margin-bottom:16px}
+.release{border:2px solid #12263a;padding:14px;margin:18px 0}.help{font-size:.9rem;color:#425668}
+a{color:#a1272b}button,.download{display:inline-block;background:#12263a;color:white;border:0;border-radius:7px;padding:13px 22px;min-height:48px;font-weight:bold;text-decoration:none}
+button:disabled{opacity:.6}button{cursor:pointer}input:focus,select:focus,button:focus,a:focus{outline:3px solid #ffb703;outline-offset:3px}
+.trap{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
+[hidden]{display:none!important}#status{white-space:pre-line;font-weight:bold}#status.error{color:#a1272b}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.card{padding:16px}main{padding:18px 12px 40px}}
+@media print{body{background:white}button,.download,.trap{display:none}.card{border:0;padding:0}main{max-width:none}}
+</style>
+</head>
+<body>
+<main>
+  <p><a href="https://yourpartyporch.com/">The Party Porch</a></p>
+  <h1 id="title"></h1>
+  <p id="business"></p>
+  <p id="intro"></p>
+  <p class="help">Please have an adult complete this form before participation. Providing a booking or payment does not sign a waiver. Your information is sent to The Party Porch, saved privately in Google Drive, and emailed as a PDF to yourpartyporch@gmail.com. It is not stored in the public website repository. <a href="https://yourpartyporch.com/privacy.html" target="_blank" rel="noopener">Privacy policy</a></p>
+  <form id="waiver-form">
+    <fieldset id="fields">
+      <div class="card">
+        <h2>Event and contact information</h2>
+        <p>Required unless marked optional. Times are Houston time.</p>
+        <div class="grid">
+          <label><span id="name-label">Full legal name</span><input name="name" required maxlength="120" autocomplete="name"></label>
+          <label>Event date<input name="eventDate" type="date" required></label>
+          <label>Service booked<select name="service" required><option value="">Choose one</option><option value="unrefereed">No Party Porch referee</option><option value="refereed">Party Porch referee</option></select></label>
+          <label>Booking reference (optional)<input name="reference" maxlength="120"></label>
+          <label>Signer's email<input name="email" type="email" required maxlength="254" autocomplete="email"></label>
+          <label>Signer's phone<input name="phone" type="tel" required maxlength="40" autocomplete="tel"></label>
+        </div>
+      </div>
+      <div id="host-fields" class="card" hidden>
+        <h2>Host / renter details</h2>
+        <div class="grid">
+          <label>Event start time<input name="eventTime" type="time"></label>
+          <label class="wide">Event address<input name="address" maxlength="300" autocomplete="street-address"></label>
+          <label class="wide">Equipment / inventory reference (optional)<input name="inventory" maxlength="200"></label>
+          <div class="wide" id="pickup-fields" hidden>
+            <p>Without a Party Porch referee, rentals are overnight. Enter the pickup arrangements already agreed with The Party Porch; this form does not schedule or change pickup.</p>
+            <div class="grid">
+              <label>Agreed pickup date<input name="pickupDate" type="date"></label>
+              <label>Agreed pickup time<input name="pickupTime" type="time"></label>
+            </div>
+          </div>
+        </div>
+        <p>For staff-refereed parties, your referee sets up, runs two hours of games, then packs and removes the equipment.</p>
+      </div>
+      <div id="participant-fields" class="card" hidden>
+        <h2>Participant details</h2>
+        <div class="grid">
+          <label>Participant is<select name="participantType"><option value="">Choose one</option><option value="adult">Adult (18 or older), signing for myself</option><option value="minor">Minor, signed by parent/legal guardian</option></select></label>
+          <div id="guardian-fields" class="wide" hidden>
+            <div class="grid">
+              <label>Minor's age<input name="age" type="number" min="1" max="17" step="1"></label>
+              <label>Your relationship to the minor<select name="relationship"><option value="">Choose one</option><option>Parent</option><option>Legal guardian</option></select></label>
+            </div>
+            <label class="check"><input name="guardianConsent" type="checkbox"><span>I am this participant's parent or legal guardian and authorize their participation. I am not signing merely as the party host or another child's parent.</span></label>
+          </div>
+          <label>Emergency contact name<input name="emergencyName" maxlength="120"></label>
+          <label>Emergency contact phone<input name="emergencyPhone" type="tel" maxlength="40"></label>
+        </div>
+      </div>
+      <article id="terms" class="card" aria-label="Agreement to read before signing"></article>
+      <div class="card">
+        <h2>Read, consent and sign</h2>
+        <p class="help" id="version"></p>
+        <label class="check"><input name="termsConsent" type="checkbox" required><span>I have read and agree to the agreement above.</span></label>
+        <label class="check"><input name="adultConsent" type="checkbox" required><span>I am at least 18 and sign for myself as host/adult participant, or as this minor's parent/legal guardian.</span></label>
+        <label class="check"><input name="electronicConsent" type="checkbox" required><span id="electronic-consent"></span></label>
+        <label>Electronic signature: your full legal name<input name="signer" required maxlength="120" autocomplete="name"></label>
+        <p class="help">For an adult participant or host, this must match their full legal name above. For a minor, enter the parent/legal guardian's name. You can request a paper form instead by emailing <a href="mailto:yourpartyporch@gmail.com">yourpartyporch@gmail.com</a>.</p>
+      </div>
+      <div class="trap" aria-hidden="true"><label>Leave blank<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    </fieldset>
+    <button id="submit" type="submit">Sign and submit</button>
+  </form>
+  <p id="status" role="status" aria-live="polite" tabindex="-1"></p>
+  <section id="receipt" class="card" hidden>
+    <h2>Keep your copy</h2>
+    <p id="receipt-details"></p>
+    <a id="download" class="download">Download signed PDF</a>
+    <p>Each participant needs a separate participant/guardian form. A host signature does not cover all guests.</p>
+    <a href="https://yourpartyporch.com/customer/waiver.html">Open another waiver form</a>
+  </section>
+  <noscript>JavaScript must be enabled to sign online. Email yourpartyporch@gmail.com for a paper form.</noscript>
+</main>
+<script>
+const config = <?!= configJson ?>;
+const form = document.getElementById("waiver-form");
+const controls = form.elements;
+const status = document.getElementById("status");
+const button = document.getElementById("submit");
+let submission = null;
+let sending = false;
+let downloadUrl;
+document.getElementById("title").textContent = config.document.title;
+document.getElementById("business").textContent = config.business;
+document.getElementById("intro").textContent = config.document.intro;
+document.getElementById("version").textContent = "Agreement version: " + config.version;
+document.getElementById("electronic-consent").textContent = config.electronicConsent;
+document.getElementById("name-label").textContent = config.kind === "host" ? "Host / renter full legal name" : "Participant full legal name";
+const terms = document.getElementById("terms");
+config.document.sections.forEach(section => {
+  const block = document.createElement("section");
+  if (section.release) block.className = "release";
+  const heading = document.createElement("h2");
+  heading.textContent = section.title;
+  block.append(heading);
+  (section.paragraphs || []).forEach(text => {
+    const p = document.createElement("p"); p.textContent = text; block.append(p);
+  });
+  if (section.bullets) {
+    const ul = document.createElement("ul");
+    section.bullets.forEach(text => { const li = document.createElement("li"); li.textContent = text; ul.append(li); });
+    block.append(ul);
+  }
+  terms.append(block);
+});
+function toggleSection(id, active, required) {
+  const section = document.getElementById(id);
+  section.hidden = !active;
+  section.querySelectorAll("input,select").forEach(input => {
+    input.disabled = !active;
+    input.required = active && required.includes(input.name);
+  });
+}
+function updateFields() {
+  const host = config.kind === "host";
+  toggleSection("host-fields", host, ["eventTime", "address"]);
+  toggleSection("pickup-fields", host && controls.service.value === "unrefereed", ["pickupDate", "pickupTime"]);
+  toggleSection("participant-fields", !host, ["participantType", "emergencyName", "emergencyPhone"]);
+  toggleSection("guardian-fields", !host && controls.participantType.value === "minor", ["age", "relationship", "guardianConsent"]);
+}
+form.addEventListener("change", updateFields);
+updateFields();
+function showStatus(message, error) {
+  status.textContent = message;
+  status.className = error ? "error" : "";
+  status.focus();
+}
+function failed(message, canEdit) {
+  sending = false;
+  button.disabled = false;
+  button.textContent = "Retry signing";
+  if (canEdit) {
+    submission = null;
+    document.getElementById("fields").disabled = false;
+    updateFields();
+    button.textContent = "Sign and submit";
+  }
+  showStatus(message, true);
+}
+form.addEventListener("submit", event => {
+  event.preventDefault();
+  if (sending) return;
+  if (!submission) {
+    if (!form.reportValidity()) return;
+    submission = Object.fromEntries(new FormData(form).entries());
+    ["termsConsent", "electronicConsent", "adultConsent", "guardianConsent"].forEach(key => { submission[key] = controls[key].checked; });
+    if (submission.age) submission.age = Number(submission.age);
+    submission.token = config.token;
+  }
+  sending = true;
+  document.getElementById("fields").disabled = true;
+  button.disabled = true;
+  button.textContent = "Saving signed waiver...";
+  showStatus("Saving your signed PDF. Please keep this page open.", false);
+  google.script.run.withSuccessHandler(result => {
+    if (!result || !result.ok) {
+      failed(result && result.error || "Could not confirm submission. Retry the same form or contact yourpartyporch@gmail.com.", !!(result && result.canEdit));
+      return;
+    }
+    sending = false;
+    form.hidden = true;
+    showStatus(result.emailStatus === "sent" ?
+      "Your signed waiver was saved privately in Google Drive and emailed to The Party Porch." :
+      "Your signed waiver was saved privately in Google Drive, but the owner email could not be confirmed. Please contact yourpartyporch@gmail.com with your receipt number.", result.emailStatus !== "sent");
+    document.getElementById("receipt-details").textContent = "Receipt: " + result.id + " | Signed at (UTC): " + result.signedAt;
+    document.getElementById("receipt").hidden = false;
+    try {
+      const bytes = Uint8Array.from(atob(result.pdfBase64), c => c.charCodeAt(0));
+      downloadUrl = URL.createObjectURL(new Blob([bytes], {type:"application/pdf"}));
+      const link = document.getElementById("download");
+      link.href = downloadUrl;
+      link.download = result.pdfName;
+    } catch (error) {
+      document.getElementById("download").hidden = true;
+      document.getElementById("receipt-details").append(" Your waiver is saved, but this browser could not prepare the download. Request your copy from yourpartyporch@gmail.com.");
+    }
+  }).withFailureHandler(() => {
+    failed("The connection was interrupted; your waiver may already be saved. Retry this same submission to check without creating another record. If needed, contact yourpartyporch@gmail.com. Do not assume the waiver is complete.", false);
+  }).submitWaiver(submission);
+});
+window.addEventListener("beforeunload", event => {
+  if (sending || (submission && !form.hidden)) { event.preventDefault(); event.returnValue = ""; }
+});
+window.addEventListener("unload", () => { if (downloadUrl) URL.revokeObjectURL(downloadUrl); });
+</script>
+</body>
+</html>

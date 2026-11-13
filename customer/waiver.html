@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<link rel="icon" href="../assets/favicon.ico">
+<title>Party Waivers | The Party Porch</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fff8f0;color:#12263a;font:17px/1.6 Arial,sans-serif}
+main{max-width:760px;margin:auto;padding:32px 20px 60px}h1{line-height:1.15}
+.card{background:white;border:1px solid #d5dce1;border-radius:12px;padding:24px;margin:22px 0}
+a{color:#a1272b}.button{display:inline-block;padding:12px 20px;border-radius:7px;background:#12263a;color:white;text-decoration:none;font-weight:bold}
+[hidden]{display:none!important}a:focus{outline:3px solid #ffb703;outline-offset:3px}
+</style>
+</head>
+<body>
+<main>
+  <a href="/">The Party Porch</a>
+  <h1>Complete your party waiver</h1>
+  <p><strong>The Party Porch, a Sharrer Investments LLC company</strong></p>
+  <p>These forms cover Nerf parties with or without a Party Porch referee. Complete the required forms before participation; booking or payment alone is not a signature.</p>
+  <p id="status" role="status">Checking online signing availability...</p>
+  <div id="forms" hidden>
+    <section class="card">
+      <h2>Host / rental agreement</h2>
+      <p>The adult host or renter completes this form for their rental and safety responsibilities. This does not sign for all guests.</p>
+      <a class="button" id="host-link">Complete host agreement</a>
+    </section>
+    <section class="card">
+      <h2>Participant / parent or guardian</h2>
+      <p>Complete one form per participant. Adults sign for themselves. Each minor needs their own parent or legal guardian to sign; the party host cannot sign for other people's children solely as host.</p>
+      <a class="button" id="participant-link">Complete participant form</a>
+    </section>
+  </div>
+  <p>Signed PDFs are stored privately in The Party Porch's Google Drive and emailed to <a href="mailto:yourpartyporch@gmail.com">yourpartyporch@gmail.com</a>. You can download your signed copy after submitting. Personal information and signed records are not published in the website repository.</p>
+  <p>Prefer paper or need help? Email <a href="mailto:yourpartyporch@gmail.com">yourpartyporch@gmail.com</a>. <a href="../privacy.html">Privacy policy</a>.</p>
+  <noscript>Enable JavaScript to check signing availability, or contact The Party Porch for a paper form.</noscript>
+</main>
+<script>
+(function () {
+  var endpoint = "https://script.google.com/macros/s/AKfycbz0ReUHRf_V5AqCiDBvvOmefzTQEwkpouEj-9A5HuqTZ0ZMEbCsz1rnhUDIy2pmtbFluw/exec";
+  var status = document.getElementById("status");
+  var script = document.createElement("script");
+  var finished = false;
+  function unavailable() {
+    if (finished) return;
+    finished = true;
+    status.textContent = "Online signing is not available right now. Please contact yourpartyporch@gmail.com for a paper form.";
+    script.remove();
+  }
+  var timer = setTimeout(unavailable, 20000);
+  window.partyPorchWaiverReady = function (result) {
+    if (finished) return;
+    if (!result || result.waiversReady !== true) { unavailable(); return; }
+    finished = true;
+    clearTimeout(timer);
+    script.remove();
+    document.getElementById("host-link").href = endpoint + "?action=waiver&type=host";
+    document.getElementById("participant-link").href = endpoint + "?action=waiver&type=participant";
+    document.getElementById("forms").hidden = false;
+    status.textContent = "Choose the form you need. Online signing opens on Google's secure Apps Script service.";
+  };
+  script.src = endpoint + "?action=waiverStatus&callback=partyPorchWaiverReady";
+  script.onerror = unavailable;
+  document.head.append(script);
+})();
+</script>
+</body>
+</html>

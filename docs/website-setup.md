@@ -63,6 +63,14 @@ deploy as a Web App (Execute as: Me · Access: Anyone), copy the `/exec` URL, an
 `var GCAL_WEBHOOK_URL = "https://script.google.com/macros/s/AKfyc.../exec";`
 Every booking then creates a calendar event and (optionally) emails the customer an invite.
 
+## Online host and participant waivers
+
+See [online-waivers.md](online-waivers.md) for the private Google Drive and owner-email
+setup. Add `waivers.gs` and `WaiverForm.html` to the existing Apps Script project,
+authorize Drive, and redeploy before using online signing. The shareable customer
+page is `/customer/waiver.html`; it keeps signing links hidden until setup is deployed.
+Signed records never belong in the public website repository.
+
 ## Logo & favicon
 Brand assets live in `assets/` (generated from porch.png):
 `logo.png` (transparent) is used in the header + hero; `favicon.ico`, `favicon-32.png`,

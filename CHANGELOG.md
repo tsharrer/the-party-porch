@@ -5,6 +5,15 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-11-13
 
+### Added - Online host and participant waivers
+- Added separate host and participant/guardian electronic-signature forms covering
+  staffed and unrefereed parties, using the supplied Sharrer Investments LLC wording.
+- Added private Google Drive PDF/submission records, owner email attachments, signer
+  downloads, versioned consent and server timestamps. Retries reuse a receipt and do
+  not automatically repeat an email with an uncertain send outcome.
+- Added an unlisted customer link that enables signing only after Apps Script setup,
+  and documented the required Drive authorization and manual deployment.
+
 ### Added - Referee training manual
 - Added an unlisted, print-friendly staff manual for two-hour hosted Nerf sessions,
   with arrival 60 minutes early, host-supplied hose/water and outlet, referee
