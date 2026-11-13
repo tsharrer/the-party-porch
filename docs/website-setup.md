@@ -188,8 +188,10 @@ deposit texts still require consent. These are request notifications, not proof 
 deposit payment.
 
 1. In Apps Script **Project Settings -> Script Properties**, add `OWNER_SMS_TO`
-   with your own mobile number, such as `+12025550199`. Do not use the Twilio
-   sender number or publish your personal number in website code.
+   with one or more mobile numbers separated by commas, such as
+   `+12025550199,+12025550198`. Keep the primary owner's number first. Duplicate
+   numbers are normalized and sent only once. Do not use the Twilio sender number
+   or publish personal numbers in website code.
 2. Keep the existing `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, and `TWILIO_FROM`
    properties. Set `WEBHOOK_URL` to the existing `/exec` URL so Twilio delivery
    failures can email the business inbox. Outbound messaging must be enabled for
@@ -215,7 +217,7 @@ deposit payment.
 6. Save and run `installBookingAutomations()`. Approve the new permission for the
    Party Porch account. It checks Contacts access and installs the daily reminder
    trigger once; it creates no contact, invoice or calendar booking.
-7. Run `testOwnerSms()` and check your phone for its test message. This creates no
+7. Run `testOwnerSms()` and check each recipient's phone for its test message. This creates no
    booking or invoice. If delivery fails, check Twilio before proceeding.
 8. **Deploy -> Manage deployments -> Edit -> New version -> Deploy**, keeping the
    existing web-app URL. No website frontend update is required.
@@ -226,7 +228,8 @@ and on the event's start date. Google time triggers are approximate (about
 in the configured Party Porch calendar as well as new requests awaiting payment;
 they do not imply the deposit is paid. Closure/vacation entries and released holds
 are excluded. Removing a calendar event stops its reminders. Recurring occurrences
-are tracked separately, and reruns do not resend an already attempted milestone.
+are tracked separately, and reruns do not resend an already attempted milestone
+to the same recipient. A send failure for one recipient does not block the others.
 Only put events you want operational reminders for in this business calendar.
 
 New requests save the customer's **name, email and phone** to Google Contacts under

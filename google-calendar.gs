@@ -43,7 +43,7 @@ var NERF_GUIDE_URL = "https://yourpartyporch.com/customer/nerf-party-guide.html"
 // Set SEND_SMS = false to disable texting.
 var SEND_SMS = true;
 
-// Owner-only alerts use OWNER_SMS_TO in Script Properties (your own mobile).
+// Owner-only alerts use comma-separated mobile numbers in OWNER_SMS_TO.
 // Run installBookingAutomations() once for reminders around 9 AM Houston time.
 var OWNER_REMINDER_HOUR = 9;
 var OWNER_REMINDER_PREFIX = "owner_reminder_";
@@ -627,9 +627,27 @@ function reportOwnerAutomationFailure(feature, err, body) {
   }
 }
 
+function ownerSmsRecipients() {
+  var raw = String(PropertiesService.getScriptProperties().getProperty("OWNER_SMS_TO") || "").trim();
+  if (!raw) return [];
+  var recipients = [];
+  raw.split(",").forEach(function(value) {
+    var num = tenDigits(value.trim());
+    if (!num) throw new Error("Every OWNER_SMS_TO entry must be a US mobile number, separated by commas.");
+    var to = "+1" + num;
+    if (recipients.indexOf(to) < 0) recipients.push(to);
+  });
+  return recipients;
+}
+
 function notifyOwnerBooking(d, deposit) {
-  var to = PropertiesService.getScriptProperties().getProperty("OWNER_SMS_TO") || "";
-  if (!to) {
+  var recipients;
+  try { recipients = ownerSmsRecipients(); }
+  catch (err) {
+    reportOwnerAutomationFailure("owner text alert", err, "Check the OWNER_SMS_TO recipient list.");
+    return;
+  }
+  if (!recipients.length) {
     console.warn("Owner SMS alerts are disabled: set OWNER_SMS_TO in Script Properties.");
     return;
   }
@@ -639,14 +657,15 @@ function notifyOwnerBooking(d, deposit) {
     (d.time ? " " + d.time + " CT" : "") + ". " +
     (deposit ? "Estimate " + d.estimate + "; $" + deposit + " deposit pending." : "Pricing needed; no date held.") +
     " See email for details.";
-  try { sendTwilioText(to, body); }
-  catch (err) { reportOwnerAutomationFailure("owner text alert", err, body); }
+  recipients.forEach(function(to) {
+    try { sendTwilioText(to, body); }
+    catch (err) { reportOwnerAutomationFailure("owner text alert", err, body); }
+  });
 }
 
 function installBookingAutomations() {
   ScriptApp.requireAllScopes(ScriptApp.AuthMode.FULL);
-  var to = PropertiesService.getScriptProperties().getProperty("OWNER_SMS_TO");
-  if (!tenDigits(to)) throw new Error("Set OWNER_SMS_TO to your own US mobile number first.");
+  if (!ownerSmsRecipients().length) throw new Error("Set OWNER_SMS_TO to the owner mobile number(s) first.");
   People.People.Connections.list("people/me", { pageSize: 1, personFields: "metadata" });
   var exists = ScriptApp.getProjectTriggers().some(function(trigger) {
     return trigger.getHandlerFunction() === "sendOwnerBookingReminders";
@@ -659,14 +678,26 @@ function installBookingAutomations() {
 }
 
 function testOwnerSms() {
-  var to = PropertiesService.getScriptProperties().getProperty("OWNER_SMS_TO");
-  var sid = sendTwilioText(to, BUSINESS_NAME + ": Owner booking alerts test. No booking or invoice was created.");
-  console.log("Owner test SMS accepted by Twilio: " + sid + ". Check your phone to confirm delivery.");
+  var recipients = ownerSmsRecipients();
+  if (!recipients.length) throw new Error("Set OWNER_SMS_TO before sending an owner test.");
+  var failures = 0;
+  var body = BUSINESS_NAME + ": Owner booking alerts test. No booking or invoice was created.";
+  recipients.forEach(function(to, index) {
+    try {
+      var sid = sendTwilioText(to, body);
+      console.log("Owner test SMS for recipient " + (index + 1) + " accepted by Twilio: " + sid + ". Check that phone to confirm delivery.");
+    } catch (err) {
+      reportOwnerAutomationFailure("owner SMS test", err, body);
+      failures++;
+    }
+  });
+  if (failures) throw new Error("Could not confirm " + failures + " owner test message(s). Check Twilio.");
 }
 
 function sendOwnerBookingReminders() {
   var props = PropertiesService.getScriptProperties();
-  if (!tenDigits(props.getProperty("OWNER_SMS_TO"))) throw new Error("OWNER_SMS_TO is missing or invalid.");
+  var recipients = ownerSmsRecipients();
+  if (!recipients.length) throw new Error("OWNER_SMS_TO is missing.");
   var timezone = Session.getScriptTimeZone();
   if (timezone !== "America/Chicago") throw new Error("Set the project time zone to America/Chicago for owner reminders.");
   var today = new Date(); today.setHours(0, 0, 0, 0);
@@ -688,26 +719,31 @@ function sendOwnerBookingReminders() {
     calendar.getEvents(start, end).forEach(function(event) {
       if (Utilities.formatDate(event.getStartTime(), timezone, "yyyy-MM-dd") !== dateStr) return;
       if (/BLOCKED|CLOSED|UNAVAILABLE|VACATION/i.test(String(event.getTitle() || ""))) return;
-      try {
-        if (queueOwnerBookingReminder(event, daysBefore, todayStr) === false) failures++;
-      } catch (err) {
-        reportOwnerAutomationFailure("owner reminder", err, "Reminder for calendar event " + event.getId());
-        failures++;
-      }
+      recipients.forEach(function(to, index) {
+        try {
+          if (queueOwnerBookingReminder(event, daysBefore, todayStr, to, index === 0) === false) failures++;
+        } catch (err) {
+          reportOwnerAutomationFailure("owner reminder", err, "Reminder for calendar event " + event.getId());
+          failures++;
+        }
+      });
     });
   });
   if (failures) throw new Error("Could not confirm " + failures + " owner reminder(s). Check email and Twilio before retrying.");
 }
 
-function queueOwnerBookingReminder(event, daysBefore, todayStr) {
+function queueOwnerBookingReminder(event, daysBefore, todayStr, to, primaryRecipient) {
   var props = PropertiesService.getScriptProperties();
-  var key = OWNER_REMINDER_PREFIX + todayStr + "_" +
+  var legacyKey = OWNER_REMINDER_PREFIX + todayStr + "_" +
     encodeURIComponent(event.getId() + "_" + event.getStartTime().getTime() + "_" + daysBefore);
+  var key = legacyKey + "_" + encodeURIComponent(to);
   var lock = getBookingLock();
   lock.waitLock(30000);
   try {
     if (!eventHoldActive(event)) return null;
     var previous = props.getProperty(key);
+    // Older single-recipient markers belong to the first configured mobile.
+    if (!previous && primaryRecipient) previous = props.getProperty(legacyKey);
     if (previous) return previous === "sent" ? null : false;
     // Reserve before sending so overlapping runs cannot send duplicate reminders.
     props.setProperty(key, "sending");
@@ -719,7 +755,7 @@ function queueOwnerBookingReminder(event, daysBefore, todayStr) {
   var body = BUSINESS_NAME + " reminder - " + label + ": " + event.getTitle() +
     ". " + when + ". Check Calendar for details and payment status.";
   try {
-    sendTwilioText(props.getProperty("OWNER_SMS_TO"), body);
+    sendTwilioText(to, body);
     props.setProperty(key, "sent");
     return true;
   } catch (err) {

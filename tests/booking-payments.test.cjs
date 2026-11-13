@@ -111,7 +111,8 @@ function harness(config = {}) {
         body = invoice;
       }
       return {
-        getResponseCode: () => twilio ? (config.twilioStatus || 201) : 200,
+        getResponseCode: () => twilio ?
+          (typeof config.twilioStatus === 'function' ? config.twilioStatus(options.payload.To) : (config.twilioStatus || 201)) : 200,
         getContentText: () => JSON.stringify(body)
       };
     } },
@@ -342,6 +343,64 @@ test('owner SMS failure emails the owner without failing the booking or creating
   assert.equal(h.lookup().ok, true);
   assert.ok(h.emails.some(email => email.subject.includes('owner text alert failed')));
   assert.equal(h.calls.filter(call => call.url.endsWith('/invoices')).length, 1);
+});
+
+test('booking alerts and owner tests reach both normalized recipients without duplicate numbers', () => {
+  const h = harness();
+  configureOwnerSms(h);
+  h.properties.set('OWNER_SMS_TO', '+12025550199, 202-555-0198, (202) 555-0199');
+  assert.equal(h.post().ok, true);
+  const messages = () => h.calls.filter(call => call.url.startsWith('https://api.twilio.com/'));
+  assert.deepEqual(messages().map(message => message.payload.To), ['+12025550199', '+12025550198']);
+  h.context.testOwnerSms();
+  assert.equal(messages().length, 4);
+  assert.equal(h.events.length, 1);
+  assert.equal(h.calls.filter(call => call.url.endsWith('/invoices')).length, 1);
+  h.properties.set('OWNER_SMS_TO', '+12025550199, invalid');
+  assert.throws(() => h.context.testOwnerSms(), /Every OWNER_SMS_TO entry/);
+  assert.equal(messages().length, 4);
+});
+
+test('each recipient receives each reminder milestone only once', () => {
+  const h = harness();
+  configureOwnerSms(h);
+  h.properties.set('OWNER_SMS_TO', '+12025550199,+12025550198');
+  for (const days of [7, 1, 0]) addReminderEvent(h, days);
+  h.context.sendOwnerBookingReminders();
+  h.context.sendOwnerBookingReminders();
+  const messages = h.calls.filter(call => call.url.startsWith('https://api.twilio.com/'));
+  assert.equal(messages.length, 6);
+  for (const phone of ['+12025550199', '+12025550198']) {
+    assert.equal(messages.filter(message => message.payload.To === phone).length, 3);
+  }
+});
+
+test('one recipient failing does not block the other, or cause successful reminders to resend', () => {
+  const h = harness({twilioStatus: to => to === '+12025550199' ? 400 : 201});
+  configureOwnerSms(h);
+  h.properties.set('OWNER_SMS_TO', '+12025550199,+12025550198');
+  addReminderEvent(h, 0);
+  assert.throws(() => h.context.sendOwnerBookingReminders(), /Could not confirm 1 owner reminder/);
+  assert.throws(() => h.context.sendOwnerBookingReminders(), /Could not confirm 1 owner reminder/);
+  const messages = h.calls.filter(call => call.url.startsWith('https://api.twilio.com/'));
+  assert.deepEqual(messages.map(message => message.payload.To), ['+12025550199', '+12025550198']);
+  assert.equal(h.emails.filter(email => email.subject.includes('owner reminder failed')).length, 1);
+});
+
+test('old single-recipient reminder markers do not suppress a newly added recipient', () => {
+  const h = harness();
+  configureOwnerSms(h);
+  h.properties.set('OWNER_SMS_TO', '+12025550199,+12025550198');
+  addReminderEvent(h, 0);
+  const event = h.events[0];
+  const legacyKey = 'owner_reminder_2026-11-12_' +
+    encodeURIComponent(event.getId() + '_' + event.getStartTime().getTime() + '_0');
+  h.properties.set(legacyKey, 'sent');
+  h.context.sendOwnerBookingReminders();
+  h.context.sendOwnerBookingReminders();
+  const messages = h.calls.filter(call => call.url.startsWith('https://api.twilio.com/'));
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0].payload.To, '+12025550198');
 });
 
 test('reminders cover manual and recurring bookings at 7 days, 1 day and day-of, once per milestone', () => {
