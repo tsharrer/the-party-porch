@@ -15,13 +15,16 @@ Both forms cover parties with and without a Party Porch referee.
 3. Add an **HTML** file named **WaiverForm** and paste all of `WaiverForm.html`.
    Do not paste the public `customer/waiver.html` into Apps Script.
 4. If the manifest has explicit `oauthScopes`, preserve its existing scopes and add
-   `https://www.googleapis.com/auth/drive`. The existing
+   `https://www.googleapis.com/auth/drive` and
+   `https://www.googleapis.com/auth/userinfo.email` (for the owner-account check). The existing
    `https://www.googleapis.com/auth/script.send_mail` scope is also required.
    Do not remove the Calendar, external-request, script.scriptapp or Contacts scopes.
-5. From the Apps Script editor, run **installWaiverStorage_** and approve the new
+5. From the Apps Script editor, run **installWaiverStorage** and approve the new
    permissions. It creates **Party Porch - Signed Waivers** in the business account's
    My Drive and logs its private URL. Re-running it reuses that folder. It does not
    email customers, send a test email, create a booking or charge a payment.
+   The setup function rejects anonymous visitors and accounts other than the
+   business account; customer forms do not require a Google sign-in.
 6. **Deploy -> Manage deployments -> Edit the existing web app -> New version -> Deploy.**
    Keep **Execute as: Me** and **Who has access: Anyone**. Retain the existing `/exec`
    URL; it is shared by bookings and waivers. Do not create a replacement URL.

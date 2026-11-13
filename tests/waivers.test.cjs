@@ -84,7 +84,7 @@ function harness(options = {}) {
     console: { log: value => logs.push(value), error: value => logs.push(value) },
     PropertiesService: { getScriptProperties: () => store },
     ScriptApp: { AuthMode: {FULL: 'full'}, requireAllScopes: () => {} },
-    Session: { getActiveUser: () => ({ getEmail: () => options.activeEmail || ownerEmail }) },
+    Session: { getActiveUser: () => ({ getEmail: () => options.activeEmail === undefined ? ownerEmail : options.activeEmail }) },
     DriveApp: {
       Access: { PRIVATE: 'private' },
       getRootFolder: () => ({ createFolder(name) { assert.equal(name, 'Party Porch - Signed Waivers'); return folder; } }),
@@ -149,7 +149,7 @@ function harness(options = {}) {
       participantType: 'adult', emergencyName: 'Test Emergency', emergencyPhone: '202-555-0101'
     };
   }
-  if (!options.uninstalled) context.installWaiverStorage_();
+  if (!options.uninstalled) context.installWaiverStorage();
   return {
     context, properties, files, emails, conversions, logs, open, input,
     advance: milliseconds => { now += milliseconds; },
@@ -161,8 +161,8 @@ test('installer reuses an owner-only private folder and keeps signing disabled u
   const h = harness({uninstalled: true});
   assert.equal(h.context.waiverReady_(), false);
   assert.match(h.context.doGet({parameter: {action: 'waiver', type: 'host'}}).html, /not available/);
-  h.context.installWaiverStorage_();
-  h.context.installWaiverStorage_();
+  h.context.installWaiverStorage();
+  h.context.installWaiverStorage();
   assert.equal(h.properties.get('WAIVER_FOLDER_ID'), 'private-folder');
   const status = h.context.doGet({parameter: {action: 'waiverStatus', callback: 'ready'}});
   assert.match(status.content, /"waiversReady":true/);
@@ -174,6 +174,14 @@ test('installer rejects another account, another owner, public links and collabo
   for (const options of [{activeEmail: 'other@example.com'}, {ownerEmail: 'other@example.com'}, {shared: true}, {collaborators: true}]) {
     assert.throws(() => harness(options), /Run this installer|unshared My Drive/);
   }
+});
+
+test('public setup function rejects anonymous visitors without creating records or configuration', () => {
+  const h = harness({uninstalled: true, activeEmail: ''});
+  assert.throws(() => h.context.installWaiverStorage(), /Run this installer as/);
+  assert.equal(h.properties.size, 0);
+  assert.equal(h.files.length, 0);
+  assert.equal(h.emails.length, 0);
 });
 
 test('host submission saves a PDF with the complete accepted terms and emails the same attachment', () => {

@@ -13,6 +13,8 @@ Newest entries first. Dates in America/Chicago.
   not automatically repeat an email with an uncertain send outcome.
 - Added an unlisted customer link that enables signing only after Apps Script setup,
   and documented the required Drive authorization and manual deployment.
+- Gave the editor's setup function the selectable name `installWaiverStorage`,
+  retaining its owner-account check and documenting the email-identity scope.
 
 ### Added - Referee training manual
 - Added an unlisted, print-friendly staff manual for two-hour hosted Nerf sessions,

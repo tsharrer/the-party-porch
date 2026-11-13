@@ -1,7 +1,7 @@
 /**
  * Add this as Waivers.gs and add WaiverForm.html in the SAME Apps Script project
- * as google-calendar.gs. Run installWaiverStorage_ from the editor, then redeploy.
- * All records remain private; the only browser-callable waiver write is submitWaiver.
+ * as google-calendar.gs. Run installWaiverStorage from the editor, then redeploy.
+ * Records remain private. Setup requires the signed-in business account.
  */
 var WAIVER_VERSION = "2026-11-13.1";
 var WAIVER_BUSINESS = "The Party Porch, a Sharrer Investments LLC company";
@@ -11,7 +11,7 @@ var WAIVER_ESIGN = "I consent to use electronic records and signatures for this 
   "electronically. I can download a copy after submission or request one from yourpartyporch@gmail.com. " +
   "If I do not want to sign electronically, I will contact The Party Porch for a paper form before participating.";
 
-function installWaiverStorage_() {
+function installWaiverStorage() {
   ScriptApp.requireAllScopes(ScriptApp.AuthMode.FULL);
   if (Session.getActiveUser().getEmail().toLowerCase() !== WAIVER_EMAIL) {
     throw new Error("Run this installer as " + WAIVER_EMAIL + ".");
