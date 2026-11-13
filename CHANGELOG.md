@@ -5,6 +5,10 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-11-12
 
+### Changed - Removed standalone availability checker
+- Removed the separate "Check my date" section because it did not list available
+  experiences. Kept the booking form and its date rules unchanged.
+
 ### Changed - Seven-day deposit invoices and inventory holds
 - Replaced duplicate 24-hour Checkout sessions with one hosted deposit invoice per
   booking and a read-only payment-link lookup.
