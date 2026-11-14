@@ -17,6 +17,8 @@ checks, owner reports and unresolved work. It does not assert a new live audit.
 | Private inbox installation | Owner reported own-phone SMS arrival, reply in inbox and signed-out rejection | Owner-reported; assistant did not access the private deployment |
 | Second-phone access | Owner acknowledged Safari login guidance positively | Separate send/reply test and Home Screen persistence not independently verified |
 | December closure | Owner reported saving; live availability returned `closed: true` for all ten dates | Existing customer commitments still require separate review |
+| Owner workflow guide | Markdown and printable PDF generated; content/layout checked and copied into Drive Documents | Drive copies are snapshots, not automatic repo updates |
+| Private budget workbook | Tabs, formulas, seed classification and file copies checked | Excel upload must be saved as Google Sheets; native Sheets calculation/import not yet verified |
 
 The latest combined automated run passed 76 tests:
 
