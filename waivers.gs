@@ -294,6 +294,61 @@ function saveWaiverSignerContact_(record, journal) {
   }
 }
 
+function importWaiverSignerContacts() {
+  if (Session.getActiveUser().getEmail().toLowerCase() !== WAIVER_EMAIL) {
+    throw new Error("Run this importer as " + WAIVER_EMAIL + ".");
+  }
+  ScriptApp.requireAllScopes(ScriptApp.AuthMode.FULL);
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    var folderId = PropertiesService.getScriptProperties().getProperty("WAIVER_FOLDER_ID");
+    if (!folderId) throw new Error("Waiver storage has not been installed.");
+    var folder = DriveApp.getFolderById(folderId);
+    assertWaiverFolderPrivate_(folder);
+    var files = folder.getFiles();
+    var result = {saved: 0, alreadySaved: 0, needsReview: 0, incomplete: 0, remaining: 0};
+    var attempted = 0;
+    while (files.hasNext()) {
+      var journal = files.next();
+      var name = journal.getName();
+      if (!/^waiver-[a-f0-9-]{36}\.json$/i.test(name)) continue;
+      try {
+        var record = JSON.parse(journal.getBlob().getDataAsString());
+        var data = record.data;
+        if (!data || name !== "waiver-" + data.id + ".json" ||
+            ["host", "participant"].indexOf(data.kind) === -1 ||
+            data.adultConsent !== true || data.electronicConsent !== true || data.termsConsent !== true ||
+            typeof data.signer !== "string" || !data.signer.trim() ||
+            typeof data.email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) ||
+            (data.kind === "participant" && ["adult", "minor"].indexOf(data.participantType) === -1) ||
+            (data.kind === "participant" && data.participantType === "minor" && data.guardianConsent !== true)) {
+          throw new Error("Stored signer metadata needs owner review.");
+        }
+        if (!record.pdfName || !waiverFileByName_(folder, record.pdfName)) {
+          result.incomplete++;
+          continue;
+        }
+        if (record.contactStatus === "saved") { result.alreadySaved++; continue; }
+        if (record.contactStatus === "needs_review") { result.needsReview++; continue; }
+        if (attempted >= 25) { result.remaining++; continue; }
+        attempted++;
+        saveWaiverSignerContact_(record, journal);
+        if (record.contactStatus === "saved") result.saved++;
+        else result.needsReview++;
+      } catch (err) {
+        result.needsReview++;
+        console.error("Waiver contact import needs review for " + name + ": " + String(err));
+      }
+    }
+    console.log("Waiver signer contact import: " + JSON.stringify(result) +
+      ". No attendee email was sent. Re-run only for remaining records; review failed/uncertain saves manually.");
+    return result;
+  } finally {
+    if (lock.hasLock()) lock.releaseLock();
+  }
+}
+
 function submitWaiver(input) {
   var data;
   try {

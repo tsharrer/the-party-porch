@@ -14,6 +14,10 @@ Newest entries first. Dates in America/Chicago.
   signing or automatically repeating uncertain contact creation.
 - Document manual Apps Script deployment. Post-party email remains a draft, with
   no automatic mailing or promotional subscription enabled.
+- Added an owner-only, batch-limited import of existing completed waiver signers
+  without attendee emails, new form submissions or repeated uncertain writes.
+- Kept the waiver display unchanged. Updated the email draft for the owner's
+  opt-out approach with a request button and required pre-send disclosures.
 
 ### Added - Private mobile text inbox
 - Added a separate owner-only Apps Script inbox for Twilio business numbers,

@@ -47,7 +47,8 @@ separately. It must remain deployed as **Me / Only myself**.
 
 - Adult waiver-signer Contacts saving is implemented and tested, but requires a
   new deployment of the existing booking/waiver project. It does not enable the
-  draft post-party email or bulk-import historical forms.
+  draft post-party email. An owner-only historical importer is available but has
+  not been run by the CLI; no added permission checkbox is required in the form.
 - Inbox source was pushed as `6ae0a50`. The owner subsequently reported successful
   installation, a real self-test SMS/reply and signed-out access rejection.
 - Mobile account-routing problems were resolved without changing access controls.

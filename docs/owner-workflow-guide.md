@@ -225,9 +225,12 @@ An unsigned template or a message containing the link is not a completed waiver.
 The new waiver Contacts update saves the adult signer's name/email after the
 PDF is saved. For a child's form it saves the parent/guardian, not the child.
 It preserves matching contacts, does not subscribe anyone to marketing, and
-does not bulk-import old forms. Activate it by replacing Waivers.gs and
-WaiverForm in the existing booking project and deploying a new version; see
-`docs/online-waivers.md`. Contact failures alert the owner without undoing signing.
+does not send email. Activate it by replacing Waivers.gs in the existing booking
+project and deploying a new version; see `docs/online-waivers.md`.
+Run `importWaiverSignerContacts` as the owner to import already completed adult
+signer emails without new forms. Each run attempts 25 records; repeat for
+remaining records and review failures manually. No permission checkbox was added
+to the waiver. Contact failures alert the owner without undoing signing.
 
 If Drive saved the PDF but email is unconfirmed, inspect Drive and Gmail first.
 An uncertain email is not automatically repeated. After checking, the owner can

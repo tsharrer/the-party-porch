@@ -62,9 +62,15 @@ function harness(options = {}) {
       let index = 0;
       return { hasNext: () => index < matches.length, next: () => matches[index++] };
     },
+    getFiles() {
+      const snapshot = files.slice();
+      let index = 0;
+      return {hasNext: () => index < snapshot.length, next: () => snapshot[index++]};
+    },
     createFile(contents) {
       const file = {
         name: contents.getName(), contents: contents.getDataAsString(),
+        getName: () => file.name,
         getBlob: () => blob(file.contents, 'application/pdf', file.name),
         setContent(value) {
           if (contactJournalFailure && JSON.parse(value).contactStatus === 'saved') {
@@ -377,6 +383,88 @@ test('lost contact-outcome journal writes and ambiguous emails need review witho
     assert.equal(h.files.length, 2);
     assert.equal(h.emails.length, 2);
   }
+});
+
+function legacyWaivers(h, count = 1, withPdf = true) {
+  h.context.submitWaiver(h.input());
+  const template = h.journal();
+  h.files.length = h.contacts.length = h.emails.length = h.contactCalls.length = 0;
+  for (const key of h.properties.keys()) {
+    if (key.startsWith(h.context.CONTACT_PREFIX)) h.properties.delete(key);
+  }
+  for (let i = 1; i <= count; i++) {
+    const record = JSON.parse(JSON.stringify(template));
+    record.data.id = '12345678-1234-4234-8234-' + String(i).padStart(12, '0');
+    record.pdfName = 'Party-Porch-host-2026-12-01-' + record.data.id + '.pdf';
+    delete record.contactStatus;
+    delete record.contactResourceName;
+    h.context.DriveApp.getFolderById('private-folder').createFile(
+      h.context.Utilities.newBlob(JSON.stringify(record), 'application/json', 'waiver-' + record.data.id + '.json'));
+    if (withPdf) h.context.DriveApp.getFolderById('private-folder').createFile(
+      h.context.Utilities.newBlob('test PDF', 'application/pdf', record.pdfName));
+  }
+}
+
+test('owner importer saves existing completed waiver signers without attendee email or repeated Contacts writes', () => {
+  const h = harness();
+  legacyWaivers(h, 2);
+  const result = h.context.importWaiverSignerContacts();
+  assert.equal(result.saved, 2);
+  assert.equal(result.remaining, 0);
+  assert.equal(h.contacts.length, 1);
+  assert.equal(h.emails.length, 0);
+  const calls = h.contactCalls.length;
+  assert.equal(h.context.importWaiverSignerContacts().alreadySaved, 2);
+  assert.equal(h.contactCalls.length, calls);
+});
+
+test('importer is owner-only and rechecks storage privacy before reading records or Contacts', () => {
+  for (const changed of [{activeEmail: ''}, {activeEmail: 'other@example.com'}, {collaborators: true}]) {
+    const options = {};
+    const h = harness(options);
+    legacyWaivers(h);
+    Object.assign(options, changed);
+    assert.throws(() => h.context.importWaiverSignerContacts(), /Run this importer|unshared My Drive/);
+    assert.equal(h.contactCalls.length, 0);
+    assert.equal(h.emails.length, 0);
+  }
+});
+
+test('importer skips incomplete PDFs, reports invalid journals and never repeats uncertain contact creates', () => {
+  const incomplete = harness();
+  legacyWaivers(incomplete, 1, false);
+  assert.equal(incomplete.context.importWaiverSignerContacts().incomplete, 1);
+  assert.equal(incomplete.contacts.length, 0);
+  const failed = harness();
+  legacyWaivers(failed);
+  const journal = failed.files.find(file => file.name.endsWith('.json'));
+  journal.contents = '{bad JSON';
+  assert.equal(failed.context.importWaiverSignerContacts().needsReview, 1);
+  assert.equal(failed.contacts.length, 0);
+  const options = {};
+  const uncertain = harness(options);
+  legacyWaivers(uncertain);
+  options.contactFailure = 'create';
+  assert.equal(uncertain.context.importWaiverSignerContacts().needsReview, 1);
+  const calls = uncertain.contactCalls.length;
+  assert.equal(uncertain.context.importWaiverSignerContacts().needsReview, 1);
+  assert.equal(uncertain.contactCalls.length, calls);
+  assert.equal(uncertain.contacts.length, 1);
+  assert.equal(uncertain.emails.length, 1, 'Only an owner failure alert, never an attendee email');
+});
+
+test('importer limits each run to 25 contact attempts and resumes without duplicating earlier work', () => {
+  const h = harness();
+  legacyWaivers(h, 26);
+  const first = h.context.importWaiverSignerContacts();
+  assert.equal(first.saved, 25);
+  assert.equal(first.remaining, 1);
+  const second = h.context.importWaiverSignerContacts();
+  assert.equal(second.alreadySaved, 25);
+  assert.equal(second.saved, 1);
+  assert.equal(second.remaining, 0);
+  assert.equal(h.contacts.length, 1);
+  assert.equal(h.emails.length, 0);
 });
 
 test('rejects missing consents, invalid fields, forged/expired tokens and signers mismatching the adult', () => {

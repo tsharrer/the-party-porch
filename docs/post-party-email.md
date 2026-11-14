@@ -1,8 +1,9 @@
 # Post-party thank-you email draft
 
 Status: email draft only. No sending or scheduling has been enabled.
-Adult waiver-signer Contacts saving was implemented separately and requires
-manual deployment; it does not enroll those contacts in promotional emails.
+Adult waiver-signer Contacts saving and a historical importer were implemented
+separately and require manual deployment/run. They do not send promotional emails.
+The waiver form remains unchanged, without an added email-permission checkbox.
 
 Proposed timing: two days after the party, around 9 AM America/Chicago.
 The owner selected drafting only for now.
@@ -31,6 +32,10 @@ The Party Porch
 Prefer not to receive party invitations from us? Reply "unsubscribe" and we'll
 remove you from future promotional emails.
 
+This is a promotional message from The Party Porch.
+
+**Before sending:** add the business's valid physical mailing address.
+
 ## Visual design
 
 See [the HTML preview](email-templates/post-party-thank-you.html). It uses a dark
@@ -39,16 +44,19 @@ navy Party Porch header, warm background, white message card and a gold
 Do not paste raw HTML source into a normal Gmail message.
 
 The draft avoids invented discounts, deadlines, photo links, review links or
-claims about a specific party. Before commercial distribution, finalize required
-sender/address disclosures and a functioning opt-out process. Do not invent a
-business mailing address or expose a private address.
+claims about a specific party. Its opt-out button currently opens an email request;
+it is not an automatic unsubscribe endpoint. Before commercial distribution,
+finalize required sender/address disclosures and a functioning opt-out process.
+Do not invent a business mailing address or expose a private address.
 
 ## Requirements before enabling automation
 
-- Collect a separate optional permission for promotional follow-up email.
-  Required waiver/e-signature consent is not permission to market.
-- Save the consenting adult host, participant or guardian's email to business
-  Contacts, preserving existing contact data and avoiding duplicates.
+- The owner selected an opt-out approach, not an extra waiver checkbox.
+  Federal U.S. CAN-SPAM generally does not require prior opt-in, but applicable
+  privacy commitments, other laws and service-provider policies must still be
+  considered. Required waiver consent is not evidence of marketing opt-in.
+- Save adult host, participant or guardian emails to business Contacts,
+  preserving existing contact data and avoiding duplicates.
 - Never collect a child's email for this follow-up or email a child directly.
 - Deduplicate by party and adult email so a guardian signing for multiple
   children does not receive multiple copies.
@@ -57,10 +65,17 @@ business mailing address or expose a private address.
 - Respect cancellation, corrections, opt-outs and email delivery failures.
   Do not automatically repeat an uncertain send.
 - Implement and test the unsubscribe/suppression process before promotional
-  automation goes live. Contacts membership alone is not permission to send.
+  automation goes live. Exclude prior opt-outs from the first message and every
+  subsequent promotional send. Identify the promotion clearly, use accurate
+  sender/subject information and include a valid physical postal address.
+- Honor opt-outs within ten business days and keep the opt-out mechanism working
+  for at least thirty days after sending. No new attendee emails are enabled yet.
+
+Reference: [FTC CAN-SPAM compliance guide](https://www.ftc.gov/business-guidance/resources/can-spam-act-compliance-guide-business).
 
 The existing booking integration saves booking/request customer contacts. The
 new waiver update saves adult signer names/emails after completed submissions
-when deployed. It does not send this post-party email or bulk-import old forms.
-An opt-out button and suppression process remain part of the future sending
-design; an opt-out option is not evidence that a signer opted into marketing.
+when deployed. The owner-only `importWaiverSignerContacts` action can import
+existing completed forms without asking attendees to submit again. Neither
+action sends this post-party email. A tested suppression process remains part
+of the future sending design; Contacts membership is not an opt-in record.

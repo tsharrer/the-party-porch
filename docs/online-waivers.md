@@ -174,10 +174,13 @@ Paper signing remains an alternative. The two forms are not a referee/staff waiv
 
 ## Deploy adult signer contact saving
 
-Replace **Waivers.gs** with the current `waivers.gs` and **WaiverForm** with the
-current `WaiverForm.html` in the existing booking/waiver project, then deploy a
+Replace **Waivers.gs** with the current `waivers.gs` in the existing
+booking/waiver project, then deploy a
 new version of that existing public web app, keeping its URL.
 Do not change the private text inbox project.
+The waiver HTML remains as it was, without a new permission checkbox. If you
+installed the brief extra Contacts notice from the previous update, the current
+`WaiverForm.html` restores the original form display.
 
 This reuses `saveCustomerContact` from the existing `google-calendar.gs`, the
 **People API v1** advanced service and the existing
@@ -186,9 +189,24 @@ installed, no new installer or scope is needed. Otherwise enable the service
 and authorize the scope using the booking setup instructions.
 
 The signed agreement version is unchanged because its terms and signature
-fields are unchanged. Prior signed records are not modified in bulk. New
-completed submissions, and valid retries of older receipts without a contact
-status, can save their adult signer; no historical folder import is performed.
+fields are unchanged. New completed submissions, and valid retries of older
+receipts without a contact status, can save their adult signer.
+
+### Import already completed waivers
+
+Run **importWaiverSignerContacts** from the existing booking project's editor
+as **yourpartyporch@gmail.com**. It checks the private storage folder again and
+imports adult signer names/emails only from journals with saved PDFs. It sends
+no attendee email, does not alter signed PDFs/terms and requires no new forms.
+It adds contact outcome metadata to the private journals.
+
+Each run attempts up to 25 records. Check the execution summary:
+`saved`, `alreadySaved`, `needsReview`, `incomplete` and `remaining`.
+Re-run for `remaining` until zero. Existing matches are reused.
+Investigate `needsReview` in Contacts/journals before any manual retry; uncertain
+creates are not automatically repeated. `incomplete` means no saved PDF was found
+and the contact was not imported. Logs identify invalid journals needing review.
+No existing waiver records have been imported by the CLI; the owner must run it.
 
 After deployment, use an authorized adult test waiver to confirm the PDF,
 owner email and matching Google Contact. That live check has not been performed

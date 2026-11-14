@@ -19,7 +19,7 @@ checks, owner reports and unresolved work. It does not assert a new live audit.
 | December closure | Owner reported saving; live availability returned `closed: true` for all ten dates | Existing customer commitments still require separate review |
 | Owner workflow guide | Markdown and printable PDF generated; content/layout checked and copied into Drive Documents | Drive copies are snapshots, not automatic repo updates |
 | Private budget workbook | Tabs, formulas, seed classification and file copies checked | Excel upload must be saved as Google Sheets; native Sheets calculation/import not yet verified |
-| Adult waiver signer Contacts | Six focused cases plus booking/signing regressions; 67 targeted tests passed | Manual booking-project deployment and real Contact receipt check still required; no historical bulk import |
+| Adult waiver signer Contacts | Ten focused cases plus booking/signing regressions; 71 targeted tests passed | Manual deployment/import and real Contact receipt check still required; historical import not yet run |
 
 The latest combined automated run passed 76 tests:
 

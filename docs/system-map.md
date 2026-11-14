@@ -108,6 +108,9 @@ save the guardian, not child/emergency-contact data. Failed/uncertain writes ale
 the owner and preserve signing without automatically repeating the same contact
 attempt. This update requires manual Apps Script deployment and is not promotional
 subscription or a post-party mailing scheduler.
+The owner-only `importWaiverSignerContacts` action can save adult contacts from
+existing completed journals/PDFs in batches of 25 without requesting new forms.
+It is a manual action, not an automatically executed historical import.
 
 For Nerf bookings, host links go out at booking. Participant links go to the host
 after a tracked deposit invoice is verified paid; a daily job sends one reminder
