@@ -1,7 +1,8 @@
 # Post-party thank-you email draft
 
-Status: draft only. No sending, scheduling, waiver changes or signer contact
-collection have been enabled by this document.
+Status: email draft only. No sending or scheduling has been enabled.
+Adult waiver-signer Contacts saving was implemented separately and requires
+manual deployment; it does not enroll those contacts in promotional emails.
 
 Proposed timing: two days after the party, around 9 AM America/Chicago.
 The owner selected drafting only for now.
@@ -58,5 +59,8 @@ business mailing address or expose a private address.
 - Implement and test the unsubscribe/suppression process before promotional
   automation goes live. Contacts membership alone is not permission to send.
 
-The existing booking integration saves booking/request customer contacts. It
-does not currently save all waiver signers or send this post-party email.
+The existing booking integration saves booking/request customer contacts. The
+new waiver update saves adult signer names/emails after completed submissions
+when deployed. It does not send this post-party email or bulk-import old forms.
+An opt-out button and suppression process remain part of the future sending
+design; an opt-out option is not evidence that a signer opted into marketing.

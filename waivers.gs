@@ -271,6 +271,29 @@ function waiverFileByName_(folder, name) {
   return file;
 }
 
+function saveWaiverSignerContact_(record, journal) {
+  if (record.contactStatus === "saved" || record.contactStatus === "needs_review") return;
+  try {
+    if (record.contactStatus === "saving") {
+      throw new Error("An interrupted waiver contact save needs review in Google Contacts before retrying.");
+    }
+    record.contactStatus = "saving";
+    journal.setContent(JSON.stringify(record));
+    record.contactResourceName = saveCustomerContact({
+      name: record.data.signer, email: record.data.email, phone: ""
+    });
+    record.contactStatus = "saved";
+    journal.setContent(JSON.stringify(record));
+  } catch (err) {
+    record.contactStatus = "needs_review";
+    try { journal.setContent(JSON.stringify(record)); }
+    catch (saveError) { console.error("Waiver contact outcome could not be recorded: " + String(saveError)); }
+    reportOwnerAutomationFailure("Waiver signer Google Contacts save", err,
+      "Receipt: " + record.data.id + "\nAdult signer: " + record.data.signer +
+      "\nEmail: " + record.data.email + "\nThe signed waiver remains saved in Drive. Review Contacts before a manual retry.");
+  }
+}
+
 function submitWaiver(input) {
   var data;
   try {
@@ -310,6 +333,7 @@ function submitWaiver(input) {
       var blob = Utilities.newBlob(waiverPdfHtml_(record), "text/html", "waiver.html").getAs(MimeType.PDF);
       pdf = folder.createFile(blob.setName(record.pdfName));
     }
+    saveWaiverSignerContact_(record, journal);
     if (record.emailStatus === "pending") {
       record.emailStatus = "sending";
       journal.setContent(JSON.stringify(record));
@@ -319,6 +343,7 @@ function submitWaiver(input) {
           body: "A waiver was signed online and saved privately in Google Drive.\n\n" +
             "Form: " + record.document.title + "\nEvent date: " + data.eventDate +
             "\nReceipt: " + data.id + "\nSigned at: " + record.acceptedAtHouston +
+            "\nAdult signer contact: " + record.contactStatus +
             "\nPrivate PDF: " + pdf.getUrl() + "\n\nThe signed PDF is attached. " +
             "A host form does not replace individual participant/guardian forms. A typed signature does not independently verify identity.",
           attachments: [pdf.getBlob().setName(record.pdfName)]
@@ -333,6 +358,7 @@ function submitWaiver(input) {
     }
     return {
       ok: true, id: data.id, signedAt: record.acceptedAt, emailStatus: record.emailStatus,
+      contactStatus: record.contactStatus,
       pdfName: record.pdfName, pdfBase64: Utilities.base64Encode(pdf.getBlob().getBytes())
     };
   } catch (err) {

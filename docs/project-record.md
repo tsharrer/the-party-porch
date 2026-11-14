@@ -45,6 +45,9 @@ separately. It must remain deployed as **Me / Only myself**.
 
 ## Latest recorded status
 
+- Adult waiver-signer Contacts saving is implemented and tested, but requires a
+  new deployment of the existing booking/waiver project. It does not enable the
+  draft post-party email or bulk-import historical forms.
 - Inbox source was pushed as `6ae0a50`. The owner subsequently reported successful
   installation, a real self-test SMS/reply and signed-out access rejection.
 - Mobile account-routing problems were resolved without changing access controls.

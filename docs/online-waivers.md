@@ -126,6 +126,16 @@ signed; the owner must check the private completed forms before participation.
 
 ## Records and delivery
 
+- After a completed PDF is saved, the adult signer's name and email are saved in
+  business Google Contacts using the existing email-matching helper. A child's
+  form saves the parent/legal guardian, not the child or emergency contact.
+  Waiver contact saving does not copy phone numbers or child birth dates into
+  Contacts and does not subscribe anyone to promotional email.
+- The private journal records `contactStatus` as `saving`, `saved` or
+  `needs_review`. Matching Contacts retain their existing names/phone numbers.
+  A failed/uncertain contact write does not undo the signed PDF; it produces an
+  owner alert and is not automatically repeated on the same waiver receipt.
+  The signed-PDF owner email includes the contact status.
 - Each form load receives a signed, random receipt token valid for 24 hours.
   Submission requires the current terms version, an adult signer, agreement consent,
   electronic-signature consent and (for minors) parent/guardian authorization.
@@ -161,6 +171,28 @@ Forms use server-issued tokens and a honeypot, not a CAPTCHA; anonymous Google A
 Script access is still subject to abuse and daily Drive conversion/mail quotas.
 Monitor execution failures and storage; contact customers if collection is unavailable.
 Paper signing remains an alternative. The two forms are not a referee/staff waiver.
+
+## Deploy adult signer contact saving
+
+Replace **Waivers.gs** with the current `waivers.gs` and **WaiverForm** with the
+current `WaiverForm.html` in the existing booking/waiver project, then deploy a
+new version of that existing public web app, keeping its URL.
+Do not change the private text inbox project.
+
+This reuses `saveCustomerContact` from the existing `google-calendar.gs`, the
+**People API v1** advanced service and the existing
+`https://www.googleapis.com/auth/contacts` scope. If booking Contacts are already
+installed, no new installer or scope is needed. Otherwise enable the service
+and authorize the scope using the booking setup instructions.
+
+The signed agreement version is unchanged because its terms and signature
+fields are unchanged. Prior signed records are not modified in bulk. New
+completed submissions, and valid retries of older receipts without a contact
+status, can save their adult signer; no historical folder import is performed.
+
+After deployment, use an authorized adult test waiver to confirm the PDF,
+owner email and matching Google Contact. That live check has not been performed
+by the CLI. Post-party promotional sending remains draft-only.
 
 Run offline checks with:
 

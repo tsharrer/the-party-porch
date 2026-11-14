@@ -102,6 +102,13 @@ accepted agreement and fields. Exact retries reuse the receipt/PDF; changed data
 requires a new submission. Uncertain email sends are not automatically repeated.
 Signers download their copy without making the Drive folder public.
 
+The adult signer's name and email can also be saved in private business Google
+Contacts after the PDF is saved, reusing booking contact matching. Minor forms
+save the guardian, not child/emergency-contact data. Failed/uncertain writes alert
+the owner and preserve signing without automatically repeating the same contact
+attempt. This update requires manual Apps Script deployment and is not promotional
+subscription or a post-party mailing scheduler.
+
 For Nerf bookings, host links go out at booking. Participant links go to the host
 after a tracked deposit invoice is verified paid; a daily job sends one reminder
 four days before and catches up inside that window. SMS requires recorded consent.

@@ -222,6 +222,13 @@ Check **Party Porch - Signed Waivers** and matching email receipts before play.
 That folder must remain private and separate from general shareable Documents.
 An unsigned template or a message containing the link is not a completed waiver.
 
+The new waiver Contacts update saves the adult signer's name/email after the
+PDF is saved. For a child's form it saves the parent/guardian, not the child.
+It preserves matching contacts, does not subscribe anyone to marketing, and
+does not bulk-import old forms. Activate it by replacing Waivers.gs and
+WaiverForm in the existing booking project and deploying a new version; see
+`docs/online-waivers.md`. Contact failures alert the owner without undoing signing.
+
 If Drive saved the PDF but email is unconfirmed, inspect Drive and Gmail first.
 An uncertain email is not automatically repeated. After checking, the owner can
 manually send the private PDF to the appropriate recipient.

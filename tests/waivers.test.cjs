@@ -17,10 +17,13 @@ function harness(options = {}) {
   let sequence = 0;
   let pdfFailure = !!options.pdfFailure;
   let afterPdfFailure = !!options.afterPdfFailure;
+  let contactJournalFailure = !!options.failContactSavedJournal;
   const files = [];
   const emails = [];
   const logs = [];
   const conversions = [];
+  const contacts = options.contacts || [];
+  const contactCalls = [];
   const properties = new Map();
   const ownerEmail = 'yourpartyporch@gmail.com';
   const store = {
@@ -64,6 +67,10 @@ function harness(options = {}) {
         name: contents.getName(), contents: contents.getDataAsString(),
         getBlob: () => blob(file.contents, 'application/pdf', file.name),
         setContent(value) {
+          if (contactJournalFailure && JSON.parse(value).contactStatus === 'saved') {
+            contactJournalFailure = false;
+            throw new Error('Contact outcome journal write failed');
+          }
           if (options.failSentJournal && JSON.parse(value).emailStatus === 'sent') {
             throw new Error('Journal write failed after email');
           }
@@ -116,6 +123,26 @@ function harness(options = {}) {
       emails.push(email);
       if (options.mailFailure) throw new Error('Mail service response uncertain');
     } },
+    People: {People: {
+      Connections: {list() {
+        contactCalls.push({method: 'list'});
+        if (options.contactFailure === 'list') throw new Error('Contacts unavailable');
+        return {connections: contacts};
+      }},
+      get(resourceName) {
+        contactCalls.push({method: 'get', resourceName});
+        const person = contacts.find(contact => contact.resourceName === resourceName);
+        assert.ok(person);
+        return person;
+      },
+      createContact(person) {
+        contactCalls.push({method: 'create', person});
+        const contact = {...person, resourceName: 'people/waiver-' + (contacts.length + 1)};
+        contacts.push(contact);
+        if (options.contactFailure === 'create') throw new Error('Contact write outcome uncertain');
+        return contact;
+      }
+    }},
     HtmlService: {
       createHtmlOutput: html => ({html}),
       createTemplateFromFile(name) {
@@ -153,7 +180,7 @@ function harness(options = {}) {
   }
   if (!options.uninstalled) context.installWaiverStorage();
   return {
-    context, properties, files, emails, conversions, logs, open, input,
+    context, properties, files, emails, conversions, logs, open, input, contacts, contactCalls,
     advance: milliseconds => { now += milliseconds; },
     journal: () => JSON.parse(files.find(file => file.name.endsWith('.json')).contents)
   };
@@ -250,6 +277,108 @@ test('guardian signs a separate minor form and guardian authorization is retaine
   assert.ok(h.conversions[0].includes('does not by itself establish an enforceable release'));
 });
 
+test('completed host/adult waivers save only the adult signer name/email in private Contacts', () => {
+  for (const kind of ['host', 'participant']) {
+    const h = harness();
+    const result = h.context.submitWaiver(h.input(kind));
+    assert.equal(result.ok, true);
+    assert.equal(result.contactStatus, 'saved');
+    assert.equal(h.contacts.length, 1);
+    assert.deepEqual(JSON.parse(JSON.stringify(h.contactCalls.find(call => call.method === 'create').person)), {
+      names: [{unstructuredName: 'Test Adult'}],
+      emailAddresses: [{value: 'test@example.com', type: 'other'}]
+    });
+    assert.equal(h.journal().contactStatus, 'saved');
+    assert.ok(h.journal().contactResourceName);
+    assert.match(h.emails[0].body, /Adult signer contact: saved/);
+    assert.equal(h.emails[0].to, 'yourpartyporch@gmail.com', 'No promotional or signer email is sent');
+  }
+});
+
+test('guardian forms save the guardian, never the child/emergency contact, and duplicate signers reuse Contacts', () => {
+  const h = harness();
+  const input = {...h.input('participant'), name: 'Test Child', participantType: 'minor',
+    dateOfBirth: '2015-12-01', relationship: 'Parent', guardianConsent: true};
+  assert.equal(h.context.submitWaiver(input).contactStatus, 'saved');
+  h.context.Utilities.getUuid = () => '22345678-1234-4234-8234-123456789abc';
+  assert.equal(h.context.submitWaiver({...h.input('participant'), ...input,
+    token: h.open('participant').token, name: 'Second Test Child'}).contactStatus, 'saved');
+  assert.equal(h.contacts.length, 1);
+  assert.equal(h.contacts[0].names[0].unstructuredName, 'Test Adult');
+  assert.equal(JSON.stringify(h.contacts).includes('Test Child'), false);
+  assert.equal(JSON.stringify(h.contacts).includes('2015-12-01'), false);
+  assert.equal(JSON.stringify(h.contacts).includes('Test Emergency'), false);
+  assert.equal(h.contactCalls.filter(call => call.method === 'create').length, 1);
+  const calls = h.contactCalls.length;
+  h.context.submitWaiver(input);
+  assert.equal(h.contactCalls.length, calls, 'Exact waiver retry skips its completed contact save');
+});
+
+test('waiver Contacts reuse existing matching emails without replacing names or phone numbers', () => {
+  const existing = {resourceName: 'people/existing', names: [{unstructuredName: 'Existing name'}],
+    emailAddresses: [{value: 'TEST@example.com'}], phoneNumbers: [{value: '+12025550999'}]};
+  const h = harness({contacts: [existing]});
+  assert.equal(h.context.submitWaiver(h.input()).contactStatus, 'saved');
+  assert.equal(h.contacts.length, 1);
+  assert.equal(h.contactCalls.filter(call => call.method === 'create').length, 0);
+  assert.equal(existing.names[0].unstructuredName, 'Existing name');
+  assert.equal(existing.phoneNumbers[0].value, '+12025550999');
+});
+
+test('failed/uncertain contact saves do not undo signing or repeat creation/alerts on waiver retry', () => {
+  for (const contactFailure of ['list', 'create']) {
+    const h = harness({contactFailure});
+    const input = h.input();
+    const result = h.context.submitWaiver(input);
+    assert.equal(result.ok, true);
+    assert.equal(result.emailStatus, 'sent');
+    assert.equal(result.contactStatus, 'needs_review');
+    assert.equal(h.files.length, 2);
+    const calls = h.contactCalls.length;
+    assert.equal(h.context.submitWaiver(input).contactStatus, 'needs_review');
+    assert.equal(h.contactCalls.length, calls);
+    assert.equal(h.emails.length, 2, 'One failure alert and one signed-PDF email, not duplicate sends');
+    assert.ok(h.emails.some(email => email.subject.includes('Waiver signer Google Contacts save')));
+  }
+});
+
+test('an interrupted contact save becomes owner-visible review rather than an automatic repeat', () => {
+  const h = harness();
+  const input = h.input();
+  h.context.submitWaiver(input);
+  const journal = h.files.find(file => file.name.endsWith('.json'));
+  const record = JSON.parse(journal.contents);
+  record.contactStatus = 'saving';
+  journal.contents = JSON.stringify(record);
+  const calls = h.contactCalls.length;
+  assert.equal(h.context.submitWaiver(input).contactStatus, 'needs_review');
+  assert.equal(h.contactCalls.length, calls);
+  assert.equal(h.emails.length, 2);
+  h.context.submitWaiver(input);
+  assert.equal(h.emails.length, 2);
+});
+
+test('lost contact-outcome journal writes and ambiguous emails need review without duplicating Contacts', () => {
+  for (const options of [
+    {failContactSavedJournal: true},
+    {contacts: [
+      {resourceName: 'people/one', emailAddresses: [{value: 'test@example.com'}]},
+      {resourceName: 'people/two', emailAddresses: [{value: 'TEST@example.com'}]}
+    ]}
+  ]) {
+    const h = harness(options);
+    const input = h.input();
+    assert.equal(h.context.submitWaiver(input).contactStatus, 'needs_review');
+    const count = h.contacts.length;
+    const calls = h.contactCalls.length;
+    assert.equal(h.context.submitWaiver(input).ok, true);
+    assert.equal(h.contacts.length, count);
+    assert.equal(h.contactCalls.length, calls);
+    assert.equal(h.files.length, 2);
+    assert.equal(h.emails.length, 2);
+  }
+});
+
 test('rejects missing consents, invalid fields, forged/expired tokens and signers mismatching the adult', () => {
   const h = harness();
   const valid = h.input();
@@ -269,6 +398,7 @@ test('rejects missing consents, invalid fields, forged/expired tokens and signer
   assert.match(h.context.submitWaiver(valid).error, /expired/);
   assert.equal(h.files.length, 0);
   assert.equal(h.emails.length, 0);
+  assert.equal(h.contactCalls.length, 0);
 });
 
 test('rejects host-only signatures for minors and unauthorized relationships', () => {
@@ -336,6 +466,7 @@ test('conversion failure is explicit; a retry completes the same journal without
   assert.equal(h.context.submitWaiver(input).ok, false);
   assert.equal(h.files.length, 1);
   assert.equal(h.emails.length, 0);
+  assert.equal(h.contactCalls.length, 0);
   assert.equal(h.context.submitWaiver(input).ok, true);
   assert.equal(h.files.length, 2);
   assert.equal(h.emails.length, 1);

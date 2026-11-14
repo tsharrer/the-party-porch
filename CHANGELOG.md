@@ -5,6 +5,16 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-11-13
 
+### Added - Adult waiver signer contacts
+- Save adult host, participant and guardian names/emails in private business Google
+  Contacts after completed PDF storage, reusing existing email-based matching.
+- Keep children, birth dates, emergency contacts and waiver phone numbers out of
+  this contact import. Preserve existing names/phones and avoid duplicate writes.
+- Record contact outcomes privately; failures alert the owner without undoing
+  signing or automatically repeating uncertain contact creation.
+- Document manual Apps Script deployment. Post-party email remains a draft, with
+  no automatic mailing or promotional subscription enabled.
+
 ### Added - Private mobile text inbox
 - Added a separate owner-only Apps Script inbox for Twilio business numbers,
   recent/paged conversations, message statuses, compose/reply and waiver-link buttons.
