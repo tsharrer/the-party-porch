@@ -23,6 +23,7 @@ status (Lead → Quoted → Booked → Done → Lost) and value so you learn whi
 
 | Doc | Purpose |
 |-----|---------|
+| [docs/project-record.md](docs/project-record.md) | Current system map, conversation work log, operations and verification/open items |
 | [TRACKER.md](TRACKER.md) | ✅ Master task tracker — check things off as you go |
 | [index.html](index.html) | 🌐 **Booking website** (served at the domain root) — SEO-optimized, self-contained |
 | [google-calendar.gs](google-calendar.gs) | 📅 Apps Script backend: availability + booking + confirmation email |
