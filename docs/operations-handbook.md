@@ -108,6 +108,11 @@ Create closures on the business calendar used by the booking backend, not an
 unrelated personal calendar. Use an all-day event with `CLOSED`, `BLOCKED`,
 `UNAVAILABLE` or `VACATION` in its title.
 
+This is a whole-shop closure: every product is unavailable, not just Nerf or
+items listed in the event description. You do not need separate product blocks.
+Priced booking requests are rejected by the backend while the date is closed.
+Custom quote inquiries remain manual requests, not confirmed bookings.
+
 For December 16-25, 2026 inclusive, use start December 16 and exclusive end
 December 26. A prefilled closure draft was opened during this session and the
 owner reported it saved. Its calendar selection and live availability effect

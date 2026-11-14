@@ -13,6 +13,7 @@ behavior. It contains no credentials, customer records or signed forms.
 | --- | --- |
 | [Owner workflow guide](owner-workflow-guide.md) | Daily instructions: text app, bookings, waivers, calendar blocks and troubleshooting |
 | [Budget and transaction workbook](budget-and-transactions.md) | Private Google Sheets import, expense entry, budgeting and pipeline rules |
+| [Post-party email draft](post-party-email.md) | Thank-you copy and visual preview; not scheduled or enabled |
 | [Session work log](session-logs/2026-11-13.md) | Changes, decisions, deployment history and supporting commits |
 | [System map](system-map.md) | Website, booking/payment backend, waivers and private inbox |
 | [Operations handbook](operations-handbook.md) | Rentals, referees, customer communications and calendar closures |

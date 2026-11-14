@@ -193,6 +193,9 @@ the previous-day rule can block another day beyond the event.
 5. Refresh website availability and check that the dates are unavailable.
 
 Recognized closure keywords are `CLOSED`, `BLOCKED`, `UNAVAILABLE` and `VACATION`.
+This closes the whole shop for every product; do not create separate per-product
+blocks. Priced bookings are rejected while closed. A custom quote inquiry is
+still only a manual request, not permission to fulfill a party on a closed date.
 For a multi-day block, Google Calendar's underlying end date is exclusive:
 December 16-25 inclusive is start December 16, end December 26. In the normal
 calendar UI, select the last included day when it presents an inclusive date range.
