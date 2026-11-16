@@ -10,6 +10,7 @@ session; it is not a new deployment or a live account inspection.
 | Public website | `index.html`, `experiences/`, `assets/`, `terms.html`, `privacy.html` | GitHub Pages at yourpartyporch.com |
 | Booking backend | `google-calendar.gs` | Existing public Apps Script web app; runs as business account |
 | Customer signing | `waivers.gs`, `WaiverForm.html`, `customer/waiver.html` | Public forms; private completed records in Google Drive |
+| Post-party follow-up | `post-party-email.gs`, `PostPartyEmail.html` | Same public Apps Script project for unsubscribe; owner-only setup and disabled daily mail job |
 | Owner text inbox | `staff/text-inbox/Code.gs`, `Index.html`, `appsscript.json` | Separate Apps Script project; Me / Only myself |
 | Customer guide | `customer/nerf-party-guide.html` | Unlisted public webpage, not authenticated |
 | Referee manual | `staff/nerf-referee-manual.html` | Unlisted public webpage, not authenticated |
@@ -118,6 +119,25 @@ four days before and catches up inside that window. SMS requires recorded consen
 This sends links, not proof of signed forms, and never infers guest phone numbers.
 Cash, standalone invoices and legacy Checkout payments are not inferred from
 untracked payment data.
+
+## Post-party follow-up (implemented, not enabled)
+
+The owner selected automatic follow-up two days after uncancelled calendar
+parties, around 9 AM Houston, to matched adult waiver signers only. The scheduler
+does not use every Contact or add unsigned hosts. It checks unique date/reference
+matches, excludes cancelled/closed/quote/test/pickup events and unpaid tracked
+holds, and deduplicates per party and adult email.
+
+Private delivery journals and contact preferences live in the existing unshared
+waiver folder. Uncertain mail is not retried automatically. Tokenized public
+unsubscribe links show a confirmation form and record permanent promotional
+suppression on POST. They do not expose signer emails, change waivers or stop
+operational messages. Owner-entered reply opt-outs use the same private store.
+
+Sending stays disabled until a full postal address, deployed unsubscribe route,
+owner-only test and explicit installer are complete. A ZIP code alone is rejected.
+The source update does not itself send anything. See
+[email automation](post-party-email-automation.md).
 
 ## Private inbox
 

@@ -141,6 +141,14 @@ rules. The deadline is **seven days from booking or event start, whichever is
 sooner**. Due-date reconciliation is approximate; unpaid invoices must be voided
 before inventory release. Stripe errors do not silently free the inventory.
 
+**Post-party follow-up:** the new automation is implemented but not enabled.
+Once configured, it emails matched adult waiver signers two days after
+uncancelled parties around 9 AM Houston. Mark cancellations and correct no-show
+records before then; it assumes uncancelled parties happened. Confirmed
+unsubscribe requests suppress all future promotional follow-ups.
+Setup requires a full postal address (not ZIP alone), owner test and installer.
+See [automatic post-party email setup](post-party-email-automation.md).
+
 The system does not automatically collect the remaining event-day balance or
 charge a saved card for equipment damage. Handle those separately under the
 agreement after checking current payment status.

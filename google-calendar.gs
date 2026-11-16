@@ -94,6 +94,10 @@ function stripeKey() {
  */
 function doGet(e) {
   var p = (e && e.parameter) || {};
+  if (p.action === "unsubscribe") return postPartyUnsubscribe_(p, false);
+  if (p.action === "postPartyStatus") {
+    return reply({ok: true, version: typeof postPartyUnsubscribe_ === "function" ? "post-party-v1" : null}, p.callback);
+  }
   if (p.action === "waiver") return renderWaiverForm_(p.type);
   if (p.action === "waiverStatus") {
     return reply({
@@ -162,6 +166,7 @@ function eventItemKeys(event) {
 
 function doPost(e) {
   var tp = (e && e.parameter) || {};
+  if (tp.action === "unsubscribe") return postPartyUnsubscribe_(tp, true);
 
   // Twilio delivery-status callback (form-encoded) → email us if a text FAILED.
   if (tp.MessageStatus || tp.SmsStatus) {

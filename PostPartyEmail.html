@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><title>Thanks from The Party Porch</title></head>
+<body style="margin:0;padding:0;background:#f0edff;color:#12263a;font-family:Arial,sans-serif">
+  <table role="presentation" style="width:100%;border-collapse:collapse;background:#f0edff">
+    <tr><td style="padding:24px 12px">
+      <table role="presentation" style="width:100%;max-width:600px;margin:0 auto;border-collapse:collapse;background:#fff">
+        <tr><td style="height:8px;background:#ffb703;border-bottom:8px solid #ef476f"></td></tr>
+        <tr><td style="padding:30px 24px;background:#6339b5;color:#fff;text-align:center">
+          <p style="margin:0 0 18px;font-size:13px;font-weight:bold;letter-spacing:3px;color:#ffe08a">THE PARTY PORCH</p>
+          <h1 style="margin:0 0 12px;font-size:32px;line-height:1.2">Big smiles.<br><?= nerf ? "Epic Nerf battles." : "Great party memories." ?><br><span style="color:#ffe08a">Thanks for coming!</span></h1>
+          <p style="margin:0;font-size:16px;line-height:1.5"><?= nerf ? "You helped make it a Nerf party to remember." : "You helped make it a party to remember." ?></p>
+        </td></tr>
+        <tr><td style="padding:28px 24px;font-size:16px;line-height:1.6">
+          <p style="margin:0 0 16px;font-size:21px;font-weight:bold;color:#a52e57">Hey, party crew!</p>
+          <p style="margin:0 0 16px"><?= nerf ? "Thank you for joining the Nerf fun with The Party Porch! We hope you and your family had a blast teaming up, dodging darts and making great memories." : "Thank you for celebrating with The Party Porch! We hope you and your family had a wonderful time making great memories." ?></p>
+          <table role="presentation" style="width:100%;margin:0 0 24px;border-collapse:collapse">
+            <tr><td style="padding:18px;background:#e6f8f2;border-left:5px solid #16816e">
+              <h2 style="margin:0 0 8px;font-size:20px;color:#126957">Keep the good times going!</h2>
+              <p style="margin:0"><?= nerf ? "Ready for a Nerf rematch?" : "Ready for your next celebration?" ?> Whether you're planning a birthday, family celebration or another get-together, we'd love to bring the fun to your next party.</p>
+            </td></tr>
+          </table>
+          <? if (offerActive) { ?>
+          <table role="presentation" style="width:100%;margin:0 0 24px;border-collapse:collapse">
+            <tr><td style="padding:20px;background:#fff0d0;border:2px solid #ffb703;text-align:center">
+              <h2 style="margin:0 0 8px;font-size:25px;color:#6339b5">A little thank-you: 10% off!</h2>
+              <p style="margin:0 0 10px">Enjoy <strong>10% off rental charges</strong> when you book by <strong>December 31, 2026, Houston time</strong>.</p>
+              <p style="margin:0 0 10px">Enter code <strong>NERFTHANKS10</strong> in the booking form.</p>
+              <p style="margin:0;font-size:13px">Excludes delivery, staff/setup, supply packs and taxes. Available whether or not you leave a review.</p>
+            </td></tr>
+          </table>
+          <? } ?>
+          <p style="margin:0 0 24px;text-align:center"><a href="https://yourpartyporch.com/#book" style="display:inline-block;padding:15px 24px;background:#ffb703;color:#12263a;font-weight:bold;text-decoration:none;border-radius:8px">Book your next party</a></p>
+          <h2 style="margin:0 0 8px;font-size:20px;color:#a52e57"><?= nerf ? "Tell us how the Nerf fun went" : "Tell us how the party went" ?></h2>
+          <p style="margin:0 0 12px">We'd appreciate an honest Google review. Your feedback helps other families get to know The Party Porch. Leaving a review is completely optional<?= offerActive ? " and does not affect your discount" : "" ?>.</p>
+          <p style="margin:0 0 24px"><a href="https://g.page/r/CauEr6BR1sANEBM/review" style="display:inline-block;padding:11px 18px;border:2px solid #6339b5;border-radius:6px;color:#6339b5;font-weight:bold;text-decoration:none">Leave an honest Google review</a></p>
+          <p style="margin:0 0 16px">Have a question? Just reply to this email.</p>
+          <p style="margin:0">Thanks again,<br><strong style="color:#6339b5">The Party Porch</strong></p>
+        </td></tr>
+        <tr><td style="padding:20px 24px;border-top:4px solid #ef476f;background:#fff5e5;color:#4e6273;font-size:12px;line-height:1.6;text-align:center">
+          <p style="margin:0 0 8px"><a href="https://yourpartyporch.com" style="color:#12263a">yourpartyporch.com</a></p>
+          <p style="margin:0 0 12px">Prefer not to receive party invitations? Unsubscribe below or reply &quot;unsubscribe&quot;.</p>
+          <p style="margin:0 0 12px"><a href="<?= unsubscribeUrl ?>" style="display:inline-block;padding:10px 16px;border:1px solid #4e6273;border-radius:6px;color:#12263a;text-decoration:none">Unsubscribe from promotional emails</a></p>
+          <p style="margin:0">A promotional message from The Party Porch.<br><?= address ?></p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

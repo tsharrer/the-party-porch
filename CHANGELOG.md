@@ -5,6 +5,16 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-11-16
 
+### Added - Disabled-by-default automatic post-party follow-up
+- Prepare daily follow-up around 9 AM Houston, two days after uncancelled
+  calendar parties, to uniquely matched adult waiver signers only.
+- Deduplicate guardians, exclude cancelled/closed/test/quote/pickup and unpaid
+  tracked events, hold ambiguous matches, and never retry uncertain mail.
+- Add private permanent promotional suppression and tokenized unsubscribe
+  confirmation, plus owner-only preview, test, install, pause and reply-opt-out actions.
+- Retain colorful Nerf/neutral copy, remove the offer after expiry, and require
+  a full postal address and owner test before enabling. No attendee emails sent.
+
 ### Added - Rental thank-you discount code
 - Implemented NERFTHANKS10 for 10% off rental charges on bookings submitted by
   December 31, 2026, Houston time, independent of the optional Google review.

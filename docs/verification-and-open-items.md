@@ -20,7 +20,8 @@ checks, owner reports and unresolved work. It does not assert a new live audit.
 | Owner workflow guide | Markdown and printable PDF generated; content/layout checked and copied into Drive Documents | Drive copies are snapshots, not automatic repo updates |
 | Private budget workbook | Tabs, formulas, seed classification and file copies checked | Excel upload must be saved as Google Sheets; native Sheets calculation/import not yet verified |
 | Adult waiver signer Contacts | Ten focused cases plus booking/signing regressions; 71 targeted tests passed | Manual deployment/import and real Contact receipt check still required; historical import not yet run |
-| NERFTHANKS10 rental discount | 49 focused pricing/payment tests plus mocked mobile/desktop form checks | Live read-only promotionStatus still returns the old generic service response; owner must deploy Code.gs and Pricing.gs before redemption |
+| NERFTHANKS10 rental discount | 49 focused pricing/payment tests plus mocked mobile/desktop form checks; live readiness confirmed `nerfthanks10-v1` after owner deployment | No real discounted invoice/payment was created |
+| Automatic post-party emails | 15 focused automation tests; 93 tests with directly dependent booking, pricing and waiver regressions | Not deployed/enabled; full postal address, real owner email/link test and recipient preview remain outstanding |
 
 A historical combined automated run passed 76 tests:
 
@@ -35,11 +36,11 @@ races and absence of browser conversation storage. These checks sent no real SMS
 
 ## Outstanding checks
 
-The discount implementation is not yet activated in Apps Script. Follow
-[discount-code setup](discount-codes.md), then verify the live readiness version
-before sending the offer. No attendee email has been sent; recipient matching,
-prior opt-outs, a valid business mailing address and opt-out processing still
-need resolution.
+The discount backend is activated; email automation is a separate, disabled
+feature. Follow [email setup](post-party-email-automation.md) before enabling it.
+No attendee email has been sent. A full valid business postal address is still
+missing; ZIP alone is not enough. Actual recipient preview, owner email receipt
+and unsubscribe confirmation tests are required before the installer.
 
 1. Review existing commitments inside the verified December 16-25 closure.
    Blocking new availability does not cancel or renegotiate those bookings.

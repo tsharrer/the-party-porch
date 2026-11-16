@@ -1,12 +1,16 @@
 # Post-party thank-you email draft
 
-Status: email draft only. No sending or scheduling has been enabled.
+Status: approved draft plus implemented, disabled-by-default
+[post-party automation](post-party-email-automation.md). No sending or scheduling
+has been enabled and no attendee email has been sent.
 Adult waiver-signer Contacts saving and a historical importer were implemented
 separately and require manual deployment/run. They do not send promotional emails.
 The waiver form remains unchanged, without an added email-permission checkbox.
 
 Proposed timing: two days after the party, around 9 AM America/Chicago.
-The owner selected drafting only for now.
+The owner subsequently selected automatic follow-up after every uncancelled
+party, to that party's adult waiver signers only. Setup and a full valid postal
+address are still required.
 
 ## Email copy
 
@@ -76,12 +80,16 @@ it is not an automatic unsubscribe endpoint. Before commercial distribution,
 finalize required sender/address disclosures and a functioning opt-out process.
 Do not invent a business mailing address or expose a private address.
 
+The automated sender uses the separate `PostPartyEmail.html` Apps Script template,
+with the same colorful design and a working confirmation-based HTTPS unsubscribe
+link. Unlike this static draft, it removes the offer after expiry and changes
+Nerf wording for non-Nerf parties. See the automation setup before sending.
+
 The code is implemented in the booking form and shared server-side pricing.
-It requires manual deployment of the updated booking backend and Pricing.gs
-before customers can redeem it. The form checks promotion readiness rather
-than promising a discount against an older backend. See
-[discount-code setup](discount-codes.md). Do not send the offer until activation
-and a live readiness check are complete.
+The owner deployed the booking backend and Pricing.gs, and live readiness
+confirmed `nerfthanks10-v1` on November 16. The email automation is a separate,
+not-yet-enabled deployment/setup step. See [discount-code setup](discount-codes.md)
+and [email automation](post-party-email-automation.md).
 
 ## Requirements before enabling automation
 
@@ -111,5 +119,6 @@ The existing booking integration saves booking/request customer contacts. The
 new waiver update saves adult signer names/emails after completed submissions
 when deployed. The owner-only `importWaiverSignerContacts` action can import
 existing completed forms without asking attendees to submit again. Neither
-action sends this post-party email. A tested suppression process remains part
-of the future sending design; Contacts membership is not an opt-in record.
+action sends this post-party email. The separate automation implements tested
+suppression, but installation, a full postal address and an owner receipt/link
+check are still required. Contacts membership is not an opt-in record.
