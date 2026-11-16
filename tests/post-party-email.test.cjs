@@ -176,7 +176,7 @@ test('preview is owner-only and sends nothing even before a full address exists'
   assert.match(preview, /Full business mailing address required/);
   assert.doesNotMatch(preview, /Child name never mailed/);
   assert.equal(h.emails.length, 0);
-  for (const action of ['previewPostPartyEmails', 'sendPostPartyTestEmail', 'installPostPartyEmails', 'disablePostPartyEmails', 'savePostPartyOptOuts']) {
+  for (const action of ['previewPostPartyEmails', 'sendPostPartyTestEmail', 'installPostPartyEmails', 'disablePostPartyEmails', 'savePostPartyOptOuts', 'sendDuePostPartyEmails']) {
     assert.throws(() => harness({activeEmail: ''}).context[action](), /Run this action/);
   }
 });
@@ -199,7 +199,8 @@ test('two-day follow-up deduplicates adult emails, ignores Contacts and does not
   const h = harness(); h.event(); h.enable();
   h.waiver(); h.waiver({email: ' ADULT@EXAMPLE.COM '});
   h.waiver({kind: 'host', email: 'signing-host@example.com'});
-  const result = h.run();
+  assert.throws(() => harness().context.sendDuePostPartyEmails(), /disabled/);
+  const result = h.context.sendDuePostPartyEmails();
   assert.equal(result.sent, 2);
   assert.deepEqual(h.attendeeEmails().map(email => email.to).sort(), ['adult@example.com', 'signing-host@example.com']);
   const email = h.attendeeEmails()[0];
@@ -209,7 +210,7 @@ test('two-day follow-up deduplicates adult emails, ignores Contacts and does not
   assert.match(email.htmlBody, /NERFTHANKS10/);
   assert.match(email.body, /supply packs/);
   assert.doesNotMatch(email.body + email.htmlBody, /Child name never mailed|Test Host/);
-  assert.equal(h.run().sent, 0);
+  assert.equal(h.context.sendDuePostPartyEmails().sent, 0);
   assert.equal(h.attendeeEmails().length, 2);
 });
 

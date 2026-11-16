@@ -319,6 +319,11 @@ function postPartySend_(party, folder, config) {
   } finally { lock.releaseLock(); }
 }
 
+function sendDuePostPartyEmails() {
+  postPartyOwner_();
+  return sendPostPartyEmails_();
+}
+
 function sendPostPartyEmails_() {
   var props = PropertiesService.getScriptProperties();
   if (props.getProperty("POST_PARTY_EMAILS") !== "enabled") throw new Error("Post-party emails are disabled.");

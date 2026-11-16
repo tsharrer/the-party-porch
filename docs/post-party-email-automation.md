@@ -77,6 +77,12 @@ Keep the separate private text-inbox project unchanged.
    one daily trigger and enables future scheduled sends; installation itself
    sends no attendee email. Do not enable until prior opt-outs are recorded.
 
+To send already-due follow-ups manually after installation, select
+**sendDuePostPartyEmails** in the editor and click **Run**. This sends real
+attendee emails, using the same matching, suppression and duplicate protections
+as the daily trigger. The internal `sendPostPartyEmails_` handler may not appear
+in the editor dropdown; do not rename it or change the existing trigger.
+
 No new Google service or OAuth scope is expected beyond the existing booking/
 waiver project's Drive, MailApp, Calendar, external-fetch and trigger access.
 The installer requests existing authorization if needed and checks the deployed
