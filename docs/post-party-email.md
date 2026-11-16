@@ -12,7 +12,7 @@ The owner selected drafting only for now.
 
 **Subject:** Thanks for joining the Nerf fun!
 
-**Preview text:** Thanks for joining the Nerf fun! Plan your next party with us.
+**Preview text:** Thanks for joining the Nerf fun! Enjoy 10% off your next party rental when you book by December 31.
 
 Hey, party crew!
 
@@ -25,6 +25,20 @@ Ready for a Nerf rematch? Whether you're planning a birthday, family celebration
 or another get-together, we'd love to bring the fun to your next party.
 
 **Book your next party:** https://yourpartyporch.com/#book
+
+**A little thank-you: 10% off!**
+
+Enjoy **10% off the rental price of your next party** when you book by
+**December 31, 2026**. Excludes delivery, staff and taxes. Available to every
+recipient of this email, whether or not you leave a review.
+
+**Tell us how the Nerf fun went**
+
+We'd appreciate an honest Google review. Your feedback helps other families get
+to know The Party Porch. Leaving a review is completely optional and does not
+affect your discount.
+
+**Leave an honest Google review:** https://g.page/r/CauEr6BR1sANEBM/review
 
 Have a question? Just reply to this email.
 
@@ -47,13 +61,20 @@ card and a gold **Book your next party** button. The colorful headline reads
 styles with no external image dependencies. The HTML is a preview/template, not a mail sender.
 Do not paste raw HTML source into a normal Gmail message.
 
-The draft avoids invented discounts, deadlines, photo links, review links or
-unverified details such as a host name or party date. This version is specifically
+The owner approved a 10% rental-price discount for all recipients, excluding
+delivery, staff and taxes, for bookings made by December 31, 2026. It is not
+conditional on any review. The event itself need not occur by that date under
+these stated terms. The owner supplied the Google review link.
+
+The draft avoids unverified details such as a host name or party date. This version is specifically
 for attendees of the Nerf party, not a generic all-experience mailing.
 Its opt-out button currently opens an email request;
 it is not an automatic unsubscribe endpoint. Before commercial distribution,
 finalize required sender/address disclosures and a functioning opt-out process.
 Do not invent a business mailing address or expose a private address.
+
+No automatic discount code, invoice adjustment or website pricing change has
+been implemented. Confirm the manual redemption process before sending.
 
 ## Requirements before enabling automation
 
