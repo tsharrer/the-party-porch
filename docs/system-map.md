@@ -10,7 +10,7 @@ session; it is not a new deployment or a live account inspection.
 | Public website | `index.html`, `experiences/`, `assets/`, `terms.html`, `privacy.html` | GitHub Pages at yourpartyporch.com |
 | Booking backend | `google-calendar.gs` | Existing public Apps Script web app; runs as business account |
 | Customer signing | `waivers.gs`, `WaiverForm.html`, `customer/waiver.html` | Public forms; private completed records in Google Drive |
-| Post-party follow-up | `post-party-email.gs`, `PostPartyEmail.html` | Same public Apps Script project for unsubscribe; owner-only setup and disabled daily mail job |
+| Post-party follow-up | `post-party-email.gs`, `PostPartyEmail.html` | Same public Apps Script project for unsubscribe; owner-only setup and gated daily mail job |
 | Owner text inbox | `staff/text-inbox/Code.gs`, `Index.html`, `appsscript.json` | Separate Apps Script project; Me / Only myself |
 | Customer guide | `customer/nerf-party-guide.html` | Unlisted public webpage, not authenticated |
 | Referee manual | `staff/nerf-referee-manual.html` | Unlisted public webpage, not authenticated |
@@ -120,7 +120,7 @@ This sends links, not proof of signed forms, and never infers guest phone number
 Cash, standalone invoices and legacy Checkout payments are not inferred from
 untracked payment data.
 
-## Post-party follow-up (implemented, not enabled)
+## Post-party follow-up
 
 The owner selected automatic follow-up two days after uncancelled calendar
 parties, around 9 AM Houston, to matched adult waiver signers only. The scheduler
@@ -136,7 +136,10 @@ operational messages. Owner-entered reply opt-outs use the same private store.
 
 Sending stays disabled until a full postal address, deployed unsubscribe route,
 owner-only test and explicit installer are complete. A ZIP code alone is rejected.
-The source update does not itself send anything. See
+On November 16, live routing was confirmed and the owner reported configuration,
+owner-test checks, installation and completion of a manual due-party send.
+Actual attendee delivery counts remain unverified. The source update does not
+itself send anything. See
 [email automation](post-party-email-automation.md).
 
 ## Private inbox

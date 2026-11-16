@@ -13,7 +13,7 @@ behavior. It contains no credentials, customer records or signed forms.
 | --- | --- |
 | [Owner workflow guide](owner-workflow-guide.md) | Daily instructions: text app, bookings, waivers, calendar blocks and troubleshooting |
 | [Budget and transaction workbook](budget-and-transactions.md) | Private Google Sheets import, expense entry, budgeting and pipeline rules |
-| [Post-party email draft](post-party-email.md) | Thank-you copy and visual preview; not scheduled or enabled |
+| [Post-party email draft](post-party-email.md) | Approved thank-you copy and static visual preview; separate automation handles delivery |
 | [Automatic post-party emails](post-party-email-automation.md) | Two-day signer follow-up, private opt-outs, owner preview/test and disabled-by-default setup |
 | [Discount codes](discount-codes.md) | NERFTHANKS10 terms, shared pricing and required backend activation |
 | [Session work log](session-logs/2026-11-13.md) | Changes, decisions, deployment history and supporting commits |
@@ -47,10 +47,12 @@ separately. It must remain deployed as **Me / Only myself**.
 
 ## Latest recorded status
 
-- Post-party email automation is implemented/tested but disabled. The owner
+- Post-party email automation is implemented/tested. The owner
   selected two days after uncancelled parties, around 9 AM Houston, to matched
-  adult waiver signers only. Full postal address, owner test and manual setup
-  remain required. No attendee email was sent.
+  adult waiver signers only. The owner reported private address/URL setup,
+  successful owner email/link checks, scheduler installation and completion of
+  the manual due-party send action. The matched subset was accepted; actual
+  attendee send/delivery counts are not independently verified.
 - The owner deployed NERFTHANKS10 pricing; live readiness confirmed
   `nerfthanks10-v1` on November 16.
 - Adult waiver-signer Contacts saving is implemented and tested, but requires a

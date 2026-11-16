@@ -1,16 +1,17 @@
 # Post-party thank-you email draft
 
-Status: approved draft plus implemented, disabled-by-default
-[post-party automation](post-party-email-automation.md). No sending or scheduling
-has been enabled and no attendee email has been sent.
+Status: approved draft plus [post-party automation](post-party-email-automation.md).
+On November 16, the owner reported successful owner-test checks, scheduling
+installation and completion of the manual due-party send action. Actual
+attendee delivery counts have not been independently verified.
 Adult waiver-signer Contacts saving and a historical importer were implemented
 separately and require manual deployment/run. They do not send promotional emails.
 The waiver form remains unchanged, without an added email-permission checkbox.
 
 Proposed timing: two days after the party, around 9 AM America/Chicago.
 The owner subsequently selected automatic follow-up after every uncancelled
-party, to that party's adult waiver signers only. Setup and a full valid postal
-address are still required.
+party, to that party's adult waiver signers only. The owner reported completing
+setup, including the private full postal address.
 
 ## Email copy
 
@@ -87,8 +88,8 @@ Nerf wording for non-Nerf parties. See the automation setup before sending.
 
 The code is implemented in the booking form and shared server-side pricing.
 The owner deployed the booking backend and Pricing.gs, and live readiness
-confirmed `nerfthanks10-v1` on November 16. The email automation is a separate,
-not-yet-enabled deployment/setup step. See [discount-code setup](discount-codes.md)
+confirmed `nerfthanks10-v1` on November 16. The email automation has a separate
+deployment/setup process, subsequently reported complete by the owner. See [discount-code setup](discount-codes.md)
 and [email automation](post-party-email-automation.md).
 
 ## Requirements before enabling automation
@@ -120,5 +121,6 @@ new waiver update saves adult signer names/emails after completed submissions
 when deployed. The owner-only `importWaiverSignerContacts` action can import
 existing completed forms without asking attendees to submit again. Neither
 action sends this post-party email. The separate automation implements tested
-suppression, but installation, a full postal address and an owner receipt/link
-check are still required. Contacts membership is not an opt-in record.
+suppression. Installation, a full postal address and an owner receipt/link
+check are required and were subsequently reported complete by the owner.
+Contacts membership is not an opt-in record.

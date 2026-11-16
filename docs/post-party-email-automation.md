@@ -1,8 +1,14 @@
 # Automatic post-party emails
 
-Status: implemented and locally tested, **not installed or enabled**. No attendee
-email was sent. A ZIP code alone is not a valid sender mailing address; leave
-sending disabled until a full valid business postal address or PO box is supplied.
+Status: on November 16, the owner reported configuration, successful owner-test
+receipt/link checks, scheduler installation and completion of the manual
+due-party send action. Live readiness independently confirmed `post-party-v1`.
+The owner accepted the matched recipient subset; no send-count log or independent
+attendee-delivery confirmation was supplied. Future delivery is not guaranteed
+by installation or MailApp acceptance.
+
+A ZIP code alone is not a valid sender mailing address; leave
+sending disabled unless a full valid business postal address or PO box is supplied.
 Do not put the private address, recipients or signed records in the public repo.
 
 ## Owner-selected behavior

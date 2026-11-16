@@ -21,7 +21,7 @@ checks, owner reports and unresolved work. It does not assert a new live audit.
 | Private budget workbook | Tabs, formulas, seed classification and file copies checked | Excel upload must be saved as Google Sheets; native Sheets calculation/import not yet verified |
 | Adult waiver signer Contacts | Ten focused cases plus booking/signing regressions; 71 targeted tests passed | Manual deployment/import and real Contact receipt check still required; historical import not yet run |
 | NERFTHANKS10 rental discount | 49 focused pricing/payment tests plus mocked mobile/desktop form checks; live readiness confirmed `nerfthanks10-v1` after owner deployment | No real discounted invoice/payment was created |
-| Automatic post-party emails | 15 focused automation tests; 93 tests with directly dependent booking, pricing and waiver regressions | Not deployed/enabled; full postal address, real owner email/link test and recipient preview remain outstanding |
+| Automatic post-party emails | 15 focused automation tests; 93 tests with dependent regressions; live route confirmed `post-party-v1`; owner reported accepted matched preview, owner email/link checks, installation and completed manual send action | No execution summary or independent attendee delivery count; future scheduled execution remains unverified |
 
 A historical combined automated run passed 76 tests:
 
@@ -36,11 +36,12 @@ races and absence of browser conversation storage. These checks sent no real SMS
 
 ## Outstanding checks
 
-The discount backend is activated; email automation is a separate, disabled
-feature. Follow [email setup](post-party-email-automation.md) before enabling it.
-No attendee email has been sent. A full valid business postal address is still
-missing; ZIP alone is not enough. Actual recipient preview, owner email receipt
-and unsubscribe confirmation tests are required before the installer.
+The discount backend is activated. The owner reported completing email setup,
+private full address/URL configuration, matched-recipient preview approval,
+owner-test receipt/link checks, scheduler installation and the manual due-party
+send action. Do not infer attendee delivery from that report. Check the execution
+summary and future scheduled runs without repeating uncertain sends.
+See [email setup](post-party-email-automation.md) for safe review/pause procedures.
 
 1. Review existing commitments inside the verified December 16-25 closure.
    Blocking new availability does not cancel or renegotiate those bookings.

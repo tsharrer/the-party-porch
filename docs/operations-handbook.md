@@ -82,7 +82,7 @@ checkbox is the operator's confirmation, not independent evidence of customer
 opt-in. Queued/sent does not prove delivered. Refresh and inspect status/error
 codes; review logs before repeating an uncertain send.
 
-## Post-party email (not enabled yet)
+## Post-party email
 
 The owner selected follow-up to each party's matched adult waiver signers around
 9 AM Houston, two days after an uncancelled party. This assumes attendance; mark
@@ -90,11 +90,13 @@ cancellations and correct non-attendee records before the scheduled follow-up.
 No email goes to the entire Contacts list or to an unsigned host.
 
 The implementation has deduplication, private permanent promotional opt-outs
-and uncertain-send protection. A full valid sender postal address, owner test
-and explicit setup are still required; ZIP alone is insufficient. Process reply
+and uncertain-send protection. The owner reported full private configuration,
+successful owner-test checks, installation and completion of a manual due-party
+send on November 16; attendee delivery counts are not independently verified.
+A full valid sender postal address is required; ZIP alone is insufficient. Process reply
 opt-outs using the private suppression property and `savePostPartyOptOuts`.
 See [setup and pause instructions](post-party-email-automation.md). Waiver forms
-remain unchanged; no attendee email has been sent.
+remain unchanged. Do not repeat an uncertain delivery without checking its journal.
 
 The custom inbox was chosen over a third-party subscription. Twilio usage charges
 still apply. No new phone numbers or credentials were required, but existing
