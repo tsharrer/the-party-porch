@@ -14,13 +14,15 @@ The owner selected drafting only for now.
 
 **Preview text:** We loved being part of the fun. Plan your next party with us.
 
-Hi there!
+Hey, party crew!
 
 Thank you for joining the fun at a Party Porch party! We hope you had a great time
 and made some wonderful memories.
 
+**Keep the good times going!**
+
 Planning a birthday, family celebration or another get-together? We'd love to
-help make your next party just as fun.
+bring the fun to your next party.
 
 **Book your next party:** https://yourpartyporch.com/#book
 
@@ -38,9 +40,11 @@ This is a promotional message from The Party Porch.
 
 ## Visual design
 
-See [the HTML preview](email-templates/post-party-thank-you.html). It uses a dark
-navy Party Porch header, warm background, white message card and a gold
-**Book your next party** button. The HTML is a preview/template, not a mail sender.
+See [the HTML preview](email-templates/post-party-thank-you.html). It uses a purple
+party header with gold/pink/mint accents, a lavender background, a mint invitation
+card and a gold **Book your next party** button. The colorful headline reads
+"Big smiles. Great memories. Thanks for coming!" Colors use inline email-friendly
+styles with no external image dependencies. The HTML is a preview/template, not a mail sender.
 Do not paste raw HTML source into a normal Gmail message.
 
 The draft avoids invented discounts, deadlines, photo links, review links or
