@@ -1,6 +1,6 @@
 # Verification and open items
 
-Recorded November 13, 2026. This separates automated checks, historical live
+Updated November 16, 2026. This separates automated checks, historical live
 checks, owner reports and unresolved work. It does not assert a new live audit.
 
 ## Verification evidence
@@ -20,8 +20,9 @@ checks, owner reports and unresolved work. It does not assert a new live audit.
 | Owner workflow guide | Markdown and printable PDF generated; content/layout checked and copied into Drive Documents | Drive copies are snapshots, not automatic repo updates |
 | Private budget workbook | Tabs, formulas, seed classification and file copies checked | Excel upload must be saved as Google Sheets; native Sheets calculation/import not yet verified |
 | Adult waiver signer Contacts | Ten focused cases plus booking/signing regressions; 71 targeted tests passed | Manual deployment/import and real Contact receipt check still required; historical import not yet run |
+| NERFTHANKS10 rental discount | 49 focused pricing/payment tests plus mocked mobile/desktop form checks | Live read-only promotionStatus still returns the old generic service response; owner must deploy Code.gs and Pricing.gs before redemption |
 
-The latest combined automated run passed 76 tests:
+A historical combined automated run passed 76 tests:
 
 ```sh
 node --test tests/booking-payments.test.cjs tests/waivers.test.cjs tests/text-inbox.test.cjs
@@ -33,6 +34,12 @@ rejected sends, lost-response recovery, history exhaustion, stale reads, token
 races and absence of browser conversation storage. These checks sent no real SMS.
 
 ## Outstanding checks
+
+The discount implementation is not yet activated in Apps Script. Follow
+[discount-code setup](discount-codes.md), then verify the live readiness version
+before sending the offer. No attendee email has been sent; recipient matching,
+prior opt-outs, a valid business mailing address and opt-out processing still
+need resolution.
 
 1. Review existing commitments inside the verified December 16-25 closure.
    Blocking new availability does not cancel or renegotiate those bookings.

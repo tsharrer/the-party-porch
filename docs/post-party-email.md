@@ -32,6 +32,9 @@ Enjoy **10% off the rental price of your next party** when you book by
 **December 31, 2026**. Excludes delivery, staff and taxes. Available to every
 recipient of this email, whether or not you leave a review.
 
+Enter code **NERFTHANKS10** in the booking form. Rental charges only; consumable
+supply packs are not rentals and are excluded.
+
 **Tell us how the Nerf fun went**
 
 We'd appreciate an honest Google review. Your feedback helps other families get
@@ -73,8 +76,12 @@ it is not an automatic unsubscribe endpoint. Before commercial distribution,
 finalize required sender/address disclosures and a functioning opt-out process.
 Do not invent a business mailing address or expose a private address.
 
-No automatic discount code, invoice adjustment or website pricing change has
-been implemented. Confirm the manual redemption process before sending.
+The code is implemented in the booking form and shared server-side pricing.
+It requires manual deployment of the updated booking backend and Pricing.gs
+before customers can redeem it. The form checks promotion readiness rather
+than promising a discount against an older backend. See
+[discount-code setup](discount-codes.md). Do not send the offer until activation
+and a live readiness check are complete.
 
 ## Requirements before enabling automation
 

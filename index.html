@@ -673,6 +673,9 @@
         <label class="f" style="margin-top:14px">Anything else? (birthday kid's age, theme, questions)</label>
         <textarea name="notes" id="f_notes" placeholder="Turning 8, superhero theme, backyard is flat grass..."></textarea>
 
+        <label class="f" for="f_promo">Discount code (optional)</label>
+        <input id="f_promo" name="promoCode" maxlength="40" autocomplete="off" placeholder="Enter your code" oninput="calcEstimate()">
+        <p id="promo_status" class="form-note" role="status" aria-live="polite"></p>
         <div class="estimate">
           <div class="amt" id="est_amt">$280</div>
           <small id="est_note">Estimated total · a 50% deposit reserves your date</small>
@@ -755,6 +758,7 @@
   <small>yourpartyporch.com · © <span id="yr"></span> The Party Porch. All rights reserved. · Serving Houston, Katy, Sugar Land, The Woodlands, Pearland &amp; beyond.</small>
 </footer>
 
+<script src="booking-pricing.js"></script>
 <script>
 function initHeroCarousel(carousel){
   var slides = carousel.querySelectorAll('.hero-slide');
@@ -1077,7 +1081,7 @@ function onRentalChange(){
   calcEstimate();
 }
 
-function calcEstimate(){
+function calcBaseEstimate(){
   refreshBookingDate();
   document.querySelectorAll('.addon-c[data-requires]').forEach(function(supply){
     var machine = document.getElementById(supply.getAttribute('data-requires'));
@@ -1134,6 +1138,62 @@ function calcEstimate(){
   noteEl.textContent = "Estimated total · " + depositNote(total);
 }
 
+var promotionReady = false, promotionChecking = false;
+function promotionSelection(){
+  var addons = [];
+  document.querySelectorAll('.addon-c:checked').forEach(function(c){ addons.push(c.value); });
+  return {rental:currentRental(), players:val('f_players'), service:val('f_service'), addons:addons, cart:cartGet()};
+}
+function checkPromotionReady(){
+  if(promotionChecking) return;
+  promotionChecking = true;
+  var script = document.createElement('script');
+  var callback = 'pp_promo_' + Date.now();
+  var finished = false;
+  var timer = setTimeout(function(){ finish(null); }, 15000);
+  function finish(result){
+    if(finished) return;
+    finished = true;
+    clearTimeout(timer); script.remove(); delete window[callback]; promotionChecking = false;
+    promotionReady = !!result && result.ok && result.version === "nerfthanks10-v1";
+    if(!document.getElementById('f_promo').value.trim()){
+      document.getElementById('f_promo').setCustomValidity("");
+      document.getElementById('promo_status').textContent = "";
+      return;
+    }
+    if(promotionReady) calcEstimate();
+    else {
+      document.getElementById('promo_status').textContent = "Discount service is not available yet. Try again shortly or contact us before booking.";
+      document.getElementById('f_promo').setCustomValidity("We could not confirm discount availability. Try re-entering the code or contact us.");
+    }
+  }
+  window[callback] = finish;
+  script.onerror = function(){ finish(null); };
+  script.src = GCAL_WEBHOOK_URL + "?action=promotionStatus&callback=" + callback;
+  document.body.appendChild(script);
+}
+function calcEstimate(){
+  calcBaseEstimate();
+  var input = document.getElementById('f_promo');
+  var status = document.getElementById('promo_status');
+  input.setCustomValidity(""); status.textContent = "";
+  if(!input.value.trim()) return;
+  try {
+    var price = partyPorchPromoPrice_(promotionSelection(), input.value, Date.now());
+    if(!promotionReady){
+      input.setCustomValidity("Please wait until discount availability is confirmed.");
+      status.textContent = "Checking discount availability...";
+      checkPromotionReady(); return;
+    }
+    document.getElementById('est_amt').textContent = "$" + (price.totalCents / 100).toFixed(2);
+    document.getElementById('est_note').textContent = "Discounted estimated total · " + depositNote(price.totalCents / 100);
+    status.textContent = price.code + " applied: $" + (price.discountCents / 100).toFixed(2) +
+      " rental savings. Excludes delivery, staff, supplies and taxes; delivery/taxes, if applicable, are confirmed separately.";
+  } catch(error) {
+    input.setCustomValidity(error.message); status.textContent = error.message;
+  }
+}
+
 function val(id){ return document.getElementById(id).value.trim(); }
 function bookingSummary(){
   var r = currentRental();
@@ -1155,7 +1215,10 @@ function bookingSummary(){
     service: isNerf ? service : "-",
     addons: addons.length ? addons.join(", ") : "None", notes: val('f_notes'),
     consent: (document.getElementById('f_consent') && document.getElementById('f_consent').checked) ? "Yes" : "No",
-    estimate: document.getElementById('est_amt').textContent
+    estimate: document.getElementById('est_amt').textContent,
+    promoCode: val('f_promo'),
+    discountSummary: document.getElementById('promo_status').textContent,
+    pricingSelection: promotionSelection()
   };
 }
 
@@ -1171,6 +1234,11 @@ function setBookingSubmitting(active){
 function submitBooking(e){
   e.preventDefault();
   if(bookingSubmitting) return false;
+  var promoInput = document.getElementById('f_promo');
+  if(promoInput && promoInput.value && promoInput.value.trim()){
+    calcEstimate();
+    if(!promoInput.reportValidity()) return false;
+  }
   var dateEl = document.getElementById('f_date');
   var minStr = bookingMinDate();
   if(dateEl && (!dateEl.value || dateEl.value < minStr)){
@@ -1196,6 +1264,7 @@ function submitBooking(e){
     fd.append("cart", s.cart);
     fd.append("cart_total", s.cartTotal);
     fd.append("booking_id", s.bookingId);
+    if(s.promoCode) fd.append("discount_summary", s.discountSummary);
     fd.append("_subject", "New booking: " + (s.cart !== "None" ? s.cart : s.rental) + " - " + s.name + " (" + s.date + ")");
     fetch("https://formspree.io/f/" + FORMSPREE_ID, {
       method:"POST", headers:{"Accept":"application/json"},
@@ -1298,6 +1367,7 @@ function openEmail(s){
     "Service: " + enc(s.service) + "%0D%0A" +
     "Add-ons: " + enc(s.addons) + "%0D%0A" +
     "Estimated total: " + enc(s.estimate) + "%0D%0A" +
+    (s.promoCode ? "Discount: " + enc(s.discountSummary) + "%0D%0A" : "") +
     "Notes: " + enc(s.notes) + "%0D%0A";
   window.location.href = "mailto:" + BUSINESS_EMAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + body;
 }

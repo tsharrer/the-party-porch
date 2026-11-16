@@ -6,7 +6,8 @@ const vm = require('node:vm');
 const crypto = require('node:crypto');
 
 process.env.TZ = 'America/Chicago';
-const source = fs.readFileSync(path.join(__dirname, '../google-calendar.gs'), 'utf8');
+const source = fs.readFileSync(path.join(__dirname, '../booking-pricing.js'), 'utf8') +
+  '\n' + fs.readFileSync(path.join(__dirname, '../google-calendar.gs'), 'utf8');
 const bookingId = '12345678-1234-4234-8234-123456789abc';
 const startTime = Date.parse('2026-11-12T19:00:00-06:00');
 
@@ -197,6 +198,65 @@ test('one booking creates one invoice and all lookups reuse the emailed payment 
   assert.equal(h.post().duplicate, true);
   assert.equal(h.events.length, 1);
   assert.equal(h.calls.filter(call => call.url.endsWith('/invoices')).length, 1);
+});
+
+function promoBooking(h, changes = {}) {
+  return {...h.booking, estimate: '$1', promoCode: ' nerfthanks10 ',
+    pricingSelection: {rental: 'Nerf Battles', players: '18', service: 'referee',
+      cart: [], addons: ['We set up']}, ...changes};
+}
+
+test('promotion readiness requires installed pricing, and a missing helper fails before financial side effects', () => {
+  const h = harness();
+  function readiness() {
+    return JSON.parse(h.context.doGet({parameter: {action: 'promotionStatus'}}).content);
+  }
+  assert.equal(readiness().version, 'nerfthanks10-v1');
+  h.context.partyPorchPromoPrice_ = undefined;
+  assert.equal(readiness().version, null);
+  assert.equal(h.post(promoBooking(h)).ok, false);
+  assert.equal(h.events.length, 0);
+  assert.equal(h.calls.length, 0);
+  assert.equal(h.lookup().error, 'invoice_failed');
+});
+
+test('promo invoice and deposit use server-recomputed rental discount, not browser amounts or inventory', () => {
+  const h = harness();
+  const input = promoBooking(h, {items: 'movie', discountCents: 999999, originalCents: 1});
+  assert.equal(h.post(input).ok, true);
+  assert.equal(h.calls.find(call => call.url.endsWith('/invoiceitems')).payload.amount, '18300');
+  const record = h.context.loadBooking(bookingId);
+  assert.equal(record.totalCents, 36500);
+  assert.equal(record.discountCents, 2500);
+  assert.equal(record.promoCode, 'NERFTHANKS10');
+  assert.match(h.events[0].getDescription(), /Items: nerf/);
+  assert.match(h.events[0].getDescription(), /Estimate: \$365.00/);
+  assert.match(h.events[0].getDescription(), /NERFTHANKS10 - \$25.00/);
+  const invoice = h.calls.find(call => call.url.endsWith('/invoices'));
+  assert.match(invoice.payload.footer, /Discounted estimated total: \$365.00/);
+  assert.match(h.emails[0].body, /saved \$25.00/);
+  assert.match(h.emails[0].htmlBody, /NERFTHANKS10/);
+  h.post(input);
+  assert.equal(h.calls.filter(call => call.url.endsWith('/invoices')).length, 1);
+});
+
+test('invalid, expired, missing-selection and custom-quote promo submissions never create invoices or calendar events', () => {
+  for (const change of [
+    {promoCode: 'FAKE'}, {pricingSelection: null},
+    {pricingSelection: {rental: 'Custom Package', cart: [], addons: []}},
+    {pricingSelection: {rental: 'Nerf Battles', players: '25', service: 'referee', cart: [], addons: []}}
+  ]) {
+    const h = harness();
+    assert.equal(h.post(promoBooking(h, change)).ok, false);
+    assert.equal(h.events.length, 0);
+    assert.equal(h.calls.length, 0);
+    assert.equal(h.lookup().error, 'invoice_failed');
+  }
+  const expired = harness();
+  expired.setNow(Date.parse('2027-01-01T06:00:00Z'));
+  assert.equal(expired.post(promoBooking(expired, {date: '2027-02-01'})).ok, false);
+  assert.equal(expired.calls.length, 0);
+  assert.equal(expired.events.length, 0);
 });
 
 test('lookup before the POST finishes waits without creating an invoice', () => {

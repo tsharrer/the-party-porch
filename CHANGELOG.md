@@ -3,6 +3,19 @@
 All notable changes to the website, tracker, and booking backend are logged here.
 Newest entries first. Dates in America/Chicago.
 
+## 2026-11-16
+
+### Added - Rental thank-you discount code
+- Implemented NERFTHANKS10 for 10% off rental charges on bookings submitted by
+  December 31, 2026, Houston time, independent of the optional Google review.
+- Excluded staff/setup, consumable packs, delivery and taxes; derive the deposit
+  from the discounted estimated total using existing rounding/limits.
+- Share promotion pricing between the form and backend, recheck selections
+  server-side, record savings on confirmations/invoices, and gate code redemption
+  until the matching Apps Script deployment is ready.
+- Manual activation requires updated Code.gs plus Pricing.gs in the existing
+  booking project. No Stripe coupon or private-inbox change is required.
+
 ## 2026-11-13
 
 ### Added - Adult waiver signer contacts

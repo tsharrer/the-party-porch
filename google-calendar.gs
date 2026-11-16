@@ -104,6 +104,9 @@ function doGet(e) {
   if (p.action === "availability") {
     return reply(availability(p.date), p.callback);
   }
+  if (p.action === "promotionStatus") {
+    return reply({ok: true, version: typeof partyPorchPromoPrice_ === "function" ? "nerfthanks10-v1" : null}, p.callback);
+  }
   if (p.action === "checkout") {
     if (!validBookingId(p.bookingId)) return reply({ ok: false, error: "missing_booking_id" }, p.callback);
     try {
@@ -183,6 +186,29 @@ function doPost(e) {
     var due = depositDeadline(d.date, d.time, new Date());
     booking = { status: "preparing", due: due };
     saveBooking(bookingId, booking);
+    if (d.promoCode) {
+      if (typeof partyPorchPromoPrice_ !== "function") throw new Error("Promotion pricing is not installed.");
+      var pricing = partyPorchPromoPrice_(d.pricingSelection, d.promoCode, Date.now());
+      d.promoCode = pricing.code;
+      d.discountCents = pricing.discountCents;
+      d.originalCents = pricing.rentalCents + pricing.excludedCents;
+      d.estimate = "$" + (pricing.totalCents / 100).toFixed(2);
+      d.items = pricing.items.join(",");
+      d.rental = d.pricingSelection.rental;
+      d.cart = pricing.cart;
+      d.players = pricing.players;
+      d.service = pricing.service;
+      d.addons = d.pricingSelection.addons.join(", ") || "None";
+    } else {
+      delete d.discountCents;
+      delete d.originalCents;
+    }
+    if (d.promoCode) {
+      booking.promoCode = d.promoCode;
+      booking.discountCents = d.discountCents;
+      booking.totalCents = pricing.totalCents;
+    }
+    saveBooking(bookingId, booking);
     var depDollars = depositDollars(d.estimate);
     if (!depDollars) {
       MailApp.sendEmail({
@@ -228,6 +254,7 @@ function doPost(e) {
       "Players: "  + (d.players  || ""),
       "Add-ons: "  + (d.addons   || "None"),
       "Estimate: " + (d.estimate || ""),
+      (d.promoCode ? "Discount: " + d.promoCode + " - $" + (d.discountCents / 100).toFixed(2) + " rental savings" : ""),
       "",
       "Customer: " + (d.name  || ""),
       "Phone: "    + (d.phone || ""),
@@ -392,7 +419,9 @@ function createDepositInvoice(d, bookingId, booking, dollars) {
     auto_advance: "false",
     pending_invoice_items_behavior: "exclude",
     description: BUSINESS_NAME + " - " + DEPOSIT_PERCENT + "% deposit for " + d.date,
-    footer: "The remaining balance is due on the event day. The date is held until the deposit deadline; unpaid holds are released.",
+    footer: "The remaining balance is due on the event day. The date is held until the deposit deadline; unpaid holds are released." +
+      (d.promoCode ? " " + d.promoCode + ": $" + (d.discountCents / 100).toFixed(2) +
+        " rental discount applied. Discounted estimated total: " + d.estimate + "." : ""),
     "payment_settings[payment_method_types][0]": "card",
     "metadata[booking_id]": bookingId,
     "metadata[ref]": makeRef(d.name, d.date),
@@ -405,7 +434,8 @@ function createDepositInvoice(d, bookingId, booking, dollars) {
     invoice: invoice.id,
     amount: String(Math.round(dollars * 100)),
     currency: CURRENCY,
-    description: (d.rental || "Party") + " deposit - " + d.date
+    description: (d.rental || "Party") + " deposit - " + d.date +
+      (d.promoCode ? " (" + d.promoCode + " applied; rental savings $" + (d.discountCents / 100).toFixed(2) + ")" : "")
   }, prefix + "-item");
   invoice = stripeRequest("invoices/" + invoice.id + "/finalize", "post", {
     auto_advance: "false"
@@ -573,6 +603,7 @@ function sendConfirmationEmail(d, depUrl, depDollars, due) {
         (d.players ? row("Guests", esc(d.players)) : "") +
         (d.addons && d.addons !== "None" ? row("Add-ons", esc(d.addons)) : "") +
         (est ? row("Estimate", esc(est)) : "") +
+        (d.promoCode ? row("Rental discount", esc(d.promoCode) + " - $" + (d.discountCents / 100).toFixed(2) + " saved") : "") +
       '</table>' +
       depositBlock +
       (hasNerf && link ? '<div style="margin:22px 0;padding:18px;border:2px solid #12263a">' +
@@ -603,6 +634,8 @@ function sendConfirmationEmail(d, depUrl, depDollars, due) {
           (link && amt ? ("Place your " + amt + " (" + DEPOSIT_PERCENT + "%) deposit here: " + link)
                        : ("We'll follow up with a tailored quote and confirm availability. No payment is due and no date is held until we issue a deposit invoice.")) +
           (deadline ? " Your date is held until " + deadline + ". Unpaid holds are released." : "") +
+          (d.promoCode ? " " + d.promoCode + " saved $" + (d.discountCents / 100).toFixed(2) +
+            " on rental charges. Discounted estimated total: " + d.estimate + "." : "") +
           (hasNerf && link ? " Host agreement - please complete at booking: " + HOST_WAIVER_URL +
             " Your host signature does not cover guests. After your deposit is paid, we will send the participant/guardian link to share." : "") +
           (hasNerf ? (" " + nerfServiceNote + " Setup and game guide: " + NERF_GUIDE_URL) : "")

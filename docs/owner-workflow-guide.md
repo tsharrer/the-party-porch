@@ -1,6 +1,6 @@
 # Party Porch owner workflow guide
 
-Updated November 13, 2026. Practical instructions for daily operations.
+Updated November 16, 2026. Practical instructions for daily operations.
 
 ## 1. Where everything lives
 
@@ -144,6 +144,15 @@ before inventory release. Stripe errors do not silently free the inventory.
 The system does not automatically collect the remaining event-day balance or
 charge a saved card for equipment damage. Handle those separately under the
 agreement after checking current payment status.
+
+**Thank-you code:** NERFTHANKS10 gives 10% off rentals on bookings submitted by
+December 31, 2026, Houston time. Staff/setup, supply packs, delivery and taxes are
+excluded. It reduces the total before the deposit is calculated; the invoice
+records the savings. No review is required. The code is reusable/shareable.
+Activation requires updated Code.gs and the shared Pricing.gs in the existing
+booking Apps Script project, deployed as a new version. Until then, the form
+blocks code redemption; no-code booking stays available. See
+[discount-code setup](discount-codes.md) for deployment and quote limitations.
 
 Custom quotes are manual follow-up requests, not automatically priced invoices
 or reserved inventory. Old/manual entries do not automatically gain seven-day
