@@ -10,19 +10,19 @@ The owner selected drafting only for now.
 
 ## Email copy
 
-**Subject:** Thanks for partying with The Party Porch!
+**Subject:** Thanks for joining the Nerf fun!
 
-**Preview text:** We loved being part of the fun. Plan your next party with us.
+**Preview text:** Thanks for joining the Nerf fun! Plan your next party with us.
 
 Hey, party crew!
 
-Thank you for joining the fun at a Party Porch party! We hope you had a great time
-and made some wonderful memories.
+Thank you for joining the Nerf fun with The Party Porch! We hope you and your
+family had a blast teaming up, dodging darts and making great memories.
 
 **Keep the good times going!**
 
-Planning a birthday, family celebration or another get-together? We'd love to
-bring the fun to your next party.
+Ready for a Nerf rematch? Whether you're planning a birthday, family celebration
+or another get-together, we'd love to bring the fun to your next party.
 
 **Book your next party:** https://yourpartyporch.com/#book
 
@@ -43,12 +43,14 @@ This is a promotional message from The Party Porch.
 See [the HTML preview](email-templates/post-party-thank-you.html). It uses a purple
 party header with gold/pink/mint accents, a lavender background, a mint invitation
 card and a gold **Book your next party** button. The colorful headline reads
-"Big smiles. Great memories. Thanks for coming!" Colors use inline email-friendly
+"Big smiles. Epic Nerf battles. Thanks for coming!" Colors use inline email-friendly
 styles with no external image dependencies. The HTML is a preview/template, not a mail sender.
 Do not paste raw HTML source into a normal Gmail message.
 
 The draft avoids invented discounts, deadlines, photo links, review links or
-claims about a specific party. Its opt-out button currently opens an email request;
+unverified details such as a host name or party date. This version is specifically
+for attendees of the Nerf party, not a generic all-experience mailing.
+Its opt-out button currently opens an email request;
 it is not an automatic unsubscribe endpoint. Before commercial distribution,
 finalize required sender/address disclosures and a functioning opt-out process.
 Do not invent a business mailing address or expose a private address.
