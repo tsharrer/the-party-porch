@@ -32,7 +32,7 @@ separate deployment and owner checks, not by its source directory name.
    recorded opt-in. Formspree remains part of request delivery.
 5. The frontend polls the read-only `action=checkout` lookup by booking ID for
    the same hosted invoice. It no longer creates a second Checkout session.
-6. A five-minute job reconciles stored holds. Paid invoices retain inventory;
+6. A twice-daily job (every 12 hours) reconciles stored holds. Paid invoices retain inventory;
    overdue unpaid invoices are voided before release. Stripe errors do not
    silently release inventory.
 

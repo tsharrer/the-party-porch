@@ -389,7 +389,7 @@ test('Nerf bookings include the host agreement in email and consented deposit te
   }
 });
 
-test('enabled five-minute reconciliation detects payment before expiry and sends participant invitations once, then a four-day reminder', () => {
+test('enabled reconciliation detects payment before expiry and sends participant invitations once, then a four-day reminder', () => {
   const h = harness();
   configureOwnerSms(h);
   h.properties.delete('OWNER_SMS_TO');
@@ -523,10 +523,11 @@ test('customer waiver installer adds only one payment and reminder trigger, vali
   h.context.ScriptApp = {
     AuthMode: {FULL: 'FULL'}, requireAllScopes() {},
     getProjectTriggers: () => triggers,
+    deleteTrigger(trigger) { triggers.splice(triggers.indexOf(trigger), 1); },
     newTrigger(handler) {
       return {
         timeBased() { return this; },
-        everyMinutes(minutes) { assert.equal(minutes, 5); return this; },
+        everyHours(hours) { assert.equal(hours, 12); return this; },
         atHour(hour) { assert.equal(hour, 9); return this; },
         nearMinute(minute) { assert.equal(minute, 0); return this; },
         everyDays(days) { assert.equal(days, 1); return this; },
@@ -537,7 +538,7 @@ test('customer waiver installer adds only one payment and reminder trigger, vali
   };
   h.context.installCustomerWaiverAutomations();
   h.context.installCustomerWaiverAutomations();
-  assert.deepEqual(triggers.map(trigger => trigger.getHandlerFunction()), ['expireBookingHolds', 'sendCustomerWaiverReminders_']);
+  assert.deepEqual(triggers.map(trigger => trigger.getHandlerFunction()).sort(), ['expireBookingHolds', 'sendCustomerWaiverReminders_']);
   assert.equal(h.context.customerWaiverAutomationsReady_(), true);
   assert.equal(h.calls.length, 0);
   assert.equal(h.emails.length, 0);
@@ -782,9 +783,11 @@ test('event deadlines use Houston DST and reject a nonexistent spring-forward ti
 
 const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
 
-test('trigger installer requests authorization before accessing triggers and does not duplicate the timer', () => {
-  const {context} = harness();
-  const triggers = [];
+test('hold trigger installer authorizes then replaces old and duplicate timers with one 12-hour timer, preserving other jobs', () => {
+  const {context, calls, emails} = harness();
+  const other = {getHandlerFunction: () => 'sendPostPartyEmails_'};
+  const old = {getHandlerFunction: () => 'expireBookingHolds'};
+  const triggers = [other, old, {getHandlerFunction: () => 'expireBookingHolds'}];
   let authorized = false;
   context.ScriptApp = {
     AuthMode: {FULL: 'FULL'},
@@ -796,21 +799,28 @@ test('trigger installer requests authorization before accessing triggers and doe
       assert.equal(authorized, true);
       return triggers;
     },
+    deleteTrigger(trigger) { triggers.splice(triggers.indexOf(trigger), 1); },
     newTrigger(handler) {
       return {
         timeBased() { return this; },
-        everyMinutes(minutes) { assert.equal(minutes, 5); return this; },
+        everyHours(hours) { assert.equal(hours, 12); return this; },
         create() { triggers.push({getHandlerFunction: () => handler}); }
       };
     }
   };
   assert.throws(() => context.installBookingHoldTrigger(), /Authorization required/);
-  assert.equal(triggers.length, 0);
+  assert.equal(triggers.length, 3);
   authorized = true;
   context.installBookingHoldTrigger();
   context.installBookingHoldTrigger();
-  assert.equal(triggers.length, 1);
-  assert.equal(triggers[0].getHandlerFunction(), 'expireBookingHolds');
+  assert.equal(triggers.length, 2);
+  assert.equal(triggers[0], other);
+  assert.equal(triggers[1].getHandlerFunction(), 'expireBookingHolds');
+  assert.equal(calls.length, 0);
+  assert.equal(emails.length, 0);
+  context.ScriptApp.newTrigger = () => { throw new Error('Google trigger creation failed'); };
+  assert.throws(() => context.installBookingHoldTrigger(), /trigger creation failed/);
+  assert.equal(triggers.length, 2, 'The previous working timer survives replacement creation failure');
 });
 
 const frontendSource = html.slice(html.indexOf('var bookingSubmitting ='), html.indexOf('function openEmail(s)'));

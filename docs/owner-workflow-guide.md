@@ -125,7 +125,7 @@ the inbox deployment settings and Apps Script Executions before editing code.
    email use the same payment URL; consented customers can also receive it by SMS.
 4. The owner/team receives request alerts. New-request details can be saved to
    Google Contacts. Neither action establishes payment.
-5. The customer pays the invoice in Stripe. The five-minute reconciliation checks
+5. The customer pays the invoice in Stripe. Twice-daily reconciliation (every 12 hours) checks
    tracked invoice status. Paid reservations stay held.
 6. For Nerf, the host already receives their agreement link at booking; after
    tracked deposit payment the host receives the participant link to share.
@@ -325,7 +325,7 @@ deposit status and that the party has not started. Untracked payments require a
 manual immediate link; signed forms still need a separate check.
 
 **Missing reminders:** open the booking project's **Triggers** and **Executions**.
-Relevant handlers are `expireBookingHolds` (every five minutes),
+Relevant handlers are `expireBookingHolds` (every 12 hours),
 `sendOwnerBookingReminders` (daily) and `sendCustomerWaiverReminders_` (daily).
 Daily scheduling is approximate around 9 AM America/Chicago.
 

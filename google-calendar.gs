@@ -524,10 +524,12 @@ function expireBookingHolds() {
 
 function installBookingHoldTrigger() {
   ScriptApp.requireAllScopes(ScriptApp.AuthMode.FULL);
-  var exists = ScriptApp.getProjectTriggers().some(function(trigger) {
+  var previous = ScriptApp.getProjectTriggers().filter(function(trigger) {
     return trigger.getHandlerFunction() === "expireBookingHolds";
   });
-  if (!exists) ScriptApp.newTrigger("expireBookingHolds").timeBased().everyMinutes(5).create();
+  ScriptApp.newTrigger("expireBookingHolds").timeBased().everyHours(12).create();
+  previous.forEach(function(trigger) { ScriptApp.deleteTrigger(trigger); });
+  console.log("Booking hold reconciliation scheduled every 12 hours. Previous hold-check triggers replaced; other triggers unchanged. No bookings were processed by this installer.");
 }
 
 /** Builds a Date from an <input type="date"> value + optional <input type="time">. */

@@ -3,6 +3,18 @@
 All notable changes to the website, tracker, and booking backend are logged here.
 Newest entries first. Dates in America/Chicago.
 
+## 2026-11-18
+
+### Changed - Twice-daily booking hold checks
+- Change the hold-trigger installer from every five minutes to every 12 hours.
+  Running it replaces existing hold-check timers, leaving other automations alone.
+- Preserve payment checks, void-before-release safety and paid reservations.
+  Cleanup and paid-deposit participant-waiver links can now wait about 12 hours,
+  longer after failures. Availability requests still check expired holds.
+- Requires saving the updated installer and running `installBookingHoldTrigger`
+  in the existing booking project; publishing source alone does not change timers.
+- Reduced frequency is not a confirmed fix for intermittent Google server errors.
+
 ## 2026-11-16
 
 ### Added - Disabled-by-default automatic post-party follow-up
