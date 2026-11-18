@@ -5,6 +5,14 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-11-18
 
+### Improved - Actionable post-party owner review emails
+- Include affected adult signer email addresses, party dates, reasons and private
+  receipt/journal identifiers instead of only aggregate counts.
+- Distinguish records held before sending, uncertain previous deliveries and
+  quota/runtime deferrals without repeating sent or uncertain emails.
+- Keep recipient details private; this update requires saving the latest
+  PostPartyAutomation.gs in the existing project.
+
 ### Changed - Booking hold checks every eight hours
 - Change the hold-trigger installer from every five minutes to every eight hours,
   matching the owner's manually selected interval instead of the initial 12-hour proposal.

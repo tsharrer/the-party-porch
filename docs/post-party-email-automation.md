@@ -141,6 +141,21 @@ MailApp does not provide an idempotency key or prove final delivery; inspect
 Gmail Sent and the private journal before any manual retry. Failures/review items
 are logged and reported to the owner rather than treated as sent.
 
+Owner review emails include each affected adult signer email address (as recorded),
+party date, reason, and receipt or delivery-journal identifier. Records held before
+sending are distinguished from uncertain previous attempts and quota/runtime
+deferrals. Missing addresses are labeled unavailable; no child's name or emergency
+contact is included. Already-sent and suppressed addresses are not listed as
+failures. Uncertain-attempt reasons are stored privately for subsequent alerts;
+older interrupted records without a stored reason receive an explicit explanation.
+These details are only in owner notifications, private previews and execution
+logs, not public status endpoints. Preserve the existing no-repeat behavior.
+
+To install this alert-detail update, replace **PostPartyAutomation.gs** with the
+latest `post-party-email.gs` and save. Existing scheduled/editor actions use the
+saved code; no trigger reinstall or web-app redeployment is needed for this
+reporting-only change. Do not run a real send just to test formatting.
+
 The daily job checks the due party date and six preceding dates, never earlier
 than the configured start date. This is seven days of bounded catch-up for
 missed executions, late paperwork or daily quota limits. It reserves one daily

@@ -122,7 +122,10 @@ function postPartyPlan_(date, source) {
       var match = matches[0];
       if (!match.party.excluded && !config.suppressed[email]) recipients[match.index][email] = true;
     } catch (err) {
-      issues.push(name + ": " + String(err.message || err));
+      var recordedEmail = typeof data.email === "string" && data.email.trim() ?
+        data.email.trim().replace(/[\r\n]/g, " ").slice(0, 254) : "Unavailable (missing signer email)";
+      issues.push("Held before sending | Date: " + date + " | Adult signer email (as recorded): " +
+        recordedEmail + " | Receipt: " + name + " | Reason: " + String(err.message || err));
     }
   });
   return {folder: folder, parties: parties.map(function(party, index) {
@@ -277,7 +280,8 @@ function disablePostPartyEmails() {
   console.log("Automatic promotional emails disabled. Keep the web app deployed so unsubscribe links continue to work.");
 }
 
-function postPartySend_(party, folder, config) {
+function postPartySend_(party, folder, config, reviewDetails) {
+  reviewDetails = reviewDetails || [];
   var lock = getBookingLock();
   lock.waitLock(30000);
   try {
@@ -291,10 +295,22 @@ function postPartySend_(party, folder, config) {
     var stored = postPartyJson_(folder, name);
     var state = stored ? stored.data : {recipients: {}};
     var email = party.recipient;
-    if (state.recipients[email]) return state.recipients[email].status === "sent" ? "alreadySent" : "needsReview";
+    if (state.recipients[email]) {
+      var previous = state.recipients[email];
+      if (previous.status === "sent") return "alreadySent";
+      reviewDetails.push("Previous delivery requires review; not resent | Date: " + party.date +
+        " | Adult email: " + email + " | Journal: " + name + " | Status: " + previous.status +
+        " | Reason: " + (previous.error || "An earlier attempt was interrupted or its outcome was not confirmed.") +
+        " Check Gmail Sent and the private journal before any manual resend.");
+      return "needsReview";
+    }
     var contact = postPartyContact_(folder, email);
     if (contact.data.unsubscribed || config.suppressed[email]) return "suppressed";
-    if (MailApp.getRemainingDailyQuota() < 2) return "remaining";
+    if (MailApp.getRemainingDailyQuota() < 2) {
+      reviewDetails.push("Not attempted | Date: " + party.date + " | Adult email: " + email +
+        " | Reason: Daily email quota reserve reached; pending for a later run.");
+      return "remaining";
+    }
     var message = postPartyMessage_(current, config, config.url + "?action=unsubscribe&token=" + contact.data.token);
     message.to = email;
     message.replyTo = BUSINESS_EMAIL;
@@ -309,11 +325,15 @@ function postPartySend_(party, folder, config) {
       return "sent";
     } catch (err) {
       state.recipients[email].status = "uncertain";
+      state.recipients[email].error = String(err.message || err);
       try { postPartySave_(folder, name, stored, state); }
       catch (writeErr) { console.error("Post-party delivery status write failed: " + String(writeErr)); }
       reportOwnerAutomationFailure("post-party email", err,
         "Event: " + party.event.getId() + "\nDate: " + party.date + "\nAdult email: " + email +
         "\nDo not resend before checking Gmail Sent and the private delivery journal.");
+      reviewDetails.push("Delivery outcome uncertain; not automatically retried | Date: " + party.date +
+        " | Adult email: " + email + " | Journal: " + name + " | Reason: " + String(err.message || err) +
+        " Check Gmail Sent and the private journal before any manual resend.");
       return "needsReview";
     }
   } finally { lock.releaseLock(); }
@@ -333,25 +353,36 @@ function sendPostPartyEmails_() {
   var start = props.getProperty("POST_PARTY_START_DATE");
   if (!start || !/^\d{4}-\d{2}-\d{2}$/.test(start) || postPartyShift_(start, 0) !== start) throw new Error("Install post-party emails to set a valid start date.");
   var result = {sent: 0, alreadySent: 0, suppressed: 0, excluded: 0, needsReview: 0, remaining: 0, disabled: 0};
+  var reviewDetails = [];
   var source = postPartyRecords_(postPartyFolder_());
   postPartyRecordOptOuts_(source.folder, config.suppressed);
   for (var date = postPartyShift_(due, -6); date <= due; date = postPartyShift_(date, 1)) {
     if (date < start) continue;
     var plan = postPartyPlan_(date, source);
     result.needsReview += plan.issues.length;
-    plan.issues.forEach(function(issue) { console.error("Post-party match review: " + issue); });
+    plan.issues.forEach(function(issue) {
+      console.error("Post-party match review: " + issue);
+      reviewDetails.push(issue);
+    });
     plan.parties.forEach(function(party) {
       party.recipients.forEach(function(email) {
-        if (Date.now() - started > 240000) { result.remaining++; return; }
+        if (Date.now() - started > 240000) {
+          result.remaining++;
+          reviewDetails.push("Not attempted | Date: " + party.date + " | Adult email: " + email +
+            " | Reason: Run time limit approached; pending for a later run.");
+          return;
+        }
         party.recipient = email;
-        result[postPartySend_(party, plan.folder, config)]++;
+        result[postPartySend_(party, plan.folder, config, reviewDetails)]++;
       });
     });
   }
   console.log("Post-party email run: " + JSON.stringify(result));
   if (result.needsReview || result.remaining) {
     reportOwnerAutomationFailure("post-party follow-up review", new Error(JSON.stringify(result)),
-      "Inspect Apps Script logs and the private preview. Pending recipients can be retried within the seven-day catch-up window; uncertain sends are never automatically repeated.");
+      "Affected adult signer addresses and reasons:\n\n" + reviewDetails.join("\n\n") +
+      "\n\nHeld records were not sent. Uncertain outcomes are not proof of failure or delivery. " +
+      "Pending recipients can be retried within the seven-day catch-up window; uncertain sends are never automatically repeated.");
   }
   return result;
 }

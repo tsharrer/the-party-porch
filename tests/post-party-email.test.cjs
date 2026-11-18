@@ -245,6 +245,11 @@ test('same-day parties require an exact unique reference; excluded parties still
   assert.equal(result.sent, 1);
   assert.equal(result.needsReview, 2);
   assert.equal(h.attendeeEmails()[0].to, 'good@example.com');
+  const alert = h.emails.find(email => email.subject.includes('post-party follow-up review'));
+  assert.equal(alert.to, owner);
+  assert.match(alert.body, /Held before sending.*2026-11-14.*ambiguous@example.com.*Receipt: waiver-.*Party match/);
+  assert.match(alert.body, /wrong-reference@example.com/);
+  assert.doesNotMatch(alert.body, /good@example.com|cancelled@example.com|Child name never mailed/);
 });
 
 test('unsaved, incomplete or non-adult consent records are held for review, not mailed', () => {
@@ -254,8 +259,12 @@ test('unsaved, incomplete or non-adult consent records are held for review, not 
   h.waiver({email: 'bad-type@example.com', participantType: 'unknown'});
   h.waiver({email: 'no-pdf@example.com'}, {noPdf: true});
   h.waiver({email: 'invalid'});
+  h.waiver({email: ''});
   assert.equal(h.run().sent, 0);
   assert.equal(h.attendeeEmails().length, 0);
+  const alert = h.emails.find(email => email.subject.includes('post-party follow-up review'));
+  assert.match(alert.body, /no-pdf@example.com/);
+  assert.match(alert.body, /Unavailable \(missing signer email\)/);
 });
 
 test('unsubscribe GET does not change preferences; confirmed POST suppresses all future parties and exposes no email', () => {
@@ -314,7 +323,23 @@ test('uncertain mail responses and failed sent-state writes are never automatica
     assert.equal(h.run().needsReview, 1);
     assert.equal(h.attendeeEmails().length, 1);
     assert.ok(h.emails.some(email => email.to === owner));
+    const alerts = h.emails.filter(email => email.subject.includes('post-party follow-up review'));
+    assert.equal(alerts.length, 2);
+    assert.match(alerts[0].body, /Delivery outcome uncertain.*adult@example.com.*post-party-delivery-/);
+    assert.match(alerts[1].body, /Previous delivery requires review; not resent.*adult@example.com.*Status: uncertain/);
+    assert.match(alerts[1].body, options.mailFailure ? /Lost mail response/ : /Status write failed/);
+    assert.doesNotMatch(alerts[1].body, /Child name never mailed/);
   }
+  const interrupted = harness({mailFailure: true}); interrupted.event(); interrupted.waiver(); interrupted.enable();
+  interrupted.run();
+  const journal = interrupted.files.find(file => file.name.startsWith('post-party-delivery-'));
+  const state = JSON.parse(journal.contents);
+  state.recipients['adult@example.com'] = {status: 'sending'};
+  journal.contents = JSON.stringify(state);
+  interrupted.run();
+  const alert = interrupted.emails.filter(email => email.subject.includes('post-party follow-up review')).at(-1);
+  assert.match(alert.body, /adult@example.com.*Status: sending.*earlier attempt was interrupted/);
+  assert.equal(interrupted.attendeeEmails().length, 1);
 });
 
 test('catch-up is bounded, honors the installation start date and waits until two Houston dates after the party', () => {
@@ -337,6 +362,7 @@ test('quota exhaustion leaves recipients pending and reruns safely deliver when 
   const h = harness({quota: 1}); h.event(); h.waiver(); h.enable();
   assert.equal(h.run().remaining, 1);
   assert.equal(h.attendeeEmails().length, 0);
+  assert.match(h.emails[0].body, /Not attempted.*adult@example.com.*Daily email quota reserve/);
   h.context.MailApp.getRemainingDailyQuota = () => 50;
   assert.equal(h.run().sent, 1);
 });
