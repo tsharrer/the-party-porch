@@ -38,9 +38,11 @@ races and absence of browser conversation storage. These checks sent no real SMS
 
 On November 18, the owner requested less-frequent hold reconciliation after
 intermittent Google server errors despite successful runs. The updated installer
-sets every 12 hours and replaces old hold-check timers; 45 payment/trigger tests
-passed. The owner still needs to save Code.gs and run `installBookingHoldTrigger`.
-The live schedule change and resolution of the underlying errors are unverified.
+now sets every eight hours and replaces old hold-check timers, matching the owner's
+reported manual eight-hour schedule. The initial proposed interval was 12 hours;
+the owner chose eight. Payment/trigger tests cover replacement and preservation of
+other jobs. The live schedule and resolution of the underlying errors are not
+independently verified.
 
 The discount backend is activated. The owner reported completing email setup,
 private full address/URL configuration, matched-recipient preview approval,

@@ -167,7 +167,7 @@ Deployment order:
    Invoice Items**. Do not paste the key into website code.
 3. Paste the updated `google-calendar.gs` into Apps Script. Run
    `installBookingHoldTrigger()` once and authorize it. It replaces existing
-   hold-check triggers with one reconciliation job every 12 hours; other jobs
+   hold-check triggers with one reconciliation job every eight hours; other jobs
    stay unchanged. Stripe invoices have due dates, but do not void themselves.
    The installer explicitly requests any missing project permissions. Approve the
    permissions requested for this project before running it again; opening a scope
@@ -180,7 +180,7 @@ Deployment order:
 5. Publish the matching `index.html` and `terms.html` only after the backend deploy.
 
 Voiding and releasing overdue holds occurs on the next scheduled check (normally
-within about 12 hours when scheduled runs succeed) or an availability request. A paid invoice is never automatically
+within about eight hours when scheduled runs succeed) or an availability request. A paid invoice is never automatically
 voided. The integration does not automatically migrate existing Checkout sessions,
 invoices or calendar entries: handle those separately after checking for payment.
 Custom-quote requests are emailed for manual follow-up; they create neither a payment

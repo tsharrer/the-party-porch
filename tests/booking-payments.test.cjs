@@ -527,7 +527,7 @@ test('customer waiver installer adds only one payment and reminder trigger, vali
     newTrigger(handler) {
       return {
         timeBased() { return this; },
-        everyHours(hours) { assert.equal(hours, 12); return this; },
+        everyHours(hours) { assert.equal(hours, 8); return this; },
         atHour(hour) { assert.equal(hour, 9); return this; },
         nearMinute(minute) { assert.equal(minute, 0); return this; },
         everyDays(days) { assert.equal(days, 1); return this; },
@@ -783,7 +783,7 @@ test('event deadlines use Houston DST and reject a nonexistent spring-forward ti
 
 const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
 
-test('hold trigger installer authorizes then replaces old and duplicate timers with one 12-hour timer, preserving other jobs', () => {
+test('hold trigger installer authorizes then replaces old and duplicate timers with one 8-hour timer, preserving other jobs', () => {
   const {context, calls, emails} = harness();
   const other = {getHandlerFunction: () => 'sendPostPartyEmails_'};
   const old = {getHandlerFunction: () => 'expireBookingHolds'};
@@ -803,7 +803,7 @@ test('hold trigger installer authorizes then replaces old and duplicate timers w
     newTrigger(handler) {
       return {
         timeBased() { return this; },
-        everyHours(hours) { assert.equal(hours, 12); return this; },
+        everyHours(hours) { assert.equal(hours, 8); return this; },
         create() { triggers.push({getHandlerFunction: () => handler}); }
       };
     }

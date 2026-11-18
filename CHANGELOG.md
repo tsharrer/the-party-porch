@@ -5,11 +5,12 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-11-18
 
-### Changed - Twice-daily booking hold checks
-- Change the hold-trigger installer from every five minutes to every 12 hours.
+### Changed - Booking hold checks every eight hours
+- Change the hold-trigger installer from every five minutes to every eight hours,
+  matching the owner's manually selected interval instead of the initial 12-hour proposal.
   Running it replaces existing hold-check timers, leaving other automations alone.
 - Preserve payment checks, void-before-release safety and paid reservations.
-  Cleanup and paid-deposit participant-waiver links can now wait about 12 hours,
+  Cleanup and paid-deposit participant-waiver links can now wait about eight hours,
   longer after failures. Availability requests still check expired holds.
 - Requires saving the updated installer and running `installBookingHoldTrigger`
   in the existing booking project; publishing source alone does not change timers.

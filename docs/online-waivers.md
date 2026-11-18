@@ -61,9 +61,9 @@ confirmation email and in the deposit text when the customer explicitly opted in
 to SMS. Custom quote requests and other rentals are not sent these Nerf agreements.
 This requests a host signature; it does not block payment until a signature exists.
 
-After a tracked Stripe deposit invoice is verified **paid**, the existing twice-daily
+After a tracked Stripe deposit invoice is verified **paid**, the existing eight-hour
 hold-check job sends the host the participant/guardian link to share with guests.
-This normally occurs on the next 12-hour run, not instantly at card checkout.
+This normally occurs on the next eight-hour run, not instantly at card checkout.
 Send the link manually if it is needed sooner. Failed runs can delay it further.
 Email is sent where available, plus SMS only with recorded consent. It never texts
 guest numbers or assumes that the host can sign for everyone.
@@ -108,7 +108,7 @@ after an untracked payment. No new invoice or charge is created by this automati
 2. Save and run **installCustomerWaiverAutomations** as the business account. Keep
    the existing `script.scriptapp` and `userinfo.email` scopes; no additional scope
    is needed if waiver and booking setup is already complete.
-3. This replaces old `expireBookingHolds` triggers with one every 12 hours and installs one
+3. This replaces old `expireBookingHolds` triggers with one every eight hours and installs one
    daily `sendCustomerWaiverReminders_` trigger. Re-running it does not duplicate
    those jobs or change owner/team reminders. The installer itself sends nothing,
    but the next scheduled run can send live messages for existing eligible bookings.
