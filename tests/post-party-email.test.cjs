@@ -249,6 +249,7 @@ test('same-day parties require an exact unique reference; excluded parties still
   assert.equal(alert.to, owner);
   assert.match(alert.body, /Held before sending.*2026-11-14.*ambiguous@example.com.*Receipt: waiver-.*Party match/);
   assert.match(alert.body, /wrong-reference@example.com/);
+  assert.match(alert.body, /PDF: waiver-.*\.pdf/);
   assert.doesNotMatch(alert.body, /good@example.com|cancelled@example.com|Child name never mailed/);
 });
 
@@ -265,6 +266,19 @@ test('unsaved, incomplete or non-adult consent records are held for review, not 
   const alert = h.emails.find(email => email.subject.includes('post-party follow-up review'));
   assert.match(alert.body, /no-pdf@example.com/);
   assert.match(alert.body, /Unavailable \(missing signer email\)/);
+});
+
+test('post-party matching still finds a PDF renamed before its journal finalization, without duplicate sends', () => {
+  const h = harness(); h.event(); h.enable();
+  const record = h.waiver({service: 'refereed'});
+  const oldName = record.pdfName;
+  record.pdfRename = {from: oldName, to: h.context.waiverPdfName_(record.data)};
+  const journal = h.files.find(file => file.name === 'waiver-' + record.data.id + '.json');
+  journal.contents = JSON.stringify(record);
+  h.files.find(file => file.name === oldName).name = record.pdfRename.to;
+  assert.equal(h.run().sent, 1);
+  assert.equal(h.run().alreadySent, 1);
+  assert.equal(h.attendeeEmails().length, 1);
 });
 
 test('unsubscribe GET does not change preferences; confirmed POST suppresses all future parties and exposes no email', () => {

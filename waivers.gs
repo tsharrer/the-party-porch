@@ -271,6 +271,90 @@ function waiverFileByName_(folder, name) {
   return file;
 }
 
+function waiverPdfName_(data) {
+  if (!data || !validBookingId(data.id) ||
+      typeof data.eventDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(data.eventDate) ||
+      isNaN(Date.parse(data.eventDate + "T12:00:00Z")) ||
+      new Date(data.eventDate + "T12:00:00Z").toISOString().slice(0, 10) !== data.eventDate ||
+      ["host", "participant"].indexOf(data.kind) === -1 ||
+      ["refereed", "unrefereed"].indexOf(data.service) === -1 ||
+      typeof data.name !== "string" || !data.name.trim()) {
+    throw new Error("Waiver date, party service, participant name or receipt is invalid; review before naming the PDF.");
+  }
+  var name = data.name.trim().normalize("NFKC")
+    .replace(/[<>:"/\\|?*\u0000-\u001f\u007f]/g, "-").replace(/\s+/g, "-").replace(/-+/g, "-").slice(0, 80);
+  return "Party-Porch-" + data.eventDate + "-Nerf-" +
+    (data.service === "refereed" ? "Refereed" : "Rental-Only") + "-" +
+    (data.kind === "host" ? "Host" : "Participant") + "-" + name + "-" + data.id + ".pdf";
+}
+
+function waiverPdfFile_(folder, record) {
+  if (typeof record.pdfName !== "string" || !record.pdfName) throw new Error("Missing stored waiver PDF filename.");
+  var original = waiverFileByName_(folder, record.pdfName);
+  if (!record.pdfRename) return original;
+  if (record.pdfRename.from !== record.pdfName || record.pdfRename.to !== waiverPdfName_(record.data)) {
+    throw new Error("Interrupted PDF rename metadata requires owner review.");
+  }
+  var renamed = waiverFileByName_(folder, record.pdfRename.to);
+  if (original && renamed && original.getId() !== renamed.getId()) {
+    throw new Error("Both original and renamed waiver PDFs exist; review before continuing.");
+  }
+  if (!original && !renamed) throw new Error("The waiver PDF is missing during an interrupted rename.");
+  return original || renamed;
+}
+
+function renameWaiverPdfs() {
+  if (Session.getActiveUser().getEmail().toLowerCase() !== WAIVER_EMAIL) {
+    throw new Error("Run this rename action as " + WAIVER_EMAIL + ".");
+  }
+  ScriptApp.requireAllScopes(ScriptApp.AuthMode.FULL);
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    var folderId = PropertiesService.getScriptProperties().getProperty("WAIVER_FOLDER_ID");
+    if (!folderId) throw new Error("Waiver storage has not been installed.");
+    var folder = DriveApp.getFolderById(folderId);
+    assertWaiverFolderPrivate_(folder);
+    var files = folder.getFiles();
+    var result = {renamed: 0, alreadyNamed: 0, needsReview: 0, remaining: 0};
+    var attempted = 0;
+    while (files.hasNext()) {
+      var journal = files.next(), journalName = journal.getName();
+      if (!/^waiver-[a-f0-9-]{36}\.json$/i.test(journalName)) continue;
+      try {
+        var record = JSON.parse(journal.getBlob().getDataAsString());
+        if (!record.data || journalName !== "waiver-" + record.data.id + ".json" ||
+            !waiverFileByName_(folder, journalName)) {
+          throw new Error("Waiver receipt metadata requires owner review.");
+        }
+        var target = waiverPdfName_(record.data);
+        var pdf = waiverPdfFile_(folder, record);
+        if (!pdf) throw new Error("Signed PDF is missing; no replacement was generated.");
+        if (record.pdfName === target && !record.pdfRename) { result.alreadyNamed++; continue; }
+        var collision = waiverFileByName_(folder, target);
+        if (collision && collision.getId() !== pdf.getId()) throw new Error("Target PDF filename is already used by another file.");
+        if (attempted >= 25) { result.remaining++; continue; }
+        attempted++;
+        if (!record.pdfRename) {
+          record.pdfRename = {from: record.pdfName, to: target};
+          journal.setContent(JSON.stringify(record));
+        }
+        if (pdf.getName() !== target) pdf.setName(target);
+        record.pdfName = target;
+        delete record.pdfRename;
+        journal.setContent(JSON.stringify(record));
+        result.renamed++;
+      } catch (err) {
+        result.needsReview++;
+        console.error("Waiver PDF rename needs review | Receipt: " + journalName + " | Reason: " + String(err));
+      }
+    }
+    console.log("Waiver PDF rename: " + JSON.stringify(result) +
+      ". PDF contents and Drive IDs preserved. No email was sent. Re-run for remaining records; review errors before retrying.");
+    return result;
+  } finally { if (lock.hasLock()) lock.releaseLock(); }
+}
+
 function saveWaiverSignerContact_(record, journal) {
   if (record.contactStatus === "saved" || record.contactStatus === "needs_review") return;
   try {
@@ -325,7 +409,7 @@ function importWaiverSignerContacts() {
             (data.kind === "participant" && data.participantType === "minor" && data.guardianConsent !== true)) {
           throw new Error("Stored signer metadata needs owner review.");
         }
-        if (!record.pdfName || !waiverFileByName_(folder, record.pdfName)) {
+        if (!record.pdfName || !waiverPdfFile_(folder, record)) {
           result.incomplete++;
           continue;
         }
@@ -378,12 +462,12 @@ function submitWaiver(input) {
         data: data, fingerprint: fingerprint, document: waiverDocument_(data.kind),
         electronicConsent: WAIVER_ESIGN, acceptedAt: accepted.toISOString(),
         acceptedAtHouston: Utilities.formatDate(accepted, "America/Chicago", "yyyy-MM-dd HH:mm:ss z"),
-        pdfName: "Party-Porch-" + data.kind + "-" + data.eventDate + "-" + data.id + ".pdf",
+        pdfName: waiverPdfName_(data),
         emailStatus: "pending"
       };
       journal = folder.createFile(Utilities.newBlob(JSON.stringify(record), "application/json", journalName));
     }
-    var pdf = waiverFileByName_(folder, record.pdfName);
+    var pdf = waiverPdfFile_(folder, record);
     if (!pdf) {
       var blob = Utilities.newBlob(waiverPdfHtml_(record), "text/html", "waiver.html").getAs(MimeType.PDF);
       pdf = folder.createFile(blob.setName(record.pdfName));

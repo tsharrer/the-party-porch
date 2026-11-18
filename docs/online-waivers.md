@@ -54,6 +54,54 @@ The public readiness check is not a signing or email-delivery test. Until the ma
 deployment and actual receipt check are completed, do not claim online collection
 is live or that an owner email has arrived.
 
+## Searchable PDF filenames and existing-record rename
+
+New PDFs use party date, party type/service, host/participant role, participant
+name and the unique receipt ID. Example (fictional):
+
+```text
+Party-Porch-2026-11-14-Nerf-Refereed-Participant-Jane-Smith-<receipt-id>.pdf
+```
+
+All current online agreements are Nerf agreements; the type is
+`Nerf-Refereed` or `Nerf-Rental-Only`.
+Host PDFs use the host name; a minor participant PDF uses the child's name, not
+the guardian's. Unsafe filename characters are replaced, long names are shortened,
+and non-ASCII names are retained. The signed name/terms remain unchanged.
+
+Internal `waiver-<receipt-id>.json` filenames remain stable: they are retry and
+matching keys, not display names. The JSON's `pdfName` points to the searchable PDF.
+Customer downloads and new owner attachments use the stored filename.
+
+To install:
+
+1. Replace **Waivers.gs** with the latest `waivers.gs`.
+2. Replace **PostPartyAutomation.gs** with the latest `post-party-email.gs`.
+   Keep the other files, properties and existing triggers unchanged.
+3. Save both and deploy a **new version of the existing booking web app**.
+   The deployed signing path must understand interrupted renames before the
+   owner renames existing files. No form, agreement-version or new scope change
+   is required.
+4. As the business owner, run **renameWaiverPdfs**. It renames up to 25 existing
+   PDFs per run. It logs `renamed`, `alreadyNamed`, `needsReview`, and `remaining`.
+   Re-run for remaining records; investigate review errors before retrying them.
+   It sends no email and does not create invoices or change calendar entries.
+
+Renaming preserves Drive file IDs/links and PDF contents. Only PDF display names
+and their storage references change; accepted data, fingerprints, agreement
+snapshots, signature times and message/contact status remain untouched. Existing
+email attachments are not renamed retroactively or sent again.
+
+A private pending-rename journal handles interrupted Drive operations. Signing
+retries, Contacts import and post-party matching can locate either filename while
+the action is unfinished; they do not generate a second signed PDF. Re-running
+the rename action completes the same operation. Missing files, duplicate receipts
+or target-name collisions are held for review rather than overwritten.
+
+These are private filenames containing participant names, including children's
+names. Never share the waiver folder or publish these filenames/customer records.
+Owner-only review emails may include a PDF filename to identify the exact record.
+
 ## Automatic waiver links and reminders
 
 For **Nerf bookings**, the host agreement link is included in the initial booking

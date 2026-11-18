@@ -37,8 +37,9 @@ explains postal address and opt-out requirements.
 
 The script reads private completed waiver JSON records with their matching PDFs,
 not the entire Google Contacts address book. It uses only adult signer email
-addresses for delivery; no child or emergency-contact details appear in emails
-or recipient previews.
+addresses for delivery; attendee emails contain no child or emergency-contact
+details. Owner-only diagnostics can identify a waiver by its private PDF
+filename, which can include the participant's name.
 
 The calendar must identify the event with an `Items:` line (the normal booking
 format), or Nerf wording. Closure, cancellation, pickup, cleaning, quote and test
@@ -142,10 +143,12 @@ Gmail Sent and the private journal before any manual retry. Failures/review item
 are logged and reported to the owner rather than treated as sent.
 
 Owner review emails include each affected adult signer email address (as recorded),
-party date, reason, and receipt or delivery-journal identifier. Records held before
+party date, reason, and receipt or delivery-journal identifier. Held waiver
+records also include the stored PDF filename. Records held before
 sending are distinguished from uncertain previous attempts and quota/runtime
-deferrals. Missing addresses are labeled unavailable; no child's name or emergency
-contact is included. Already-sent and suppressed addresses are not listed as
+deferrals. Missing addresses are labeled unavailable; no emergency-contact
+data is included. PDF filenames can contain the child's participant name, so
+keep these owner alerts private. Already-sent and suppressed addresses are not listed as
 failures. Uncertain-attempt reasons are stored privately for subsequent alerts;
 older interrupted records without a stored reason receive an explicit explanation.
 These details are only in owner notifications, private previews and execution
@@ -154,7 +157,10 @@ logs, not public status endpoints. Preserve the existing no-repeat behavior.
 To install this alert-detail update, replace **PostPartyAutomation.gs** with the
 latest `post-party-email.gs` and save. Existing scheduled/editor actions use the
 saved code; no trigger reinstall or web-app redeployment is needed for this
-reporting-only change. Do not run a real send just to test formatting.
+reporting-only change. The subsequent
+[searchable waiver filename update](online-waivers.md#searchable-pdf-filenames-and-existing-record-rename)
+requires saving **Waivers.gs** too and deploying both before renaming existing
+PDFs. Do not run a real send just to test formatting.
 
 The daily job checks the due party date and six preceding dates, never earlier
 than the configured start date. This is seven days of bounded catch-up for

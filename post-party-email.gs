@@ -111,7 +111,7 @@ function postPartyPlan_(date, source) {
           typeof data.signer !== "string" || !data.signer.trim() ||
           (data.kind === "participant" && ["adult", "minor"].indexOf(data.participantType) === -1) ||
           (data.kind === "participant" && data.participantType === "minor" && data.guardianConsent !== true) ||
-          !record.pdfName || !waiverFileByName_(folder, record.pdfName)) {
+          !record.pdfName || !waiverPdfFile_(folder, record)) {
         throw new Error("Incomplete or invalid signed adult record.");
       }
       var email = postPartyEmail_(data.email);
@@ -125,7 +125,8 @@ function postPartyPlan_(date, source) {
       var recordedEmail = typeof data.email === "string" && data.email.trim() ?
         data.email.trim().replace(/[\r\n]/g, " ").slice(0, 254) : "Unavailable (missing signer email)";
       issues.push("Held before sending | Date: " + date + " | Adult signer email (as recorded): " +
-        recordedEmail + " | Receipt: " + name + " | Reason: " + String(err.message || err));
+        recordedEmail + " | Receipt: " + name + " | PDF: " + (record.pdfName || "Unavailable (no PDF filename)") +
+        " | Reason: " + String(err.message || err));
     }
   });
   return {folder: folder, parties: parties.map(function(party, index) {

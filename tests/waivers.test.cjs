@@ -18,6 +18,8 @@ function harness(options = {}) {
   let pdfFailure = !!options.pdfFailure;
   let afterPdfFailure = !!options.afterPdfFailure;
   let contactJournalFailure = !!options.failContactSavedJournal;
+  let renameResponseFailure = !!options.renameResponseFailure;
+  let renameJournalFailure = !!options.renameJournalFailure;
   const files = [];
   const emails = [];
   const logs = [];
@@ -70,9 +72,25 @@ function harness(options = {}) {
     createFile(contents) {
       const file = {
         name: contents.getName(), contents: contents.getDataAsString(),
+        id: 'private-file-' + (++sequence),
+        getId: () => file.id,
         getName: () => file.name,
+        setName(value) {
+          if (options.renameFailure) throw new Error('Drive rename failed');
+          file.name = value;
+          if (renameResponseFailure) {
+            renameResponseFailure = false;
+            throw new Error('Lost rename response');
+          }
+          return this;
+        },
         getBlob: () => blob(file.contents, 'application/pdf', file.name),
         setContent(value) {
+          if (renameJournalFailure && file.name.endsWith('.json') &&
+              file.contents.includes('"pdfRename"') && !value.includes('"pdfRename"')) {
+            renameJournalFailure = false;
+            throw new Error('Final rename journal write failed');
+          }
           if (contactJournalFailure && JSON.parse(value).contactStatus === 'saved') {
             contactJournalFailure = false;
             throw new Error('Contact outcome journal write failed');
@@ -82,7 +100,7 @@ function harness(options = {}) {
           }
           file.contents = value;
         },
-        getUrl: () => `https://drive.google.com/file/d/test-${++sequence}/view`
+        getUrl: () => `https://drive.google.com/file/d/${file.id}/view`
       };
       files.push(file);
       if (afterPdfFailure && file.name.endsWith('.pdf')) {
@@ -227,6 +245,8 @@ test('host submission saves a PDF with the complete accepted terms and emails th
   assert.equal(h.files.length, 2);
   assert.equal(h.emails.length, 1);
   assert.equal(h.emails[0].to, 'yourpartyporch@gmail.com');
+  assert.equal(result.pdfName, 'Party-Porch-2026-12-01-Nerf-Rental-Only-Host-Test-Adult-' + id + '.pdf');
+  assert.equal(h.emails[0].attachments[0].getName(), result.pdfName);
   assert.equal(h.emails[0].attachments[0].getDataAsString(), Buffer.from(result.pdfBase64, 'base64').toString());
   const html = h.conversions[0];
   for (const phrase of ['a Sharrer Investments LLC company', 'Never allow unsupervised play', 'two hours of games', 'place the bin', 'Electronic signature', 'Accepted at (UTC)', 'I consent to use electronic records', 'Test Adult']) {
@@ -404,6 +424,110 @@ function legacyWaivers(h, count = 1, withPdf = true) {
       h.context.Utilities.newBlob('test PDF', 'application/pdf', record.pdfName));
   }
 }
+
+test('new participant PDF uses party date, Nerf service and participant name, safely preserving non-ASCII names', () => {
+  const h = harness();
+  const input = {...h.input('participant'), name: 'Zo\u00eb / Child: One', service: 'refereed',
+    participantType: 'minor', dateOfBirth: '2015-12-01', relationship: 'Parent', guardianConsent: true};
+  const result = h.context.submitWaiver(input);
+  assert.equal(result.ok, true);
+  assert.equal(result.pdfName, 'Party-Porch-2026-12-01-Nerf-Refereed-Participant-Zo\u00eb-Child-One-' + id + '.pdf');
+  assert.doesNotMatch(result.pdfName, /Test-Adult|[\/:]/);
+  assert.equal(h.journal().data.name, input.name, 'Only the display filename is sanitized, not the signed name');
+  assert.equal(h.context.submitWaiver(input).pdfName, result.pdfName);
+  assert.equal(h.files.length, 2);
+  assert.equal(h.emails.length, 1);
+});
+
+test('existing PDF rename preserves bytes, Drive links, accepted record and delivery/contact states without emails', () => {
+  const h = harness();
+  legacyWaivers(h, 2);
+  const journals = h.files.filter(file => file.name.endsWith('.json'));
+  const before = journals.map(file => JSON.parse(file.contents));
+  const pdfs = h.files.filter(file => file.name.endsWith('.pdf'));
+  const links = pdfs.map(file => file.getUrl());
+  const bytes = pdfs.map(file => file.contents);
+  const conversions = h.conversions.length;
+  assert.equal(h.context.renameWaiverPdfs().renamed, 2);
+  pdfs.forEach((file, index) => {
+    assert.match(file.name, /^Party-Porch-2026-12-01-Nerf-Rental-Only-Host-Test-Adult-/);
+    assert.equal(file.getUrl(), links[index]);
+    assert.equal(file.contents, bytes[index]);
+    const record = JSON.parse(journals[index].contents);
+    assert.equal(record.pdfName, file.name);
+    const {pdfName, ...rest} = record;
+    const {pdfName: oldName, ...oldRest} = before[index];
+    assert.deepEqual(rest, oldRest);
+  });
+  assert.notEqual(pdfs[0].name, pdfs[1].name, 'Receipt IDs distinguish identical participant names');
+  assert.equal(h.context.renameWaiverPdfs().alreadyNamed, 2);
+  assert.equal(h.conversions.length, conversions);
+  assert.equal(h.emails.length, 0);
+  assert.equal(h.contactCalls.length, 0);
+});
+
+test('interrupted PDF renames remain readable and resume safely without duplicates or re-signing', () => {
+  for (const options of [{renameResponseFailure: true}, {renameJournalFailure: true}, {renameFailure: true}]) {
+    const h = harness(options);
+    const input = h.input();
+    h.context.submitWaiver(input);
+    const journal = h.files.find(file => file.name.endsWith('.json'));
+    const pdf = h.files.find(file => file.name.endsWith('.pdf'));
+    const record = JSON.parse(journal.contents);
+    record.pdfName = 'Party-Porch-host-2026-12-01-' + id + '.pdf';
+    pdf.name = record.pdfName;
+    journal.contents = JSON.stringify(record);
+    assert.equal(h.context.renameWaiverPdfs().needsReview, 1);
+    assert.ok(JSON.parse(journal.contents).pdfRename);
+    assert.equal(h.context.waiverPdfFile_(h.context.DriveApp.getFolderById('private-folder'), h.journal()), pdf);
+    assert.equal(h.context.submitWaiver(input).ok, true);
+    assert.equal(h.context.importWaiverSignerContacts().alreadySaved, 1);
+    options.renameFailure = false;
+    assert.equal(h.context.renameWaiverPdfs().renamed, 1);
+    assert.equal(h.journal().pdfRename, undefined);
+    assert.equal(h.context.submitWaiver(input).ok, true);
+    assert.equal(h.files.length, 2);
+    assert.equal(h.conversions.length, 1);
+    assert.equal(h.emails.length, 1);
+  }
+});
+
+test('PDF renamer is owner-only, checks private storage and limits each run to 25 changes', () => {
+  const h = harness();
+  legacyWaivers(h, 27);
+  assert.equal(h.context.renameWaiverPdfs().renamed, 25);
+  assert.equal(h.context.renameWaiverPdfs().renamed, 2);
+  assert.equal(h.context.renameWaiverPdfs().alreadyNamed, 27);
+  assert.equal(h.emails.length, 0);
+  for (const changed of [{activeEmail: ''}, {activeEmail: 'other@example.com'}, {collaborators: true}]) {
+    const options = {}, denied = harness(options);
+    legacyWaivers(denied);
+    Object.assign(options, changed);
+    assert.throws(() => denied.context.renameWaiverPdfs(), /Run this rename action|unshared My Drive/);
+    assert.equal(denied.emails.length, 0);
+    assert.match(denied.files.find(file => file.name.endsWith('.pdf')).name, /^Party-Porch-host-/);
+  }
+});
+
+test('missing PDFs, malformed records and conflicting target filenames are reported without replacement or overwrite', () => {
+  const missing = harness();
+  legacyWaivers(missing, 1, false);
+  assert.equal(missing.context.renameWaiverPdfs().needsReview, 1);
+  assert.equal(missing.files.length, 1);
+  const h = harness();
+  legacyWaivers(h);
+  const folder = h.context.DriveApp.getFolderById('private-folder');
+  const target = h.context.waiverPdfName_(h.journal().data);
+  folder.createFile(h.context.Utilities.newBlob('other PDF bytes', 'application/pdf', target));
+  assert.equal(h.context.renameWaiverPdfs().needsReview, 1);
+  assert.equal(h.files.filter(file => file.name === target).length, 1);
+  assert.equal(h.files.find(file => file.name === target).contents, 'other PDF bytes');
+  assert.equal(h.journal().pdfRename, undefined);
+  const journal = h.files.find(file => file.name.endsWith('.json'));
+  journal.contents = '{invalid';
+  assert.equal(h.context.renameWaiverPdfs().needsReview, 1);
+  assert.equal(h.emails.length, 0);
+});
 
 test('owner importer saves existing completed waiver signers without attendee email or repeated Contacts writes', () => {
   const h = harness();

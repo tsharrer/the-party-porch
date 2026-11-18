@@ -5,6 +5,16 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-11-18
 
+### Added - Searchable signed-waiver PDF filenames
+- Name new PDFs with the party date, Nerf service type, participant/host name,
+  role and unique receipt ID; keep JSON receipt filenames stable.
+- Add owner-only `renameWaiverPdfs` to rename existing PDFs in batches of 25,
+  preserving bytes, Drive links, accepted records and delivery state.
+- Journal pending renames so retries, Contacts import and post-party matching
+  remain safe after interrupted writes, without duplicate PDFs or emails.
+- Include stored PDF filenames in owner waiver-review alerts. Requires updated
+  Waivers.gs and PostPartyAutomation.gs deployment before historical renaming.
+
 ### Improved - Actionable post-party owner review emails
 - Include affected adult signer email addresses, party dates, reasons and private
   receipt/journal identifiers instead of only aggregate counts.
