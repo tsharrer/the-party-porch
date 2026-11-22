@@ -5,6 +5,16 @@ Newest entries first. Dates in America/Chicago.
 
 ## 2026-11-22
 
+### Added - Booking source, mobile quick actions and neighborhood pages
+- Optional "How did you hear about us?" dropdown on the booking form. The choice is
+  added to the start of the booking notes ("Heard about us: ..."), so it appears on the
+  calendar event and owner notification with no Apps Script redeploy. It is also sent as
+  a separate `source` field for future reporting.
+- Mobile-only bar fixed to the bottom of the homepage with "Book a party" and "Text us"
+  (SMS to the business number); the cart button moves up to clear it.
+- Neighborhood landing pages for the Houston Heights and Spring Branch (`areas/`), inside the
+  free-delivery zone, linked from the homepage service-area list and added to the sitemap.
+
 ### Fixed - Consistent delivery radius and cleaner share previews
 - State free delivery as 12 miles of ZIP 77018 everywhere. The add-ons note on the
   homepage said 15 miles; the rest of the site, terms, structured data and the
