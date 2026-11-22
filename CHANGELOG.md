@@ -3,6 +3,18 @@
 All notable changes to the website, tracker, and booking backend are logged here.
 Newest entries first. Dates in America/Chicago.
 
+## 2026-11-22 (later)
+
+### Added - City pages for the rest of the service area
+- Landing pages in `areas/` for Houston, Katy, Sugar Land, The Woodlands, Pearland,
+  Cypress, Spring, Humble, Kingwood, Tomball, Friendswood, League City, Missouri City,
+  Richmond and Fulshear. Every homepage service-area chip now links to its page, and all
+  are in the sitemap.
+- Pages for areas outside the free 12-mile zone around ZIP 77018 say delivery is $2 per
+  mile past the first 12, with a worked example, and show "Delivering to" instead of a
+  free-delivery badge. The Houston page links readers to the neighborhood pages' areas.
+- Area-page structured data now states the $2/mile fee beyond 12 miles.
+
 ## 2026-11-22
 
 ### Added - Booking source, mobile quick actions and neighborhood pages
