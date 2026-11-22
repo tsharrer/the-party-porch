@@ -12,8 +12,10 @@ Newest entries first. Dates in America/Chicago.
   a separate `source` field for future reporting.
 - Mobile-only bar fixed to the bottom of the homepage with "Book a party" and "Text us"
   (SMS to the business number); the cart button moves up to clear it.
-- Neighborhood landing pages for the Houston Heights and Spring Branch (`areas/`), inside the
-  free-delivery zone, linked from the homepage service-area list and added to the sitemap.
+- Neighborhood landing pages (`areas/`) for Oak Forest, Garden Oaks, the Houston Heights,
+  Spring Branch, Memorial, River Oaks, West University Place, Tanglewood and Jersey Village,
+  linked from the homepage service-area list and added to the sitemap. Memorial and Jersey
+  Village pages note that addresses past 12 miles of 77018 pay the $2/mile delivery fee.
 
 ### Fixed - Consistent delivery radius and cleaner share previews
 - State free delivery as 12 miles of ZIP 77018 everywhere. The add-ons note on the
