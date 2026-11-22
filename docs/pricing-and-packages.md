@@ -12,7 +12,7 @@ pay their way.
 | **+ Referee** — our host runs every game + safety | **+$100** |
 
 Gear included: blasters, darts, safety glasses, bunkers/obstacles. Delivery + next-day pickup included
-within 15 miles.
+within 12 miles of ZIP 77018.
 
 ## Snack Bar consumables
 
@@ -49,7 +49,7 @@ to 45 servings:
 | **The Party Porch** ⭐ | **$180** | **12** | **$280** (1 ref) |
 
 *Epik Fun matches our ~$180 entry price, but we include **12 players** (vs ~8–10), charge less
-per extra player (~$12 vs $15–16), and give free delivery to 15 mi (they charge $3/mi past 10).
+per extra player (~$12 vs $15–16), and give free delivery to 12 mi from 77018 (they charge $3/mi past 10).
 Same entry price, more value. Sources: company sites, July 2026.*
 
 ## Add-ons
@@ -62,9 +62,9 @@ Same entry price, more value. Sources: company sites, July 2026.*
 | The Booth (photo booth) | +$99 |
 | The Backdrop (flower/balloon wall) | +$79 |
 | Self-pickup (you grab & return gear) | −$25 |
-| Delivery beyond 15 mi | $2/mi |
+| Delivery beyond 12 mi of 77018 | $2/mi |
 
-**Delivery differentiator:** free within 15 miles. (Epik Fun charges $3/mi past just 10 mi.)
+**Delivery differentiator:** free within 12 miles of ZIP 77018. (Epik Fun charges $3/mi past just 10 mi.)
 
 ## Bundles (anchor on rental + referee)
 | Bundle | Price |

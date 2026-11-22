@@ -3,6 +3,27 @@
 All notable changes to the website, tracker, and booking backend are logged here.
 Newest entries first. Dates in America/Chicago.
 
+## 2026-11-22
+
+### Added - Booking source, mobile quick actions and neighborhood pages
+- Optional "How did you hear about us?" dropdown on the booking form. The choice is
+  added to the start of the booking notes ("Heard about us: ..."), so it appears on the
+  calendar event and owner notification with no Apps Script redeploy. It is also sent as
+  a separate `source` field for future reporting.
+- Mobile-only bar fixed to the bottom of the homepage with "Book a party" and "Text us"
+  (SMS to the business number); the cart button moves up to clear it.
+- Neighborhood landing pages (`areas/`) for Oak Forest, Garden Oaks, the Houston Heights,
+  Spring Branch, Memorial, River Oaks, West University Place, Tanglewood and Jersey Village,
+  linked from the homepage service-area list and added to the sitemap. Memorial and Jersey
+  Village pages note that addresses past 12 miles of 77018 pay the $2/mile delivery fee.
+
+### Fixed - Consistent delivery radius and cleaner share previews
+- State free delivery as 12 miles of ZIP 77018 everywhere. The add-ons note on the
+  homepage said 15 miles; the rest of the site, terms, structured data and the
+  confirmation email already said 12. Pricing and business-plan docs now match.
+- Use clean absolute share-image URLs on experience pages (drop `/experiences/../`)
+  so Facebook, iMessage and other link previews load the photo reliably.
+
 ## 2026-11-18
 
 ### Added - Searchable signed-waiver PDF filenames

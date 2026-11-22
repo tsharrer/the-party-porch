@@ -62,7 +62,7 @@ Referee $100 each (1 host up to ~18 kids, 2 for ~24). Parties of 25+ are quoted 
 | The Backdrop | +$79 |
 | The Snack Bar (per machine) | +$69 |
 | Self-pickup | −$25 |
-| Delivery beyond 15 mi | $2/mi |
+| Delivery beyond 12 mi of 77018 | $2/mi |
 
 - **Launch blended avg ticket:** ~$240–280 (most attach a referee or add-ons)
 - **Variable cost/party:** ~$30 (rental only) to ~$130 (big party + refs) — gas, dart wear, referee labor
