@@ -3,6 +3,15 @@
 All notable changes to the website, tracker, and booking backend are logged here.
 Newest entries first. Dates in America/Chicago.
 
+## 2026-11-22
+
+### Fixed - Consistent delivery radius and cleaner share previews
+- State free delivery as 12 miles of ZIP 77018 everywhere. The add-ons note on the
+  homepage said 15 miles; the rest of the site, terms, structured data and the
+  confirmation email already said 12. Pricing and business-plan docs now match.
+- Use clean absolute share-image URLs on experience pages (drop `/experiences/../`)
+  so Facebook, iMessage and other link previews load the photo reliably.
+
 ## 2026-11-18
 
 ### Added - Searchable signed-waiver PDF filenames
