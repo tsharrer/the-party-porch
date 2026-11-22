@@ -12,7 +12,7 @@ Newest entries first. Dates in America/Chicago.
   are in the sitemap.
 - Pages for areas outside the free 12-mile zone around ZIP 77018 say delivery is $2 per
   mile past the first 12, with a worked example, and show "Delivering to" instead of a
-  free-delivery badge. The Houston page links readers to the neighborhood pages' areas.
+  free-delivery badge.
 - Area-page structured data now states the $2/mile fee beyond 12 miles.
 
 ## 2026-11-22
