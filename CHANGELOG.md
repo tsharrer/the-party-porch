@@ -11,6 +11,8 @@ Newest entries first. Dates in America/Chicago.
   confirmation email already said 12. Pricing and business-plan docs now match.
 - Use clean absolute share-image URLs on experience pages (drop `/experiences/../`)
   so Facebook, iMessage and other link previews load the photo reliably.
+- Homepage share image is now a 1200x630 party photo (`assets/share.jpg`, Nerf
+  blasters on barrels, no people, location data stripped) instead of the logo.
 
 ## 2026-11-18
 
